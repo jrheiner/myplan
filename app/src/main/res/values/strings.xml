@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">mydsb</string>
+    <string name="login_header">Login</string>
+    <string name="login_user">Benutzername</string>
+    <string name="login_password">Passwort</string>
+    <string name="login_btn">Login</string>
+    <string name="user_header">Meine Vertretungen</string>
 </resources>
