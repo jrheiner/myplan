@@ -5,4 +5,5 @@
     <string name="login_password">Passwort</string>
     <string name="login_btn">Login</string>
     <string name="user_header">Meine Vertretungen</string>
+    <string name="user_logout">Logout</string>
 </resources>
