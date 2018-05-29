@@ -89,7 +89,7 @@ public class Login extends AppCompatActivity {
                 api_key = response.replaceAll("\"", "");
                 logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
                 if (logged_in) {
-                    Toast.makeText(Login.this, String.format("%S!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
                     setLogged_in(true);
                     setApi_key(api_key);
                     Intent intent = new Intent("m.android.mydsb.User");
