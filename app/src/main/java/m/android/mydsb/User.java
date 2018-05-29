@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class User extends AppCompatActivity {
 
@@ -16,21 +18,42 @@ public class User extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        logout();
+        //Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        //setSupportActionBar(myToolbar);
     }
 
-    public void logout() {
-        button_logout = findViewById(R.id.button_logout);
-        button_logout.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        setLogged_in(false);
-                        Intent intent = new Intent(User.this, Login.class);
-                        startActivity(intent);
-                    }
-                }
-        );
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.user_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // open Settings
+                Toast.makeText(User.this, "settings selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.action_refresh:
+                // Refresh
+                Toast.makeText(User.this, "refresh selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.action_logout:
+                // Logout
+                setLogged_in(false);
+                Intent intent = new Intent(User.this, Login.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     public void setLogged_in(boolean logged_in) {

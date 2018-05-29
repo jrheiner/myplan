@@ -89,7 +89,7 @@ public class Login extends AppCompatActivity {
                 api_key = response.replaceAll("\"", "");
                 logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
                 if (logged_in) {
-                    Toast.makeText(Login.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, String.format("%S!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
                     setLogged_in(true);
                     setApi_key(api_key);
                     Intent intent = new Intent("m.android.mydsb.User");
@@ -100,17 +100,17 @@ public class Login extends AppCompatActivity {
                 } else {
                     attempt_counter--;
                     if (attempt_counter > 1) {
-                        message = attempt_counter + " attempts remaining!";
+                        message = String.format("%s %s!", attempt_counter, getString(R.string.login_attempts));
                         button_login.setEnabled(true);
                     } else if (attempt_counter == 1) {
-                        message = attempt_counter + " attempt remaining!";
+                        message = String.format("%s %s!", attempt_counter, getString(R.string.login_attempt));
                         button_login.setEnabled(true);
                     } else {
                         button_login.setEnabled(false);
-                        message = "Login temporarily disabled!";
+                        message = getString(R.string.login_login_disabled);
                     }
                     progressBar_login.setVisibility(View.INVISIBLE);
-                    Toast.makeText(Login.this, "Authentication failed!\n" + message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, String.format("%s!\n%s", getString(R.string.login_login_failed), message), Toast.LENGTH_SHORT).show();
                     password.setText("");
 
                 }
