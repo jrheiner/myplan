@@ -38,7 +38,7 @@ public class Login extends AppCompatActivity {
         if (!getLogged_in()) {
             login_auth();
         } else {
-            Intent intent = new Intent("m.android.mydsb.User");
+            Intent intent = new Intent(Login.this, User.class);
             startActivity(intent);
         }
     }
@@ -51,7 +51,7 @@ public class Login extends AppCompatActivity {
             button_login.setEnabled(true);
             login_auth();
         } else {
-            Intent intent = new Intent("m.android.mydsb.User");
+            Intent intent = new Intent(Login.this, User.class);
             startActivity(intent);
         }
     }

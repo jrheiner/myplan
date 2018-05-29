@@ -1,5 +1,6 @@
 package m.android.mydsb;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,8 +26,8 @@ public class User extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         setLogged_in(false);
-                        // TODO causes crash when restarting app while being logged in
-                        onBackPressed();
+                        Intent intent = new Intent(User.this, Login.class);
+                        startActivity(intent);
                     }
                 }
         );
