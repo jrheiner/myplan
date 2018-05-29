@@ -6,20 +6,16 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.Toast;
 
 public class User extends AppCompatActivity {
 
 
-    private Button button_logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        //Toolbar myToolbar = findViewById(R.id.my_toolbar);
-        //setSupportActionBar(myToolbar);
     }
 
 
