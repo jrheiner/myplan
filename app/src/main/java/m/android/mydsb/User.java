@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -16,6 +17,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class User extends AppCompatActivity {
 
@@ -26,6 +29,8 @@ public class User extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        this.setTitle(String.format("%s", getString(R.string.user_header)));
+        request_timetableurl(getApi_key());
     }
 
 
@@ -46,7 +51,7 @@ public class User extends AppCompatActivity {
 
             case R.id.action_refresh:
                 // Refresh
-                Toast.makeText(User.this, "refresh selected", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(User.this, "refresh selected", Toast.LENGTH_SHORT).show();
                 request_timetableurl(getApi_key());
                 return true;
 
@@ -64,6 +69,7 @@ public class User extends AppCompatActivity {
     }
 
     public void request_timetableurl(String api_key) {
+        final WebView webView_user = findViewById(R.id.webView_user);
         progressBar_user = findViewById(R.id.progressBar_user);
         progressBar_user.setVisibility(View.VISIBLE);
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
@@ -73,8 +79,27 @@ public class User extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONArray response) {
-                        Toast.makeText(User.this, "Response: " + response.toString(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(User.this, "Response: " + response.toString(), Toast.LENGTH_SHORT).show();
                         progressBar_user.setVisibility(View.INVISIBLE);
+                        try {
+                            /*
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject json_node = (JSONObject) response.get(i);
+
+                                String timetableurl = json_node.getString("timetableurl");
+                                Log.i("mydsb.User", timetableurl);
+                                }
+                            */
+
+                            // Only show newest page for now
+                            JSONObject json_node = (JSONObject) response.get(0);
+
+                            String timetableurl = json_node.getString("timetableurl");
+                            webView_user.loadUrl(timetableurl);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
 
