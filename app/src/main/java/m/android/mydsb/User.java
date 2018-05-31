@@ -65,9 +65,9 @@ public class User extends AppCompatActivity {
 
             case R.id.action_logout:
                 // Logout
-                setLogged_in(false);
                 Intent intent_login = new Intent(User.this, Login.class);
                 startActivity(intent_login);
+                resetLogged_in();
                 resetApi_key();
                 finish();
                 return true;
@@ -167,16 +167,16 @@ public class User extends AppCompatActivity {
             webView_user.loadData(builder.toString(), "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
-            Toast.makeText(User.this, "Aktualisierung erfolgreich!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(User.this, String.format("%s!", R.string.user_refresh_success), Toast.LENGTH_SHORT).show();
 
         }
 
     }
 
-    public void setLogged_in(boolean logged_in) {
+    public void resetLogged_in() {
         SharedPreferences sp3 = getSharedPreferences("logged_in", MODE_PRIVATE);
         SharedPreferences.Editor ed3 = sp3.edit();
-        ed3.putBoolean("logged_in", logged_in);
+        ed3.putBoolean("logged_in", false);
         ed3.apply();
     }
 
