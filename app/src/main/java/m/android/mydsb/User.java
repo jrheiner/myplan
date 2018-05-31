@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -35,16 +36,32 @@ import java.util.ArrayList;
 
 public class User extends AppCompatActivity {
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+        progressBar_user.setVisibility(View.VISIBLE);
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
         PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
         this.setTitle(String.format("%s", getString(R.string.user_header)));
         request_timetableurl(getApi_key());
+        mSwipeRefreshLayout = findViewById(R.id.user_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Log.i("TEST TAG", "onRefresh called from SwipeRefreshLayout");
+
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
+                        request_timetableurl(getApi_key());
+                    }
+                }
+        );
 
     }
 
@@ -62,6 +79,8 @@ public class User extends AppCompatActivity {
 
             if (service_timing > 0) {
                 builder.setPeriodic(service_timing);
+            } else {
+                return;
             }
             builder.setPersisted(true);
             if (mJobScheduler.schedule(builder.build()) == JobScheduler.RESULT_FAILURE) {
@@ -92,6 +111,7 @@ public class User extends AppCompatActivity {
 
             case R.id.action_refresh:
                 // Refresh
+                mSwipeRefreshLayout.setRefreshing(true);
                 request_timetableurl(getApi_key());
                 return true;
 
@@ -110,9 +130,8 @@ public class User extends AppCompatActivity {
         }
     }
 
+
     public void request_timetableurl(final String api_key) {
-        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
-        progressBar_user.setVisibility(View.VISIBLE);
         final ArrayList<String> timetableurls = new ArrayList<String>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
@@ -131,6 +150,7 @@ public class User extends AppCompatActivity {
                                 timetableurls.add(timetableurl);
                             }
                             new JsoupAsyncTask().execute(timetableurls);
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -193,6 +213,7 @@ public class User extends AppCompatActivity {
                         builder.append("</tbody></table></body>");
                     } catch (java.io.IOException e) {
                         Log.e("mydsb.User", e.toString());
+                        Toast.makeText(User.this, e.toString(), Toast.LENGTH_SHORT).show();
                     }
                     if (counter == 0) {
                         builder.append("<table class=\"mon_list\"><tbody>");
@@ -212,6 +233,7 @@ public class User extends AppCompatActivity {
             webView_user.loadData(builder.toString(), "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
+            mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_success)), Toast.LENGTH_SHORT).show();
 
         }
