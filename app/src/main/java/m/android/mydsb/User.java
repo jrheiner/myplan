@@ -118,8 +118,13 @@ public class User extends AppCompatActivity {
 
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
-        String class_settings[] = {"", "5a", "5b", "5c", "5d", "6a", "6b", "6c", "6d", "7a", "7b", "7c", "7d",
-                "8a", "8b", "8c", "8d", "9a", "9b", "9c", "9d", "10", "11"};
+        String class_settings[] = {"", "5a", "5b", "5c", "5d", "5e",
+                "6a", "6b", "6c", "6d", "6e",
+                "7a", "7b", "7c", "7d", "7e",
+                "8a", "8b", "8c", "8d", "8e",
+                "9a", "9b", "9c", "9d", "9e",
+                "10", "11"};
+        int counter = 0;
 
         @Override
         protected void onPreExecute() {
@@ -132,13 +137,15 @@ public class User extends AppCompatActivity {
             for (ArrayList<String> url_list : params) {
                 for (String url : url_list) {
                     try {
+                        counter = 0; //#6f6f6f
                         Document doc = Jsoup.connect(url).get();
                         Elements td_list = doc.select("tr.list");
                         Elements html_header = doc.getElementsByTag("head");
                         builder.append(html_header.outerHtml());
                         Elements tt_title = doc.select("div.mon_title");
                         builder.append(String.format("<br><b>%s</b>", tt_title.text()));
-                        builder.append("<table class=\"mon_list\"><tbody>");
+                        //custom webview background color
+                        builder.append("<body style=\"background: #fff;\"><table class=\"mon_list\"><tbody>");
                         String last_inline_header = "";
                         String class_setting = getClassSetting();
                         for (Element tt_class : td_list) {
@@ -148,11 +155,17 @@ public class User extends AppCompatActivity {
                             }
                             if (last_inline_header.contains(class_settings[Integer.parseInt(class_setting)])) {
                                 builder.append(affected_class);
+                                counter++;
                             }
                         }
-                        builder.append("</tbody></table>");
+                        builder.append("</tbody></table></body>");
                     } catch (java.io.IOException e) {
                         Log.e("mydsb.User", e.toString());
+                    }
+                    if (counter == 0) {
+                        builder.append("<table class=\"mon_list\"><tbody>");
+                        builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
+                        builder.append("</tbody></table>");
                     }
                 }
             }
@@ -163,11 +176,11 @@ public class User extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             final WebView webView_user = findViewById(R.id.webView_user);
-            Log.i("load_timetable", builder.toString());
+            //Log.i("load_timetable", builder.toString());
             webView_user.loadData(builder.toString(), "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
-            Toast.makeText(User.this, String.format("%s!", R.string.user_refresh_success), Toast.LENGTH_SHORT).show();
+            Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_success)), Toast.LENGTH_SHORT).show();
 
         }
 

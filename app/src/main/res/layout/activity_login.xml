@@ -15,7 +15,9 @@
         android:layout_marginTop="32dp"
         android:text="@string/login_header"
         android:textAlignment="center"
-        android:textSize="24sp"
+        android:textColor="@color/DiscordDark"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
