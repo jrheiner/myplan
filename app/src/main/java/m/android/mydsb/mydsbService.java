@@ -11,7 +11,6 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.widget.Toast;
 
 
 public class mydsbService extends JobService {
@@ -32,8 +31,7 @@ public class mydsbService extends JobService {
 
         @Override
         public boolean handleMessage(Message msg) {
-            Toast.makeText(getApplicationContext(),
-                    "JobService task running", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"JobService task running", Toast.LENGTH_SHORT).show();
 
             // TODO WIP
             create_notification();
