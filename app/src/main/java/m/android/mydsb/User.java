@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -34,6 +35,9 @@ public class User extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
         this.setTitle(String.format("%s", getString(R.string.user_header)));
         request_timetableurl(getApi_key());
     }
@@ -50,23 +54,21 @@ public class User extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // open Settings
-                Toast.makeText(User.this, "settings selected", Toast.LENGTH_SHORT).show();
+                Intent intent_settings = new Intent(this, Settings.class);
+                startActivity(intent_settings);
                 return true;
 
             case R.id.action_refresh:
                 // Refresh
-                // Toast.makeText(User.this, "refresh selected", Toast.LENGTH_SHORT).show();
                 request_timetableurl(getApi_key());
-
                 return true;
 
             case R.id.action_logout:
                 // Logout
                 setLogged_in(false);
-                Intent intent = new Intent(User.this, Login.class);
-                startActivity(intent);
-                setApi_key("");
+                Intent intent_login = new Intent(User.this, Login.class);
+                startActivity(intent_login);
+                resetApi_key();
                 finish();
                 return true;
 
@@ -87,8 +89,6 @@ public class User extends AppCompatActivity {
 
                     @Override
                     public void onResponse(JSONArray response) {
-                        //Toast.makeText(User.this, "Response: " + response.toString(), Toast.LENGTH_SHORT).show();
-
                         try {
 
                             for (int i = 0; i < response.length(); i++) {
@@ -99,15 +99,6 @@ public class User extends AppCompatActivity {
                                 timetableurls.add(timetableurl);
                             }
                             new JsoupAsyncTask().execute(timetableurls);
-                            /*
-                            //Only show newest page for now
-
-                            JSONObject json_node = (JSONObject) response.get(0);
-
-                            String timetableurl = json_node.getString("timetableurl");
-                            //webView_user.loadUrl(timetableurl);
-                            parse_html(timetableurl);
-                            */
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -124,54 +115,11 @@ public class User extends AppCompatActivity {
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
-/*
-    private void parse_html(final String timetableurl) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //final StringBuilder builder = new StringBuilder();
-                //final WebView webView_user = findViewById(R.id.webView_user);
-
-
-                try {
-                    Document doc = Jsoup.connect(timetableurl).get();
-                    Elements td_list = doc.select("tr.list");
-                    Elements html_header = doc.getElementsByTag("head");
-                    //Log.i("mydsb.User", html_header.outerHtml());
-                    builder.append(html_header.outerHtml());
-                    Elements tt_title = doc.select("div.mon_title");
-                    builder.append(String.format("<b>%s</b>", tt_title.text()));
-                    builder.append("<table class=\"mon_list\"><tbody>");
-                    String last_inline_header = "";
-                    for (Element tt_class : td_list) {
-                        String affected_class = tt_class.outerHtml();
-                        //Log.i("mydsb.User", affected_class);
-                        if  (affected_class.contains("inline_header")) {
-                            last_inline_header =  tt_class.text();
-                        }
-                        if (last_inline_header.contains("11")) {
-                            builder.append(affected_class);
-                        }
-                    }
-                    builder.append("</tbody></table>");
-                } catch (java.io.IOException e) {
-                    Log.e("mydsb.User", e.toString());
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //set webview here
-                        Log.i("mydsb.User", builder.toString());
-                        //webView_user.loadData(builder.toString(), "text/html; charset=utf-8", "UTF-8");
-                    }
-                });
-            }
-        }).start();
-    }
-*/
 
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
+        String class_settings[] = {"", "5a", "5b", "5c", "5d", "6a", "6b", "6c", "6d", "7a", "7b", "7c", "7d",
+                "8a", "8b", "8c", "8d", "9a", "9b", "9c", "9d", "10", "11"};
 
         @Override
         protected void onPreExecute() {
@@ -192,12 +140,13 @@ public class User extends AppCompatActivity {
                         builder.append(String.format("<br><b>%s</b>", tt_title.text()));
                         builder.append("<table class=\"mon_list\"><tbody>");
                         String last_inline_header = "";
+                        String class_setting = getClassSetting();
                         for (Element tt_class : td_list) {
                             String affected_class = tt_class.outerHtml();
                             if (affected_class.contains("inline_header")) {
                                 last_inline_header = tt_class.text();
                             }
-                            if (last_inline_header.contains("11") || last_inline_header.contains("7c")) {
+                            if (last_inline_header.contains(class_settings[Integer.parseInt(class_setting)])) {
                                 builder.append(affected_class);
                             }
                         }
@@ -214,8 +163,7 @@ public class User extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             final WebView webView_user = findViewById(R.id.webView_user);
-            //Log.i("load_timetable", builder.toString());
-            Log.i("load_timetable", "LOAD TIMETABLE HERE");
+            Log.i("load_timetable", builder.toString());
             webView_user.loadData(builder.toString(), "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
@@ -237,10 +185,16 @@ public class User extends AppCompatActivity {
         return sp2.getString("api_key", null);
     }
 
-    public void setApi_key(String api_key) {
+    public String getClassSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("general_list", "0");
+    }
+
+    public void resetApi_key() {
         SharedPreferences sp1 = getSharedPreferences("api_key", MODE_PRIVATE);
         SharedPreferences.Editor ed1 = sp1.edit();
-        ed1.putString("api_key", api_key);
+        ed1.putString("api_key", "");
         ed1.apply();
     }
 }
