@@ -94,6 +94,7 @@ public class Login extends AppCompatActivity {
                     setApi_key(api_key);
                     Intent intent = new Intent("m.android.mydsb.User");
                     startActivity(intent);
+                    finish();
                     progressBar_login.setVisibility(View.INVISIBLE);
                     password.setText("");
                     attempt_counter = 5;

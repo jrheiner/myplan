@@ -66,6 +66,8 @@ public class User extends AppCompatActivity {
                 setLogged_in(false);
                 Intent intent = new Intent(User.this, Login.class);
                 startActivity(intent);
+                setApi_key("");
+                finish();
                 return true;
 
             default:
@@ -233,5 +235,12 @@ public class User extends AppCompatActivity {
     public String getApi_key() {
         SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
         return sp2.getString("api_key", null);
+    }
+
+    public void setApi_key(String api_key) {
+        SharedPreferences sp1 = getSharedPreferences("api_key", MODE_PRIVATE);
+        SharedPreferences.Editor ed1 = sp1.edit();
+        ed1.putString("api_key", api_key);
+        ed1.apply();
     }
 }
