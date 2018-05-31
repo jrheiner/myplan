@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 public class User extends AppCompatActivity {
 
     SwipeRefreshLayout mSwipeRefreshLayout;
+    private ViewTreeObserver.OnScrollChangedListener mOnScrollChangedListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +90,20 @@ public class User extends AppCompatActivity {
         } else {
             mJobScheduler.cancelAll();
         }
+
+        final WebView webView_user = findViewById(R.id.webView_user);
+        mSwipeRefreshLayout = findViewById(R.id.user_swipe_refresh_layout);
+        mSwipeRefreshLayout.getViewTreeObserver().addOnScrollChangedListener(mOnScrollChangedListener =
+                new ViewTreeObserver.OnScrollChangedListener() {
+                    @Override
+                    public void onScrollChanged() {
+                        if (webView_user.getScrollY() == 0)
+                            mSwipeRefreshLayout.setEnabled(true);
+                        else
+                            mSwipeRefreshLayout.setEnabled(false);
+
+                    }
+                });
     }
 
     @Override
