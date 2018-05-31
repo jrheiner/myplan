@@ -1,5 +1,9 @@
 package m.android.mydsb;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -31,6 +35,7 @@ import java.util.ArrayList;
 
 public class User extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +45,35 @@ public class User extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
         this.setTitle(String.format("%s", getString(R.string.user_header)));
         request_timetableurl(getApi_key());
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        JobScheduler mJobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        if (getNotificationSetting() && getLogged_in()) {
+            JobInfo.Builder builder = new JobInfo.Builder(1,
+                    new ComponentName(getPackageName(),
+                            mydsbService.class.getName()));
+            int sync_freq = Integer.parseInt(getSyncFreq());
+            int service_timing = sync_freq * 60000;
+            Log.i("mydsb", String.valueOf(sync_freq));
+
+            if (service_timing > 0) {
+                builder.setPeriodic(service_timing);
+            }
+            builder.setPersisted(true);
+            if (mJobScheduler.schedule(builder.build()) == JobScheduler.RESULT_FAILURE) {
+                Log.i("mydsb.USER", "JobService failure");
+                Toast.makeText(this, "Background Service failed to start!", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.i("mydsb.USER", "JobService success");
+            }
+        } else {
+            mJobScheduler.cancelAll();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -193,6 +225,11 @@ public class User extends AppCompatActivity {
         ed3.apply();
     }
 
+    public boolean getLogged_in() {
+        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
+        return sp2.getBoolean("logged_in", false);
+    }
+
     public String getApi_key() {
         SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
         return sp2.getString("api_key", null);
@@ -202,6 +239,18 @@ public class User extends AppCompatActivity {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getString("general_list", "0");
+    }
+
+    public String getSyncFreq() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("sync_frequency", "180");
+    }
+
+    public Boolean getNotificationSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message", true);
     }
 
     public void resetApi_key() {
