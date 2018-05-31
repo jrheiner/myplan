@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">mydsb</string>
+    <string name="app_name">myDSB</string>
     <string name="login_header">Login</string>
     <string name="login_user">Benutzername</string>
     <string name="login_password">Passwort</string>

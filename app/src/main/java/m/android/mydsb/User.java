@@ -2,8 +2,10 @@ package m.android.mydsb;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,11 +21,14 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
 
 public class User extends AppCompatActivity {
-
-    private ProgressBar progressBar_user;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +58,7 @@ public class User extends AppCompatActivity {
                 // Refresh
                 // Toast.makeText(User.this, "refresh selected", Toast.LENGTH_SHORT).show();
                 request_timetableurl(getApi_key());
+
                 return true;
 
             case R.id.action_logout:
@@ -68,10 +74,10 @@ public class User extends AppCompatActivity {
         }
     }
 
-    public void request_timetableurl(String api_key) {
-        final WebView webView_user = findViewById(R.id.webView_user);
-        progressBar_user = findViewById(R.id.progressBar_user);
+    public void request_timetableurl(final String api_key) {
+        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
         progressBar_user.setVisibility(View.VISIBLE);
+        final ArrayList<String> timetableurls = new ArrayList<String>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
@@ -80,22 +86,26 @@ public class User extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         //Toast.makeText(User.this, "Response: " + response.toString(), Toast.LENGTH_SHORT).show();
-                        progressBar_user.setVisibility(View.INVISIBLE);
+
                         try {
-                            /*
+
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject json_node = (JSONObject) response.get(i);
 
                                 String timetableurl = json_node.getString("timetableurl");
                                 Log.i("mydsb.User", timetableurl);
-                                }
-                            */
+                                timetableurls.add(timetableurl);
+                            }
+                            new JsoupAsyncTask().execute(timetableurls);
+                            /*
+                            //Only show newest page for now
 
-                            // Only show newest page for now
                             JSONObject json_node = (JSONObject) response.get(0);
 
                             String timetableurl = json_node.getString("timetableurl");
-                            webView_user.loadUrl(timetableurl);
+                            //webView_user.loadUrl(timetableurl);
+                            parse_html(timetableurl);
+                            */
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -111,6 +121,106 @@ public class User extends AppCompatActivity {
                 });
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+/*
+    private void parse_html(final String timetableurl) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //final StringBuilder builder = new StringBuilder();
+                //final WebView webView_user = findViewById(R.id.webView_user);
+
+
+                try {
+                    Document doc = Jsoup.connect(timetableurl).get();
+                    Elements td_list = doc.select("tr.list");
+                    Elements html_header = doc.getElementsByTag("head");
+                    //Log.i("mydsb.User", html_header.outerHtml());
+                    builder.append(html_header.outerHtml());
+                    Elements tt_title = doc.select("div.mon_title");
+                    builder.append(String.format("<b>%s</b>", tt_title.text()));
+                    builder.append("<table class=\"mon_list\"><tbody>");
+                    String last_inline_header = "";
+                    for (Element tt_class : td_list) {
+                        String affected_class = tt_class.outerHtml();
+                        //Log.i("mydsb.User", affected_class);
+                        if  (affected_class.contains("inline_header")) {
+                            last_inline_header =  tt_class.text();
+                        }
+                        if (last_inline_header.contains("11")) {
+                            builder.append(affected_class);
+                        }
+                    }
+                    builder.append("</tbody></table>");
+                } catch (java.io.IOException e) {
+                    Log.e("mydsb.User", e.toString());
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //set webview here
+                        Log.i("mydsb.User", builder.toString());
+                        //webView_user.loadData(builder.toString(), "text/html; charset=utf-8", "UTF-8");
+                    }
+                });
+            }
+        }).start();
+    }
+*/
+
+    private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
+        final StringBuilder builder = new StringBuilder();
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        @SafeVarargs
+        protected final String doInBackground(ArrayList<String>... params) {
+            for (ArrayList<String> url_list : params) {
+                for (String url : url_list) {
+                    try {
+                        Document doc = Jsoup.connect(url).get();
+                        Elements td_list = doc.select("tr.list");
+                        Elements html_header = doc.getElementsByTag("head");
+                        builder.append(html_header.outerHtml());
+                        Elements tt_title = doc.select("div.mon_title");
+                        builder.append(String.format("<br><b>%s</b>", tt_title.text()));
+                        builder.append("<table class=\"mon_list\"><tbody>");
+                        String last_inline_header = "";
+                        for (Element tt_class : td_list) {
+                            String affected_class = tt_class.outerHtml();
+                            if (affected_class.contains("inline_header")) {
+                                last_inline_header = tt_class.text();
+                            }
+                            if (last_inline_header.contains("11") || last_inline_header.contains("7c")) {
+                                builder.append(affected_class);
+                            }
+                        }
+                        builder.append("</tbody></table>");
+                    } catch (java.io.IOException e) {
+                        Log.e("mydsb.User", e.toString());
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            final WebView webView_user = findViewById(R.id.webView_user);
+            //Log.i("load_timetable", builder.toString());
+            Log.i("load_timetable", "LOAD TIMETABLE HERE");
+            webView_user.loadData(builder.toString(), "text/html; charset=utf-8", "UTF-8");
+            ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+            progressBar_user.setVisibility(View.INVISIBLE);
+            Toast.makeText(User.this, "Aktualisierung erfolgreich!", Toast.LENGTH_SHORT).show();
+
+        }
+
     }
 
     public void setLogged_in(boolean logged_in) {
