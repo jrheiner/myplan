@@ -122,7 +122,7 @@ public class Login extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(Login.this, error.toString(), Toast.LENGTH_LONG).show();
                 progressBar_login.setVisibility(View.INVISIBLE);
-                button_login.setEnabled(false);
+                button_login.setEnabled(true);
             }
         });
         mRequestQueue.add(mStringRequest);
