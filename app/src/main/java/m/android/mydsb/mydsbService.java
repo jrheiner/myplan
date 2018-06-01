@@ -1,5 +1,7 @@
 package m.android.mydsb;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
@@ -8,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -69,6 +72,21 @@ public class mydsbService extends JobService {
 
     });
 
+    private void createNotificationChannel() {
+        String CHANNEL_ID = "1";
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "mydsb";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
     public void create_notification() {
         String m_class_setting = "deine ausgewählte Stufe";
         int class_setting = Integer.parseInt(getClassSetting());
@@ -83,11 +101,15 @@ public class mydsbService extends JobService {
         }
 
         // Create an explicit intent for an Activity in your app
+
+
         Intent intent = new Intent(this, User.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         String CHANNEL_ID = "1";
+
+        this.createNotificationChannel();
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_playlist_add_check_black_24dp)
@@ -98,7 +120,8 @@ public class mydsbService extends JobService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
-                .setVisibility(VISIBILITY_PUBLIC);
+                .setVisibility(VISIBILITY_PUBLIC)
+                .setChannelId(CHANNEL_ID);
 
         if (getNotificationSetting() && getVibrationSetting()) {
             mBuilder.setVibrate(new long[]{0, 250});

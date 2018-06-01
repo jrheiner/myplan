@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mydsb.iml" filepath="$PROJECT_DIR$/mydsb.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/mydsb.iml" filepath="$PROJECT_DIR$/.idea/modules/mydsb.iml" />
+      <module fileurl="file://C:\Users\Jonas\mydsb\mydsb.iml" filepath="C:\Users\Jonas\mydsb\mydsb.iml" />
     </modules>
   </component>
 </project>
