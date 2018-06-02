@@ -151,6 +151,14 @@ public class myplanService extends JobService {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
+                            String last_update = getLastUpdate();
+                            JSONObject current_request = (JSONObject) response.get(0);
+                            String timetabledate = current_request.getString("timetabledate");
+                            if (last_update.equals(timetabledate)) {
+                                return;
+                            } else {
+                                setLastUpdate(timetabledate);
+                            }
 
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject json_node = (JSONObject) response.get(i);
@@ -295,6 +303,18 @@ public class myplanService extends JobService {
     private boolean getLogged_in() {
         SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
         return sp2.getBoolean("logged_in", false);
+    }
+
+    private void setLastUpdate(String s) {
+        SharedPreferences sp = getSharedPreferences("last_update", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("last_update", s);
+        ed.apply();
+    }
+
+    private String getLastUpdate() {
+        SharedPreferences sp = this.getSharedPreferences("last_update", MODE_PRIVATE);
+        return sp.getString("last_update", "");
     }
 }
 
