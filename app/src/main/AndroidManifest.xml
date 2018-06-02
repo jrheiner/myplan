@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="m.android.mydsb">
+    package="m.android.myplan">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,31 +13,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login">
+        <activity android:name="m.android.myplan.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".User">
+        <activity android:name="m.android.myplan.User">
             <intent-filter>
-                <action android:name="m.android.mydsb.User" />
+                <action android:name="m.android.myplan.User" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".Settings"
+            android:name="m.android.myplan.Settings"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".User">
+            android:parentActivityName="m.android.myplan.User">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="m.android.mydsb.User" />
+                android:value="m.android.myplan.User" />
         </activity>
 
         <service
-            android:name=".mydsbService"
+            android:name="m.android.myplan.myplanService"
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />

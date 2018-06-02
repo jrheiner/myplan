@@ -1,4 +1,4 @@
-package m.android.mydsb;
+package m.android.myplan;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

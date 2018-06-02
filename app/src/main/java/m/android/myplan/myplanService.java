@@ -1,4 +1,4 @@
-package m.android.mydsb;
+package m.android.myplan;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 
-public class mydsbService extends JobService {
+public class myplanService extends JobService {
 
     private final String[] class_settings = {"", "5a", "5b", "5c", "5d", "5e",
             "6a", "6b", "6c", "6d", "6e",
@@ -76,7 +76,7 @@ public class mydsbService extends JobService {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "mydsb";
+            CharSequence name = "myplan";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             // Register the channel with the system; you can't change the importance
@@ -156,10 +156,10 @@ public class mydsbService extends JobService {
                                 JSONObject json_node = (JSONObject) response.get(i);
 
                                 String timetableurl = json_node.getString("timetableurl");
-                                Log.i("mydsbService", timetableurl);
+                                Log.i("myplanService", timetableurl);
                                 timetableurls.add(timetableurl);
                             }
-                            new mydsbService.JsoupAsyncTask().execute(timetableurls);
+                            new myplanService.JsoupAsyncTask().execute(timetableurls);
 
 
                         } catch (JSONException e) {
@@ -211,8 +211,8 @@ public class mydsbService extends JobService {
                         }
                         builder.append("</tbody></table></body>");
                     } catch (java.io.IOException e) {
-                        Log.e("mydsbService", e.toString());
-                        //Toast.makeText(mydsbService.this, e.toString(), Toast.LENGTH_SHORT).show();
+                        Log.e("myplanService", e.toString());
+                        //Toast.makeText(myplanService.this, e.toString(), Toast.LENGTH_SHORT).show();
                     }
                     if (counter == 0) {
                         builder.append("<table class=\"mon_list\"><tbody>");

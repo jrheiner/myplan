@@ -1,4 +1,4 @@
-package m.android.mydsb;
+package m.android.myplan;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -113,7 +113,7 @@ public class Login extends AppCompatActivity {
                     Toast.makeText(Login.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
                     setLogged_in();
                     setApi_key(api_key);
-                    Intent intent = new Intent("m.android.mydsb.User");
+                    Intent intent = new Intent("m.android.myplan.User");
                     startActivity(intent);
                     finish();
                     progressBar_login.setVisibility(View.INVISIBLE);

@@ -1,4 +1,4 @@
-package m.android.mydsb;
+package m.android.myplan;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -105,10 +105,10 @@ public class User extends AppCompatActivity {
         if (getNotificationSetting() && getLogged_in()) {
             JobInfo.Builder builder = new JobInfo.Builder(1,
                     new ComponentName(getPackageName(),
-                            mydsbService.class.getName()));
+                            myplanService.class.getName()));
             int sync_freq = Integer.parseInt(getSyncFreq());
             int service_timing = sync_freq * 60000;
-            Log.i("mydsb", String.valueOf(sync_freq));
+            Log.i("myplan", String.valueOf(sync_freq));
 
             if (service_timing > 0) {
                 builder.setPeriodic(service_timing);
@@ -118,10 +118,10 @@ public class User extends AppCompatActivity {
             builder.setPersisted(true);
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
             if (((mJobScheduler != null) ? mJobScheduler.schedule(builder.build()) : 0) == JobScheduler.RESULT_FAILURE) {
-                Log.i("mydsb.USER", "JobService failure");
+                Log.i("myplan.USER", "JobService failure");
                 Toast.makeText(this, "Background Service failed to start!", Toast.LENGTH_SHORT).show();
             } else {
-                Log.i("mydsb.USER", "JobService success");
+                Log.i("myplan.USER", "JobService success");
             }
         } else if (!getNotificationSetting() && !getLogged_in()) {
             assert mJobScheduler != null;
@@ -205,7 +205,7 @@ public class User extends AppCompatActivity {
                                 JSONObject json_node = (JSONObject) response.get(i);
 
                                 String timetableurl = json_node.getString("timetableurl");
-                                Log.i("mydsb.User", timetableurl);
+                                Log.i("myplan.User", timetableurl);
                                 timetableurls.add(timetableurl);
                             }
                             new JsoupAsyncTask().execute(timetableurls);
@@ -265,7 +265,7 @@ public class User extends AppCompatActivity {
                         }
                         builder.append("</tbody></table></body>");
                     } catch (java.io.IOException e) {
-                        Log.e("mydsb.User", e.toString());
+                        Log.e("myplan.User", e.toString());
                         Toast.makeText(User.this, e.toString(), Toast.LENGTH_SHORT).show();
                     }
                     if (counter == 0) {
