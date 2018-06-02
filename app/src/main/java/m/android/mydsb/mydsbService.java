@@ -38,26 +38,13 @@ import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 public class mydsbService extends JobService {
 
-    String class_settings[] = {"", "5a", "5b", "5c", "5d", "5e",
+    private final String[] class_settings = {"", "5a", "5b", "5c", "5d", "5e",
             "6a", "6b", "6c", "6d", "6e",
             "7a", "7b", "7c", "7d", "7e",
             "8a", "8b", "8c", "8d", "8e",
             "9a", "9b", "9c", "9d", "9e",
             "10", "11"};
-
-    @Override
-    public boolean onStartJob(JobParameters params) {
-        mJobHandler.sendMessage(Message.obtain(mJobHandler, 1, params));
-        return true;
-    }
-
-    @Override
-    public boolean onStopJob(JobParameters params) {
-        mJobHandler.removeMessages(1);
-        return false;
-    }
-
-    private Handler mJobHandler = new Handler(new Handler.Callback() {
+    private final Handler mJobHandler = new Handler(new Handler.Callback() {
 
         @Override
         public boolean handleMessage(Message msg) {
@@ -72,6 +59,18 @@ public class mydsbService extends JobService {
 
     });
 
+    @Override
+    public boolean onStartJob(JobParameters params) {
+        mJobHandler.sendMessage(Message.obtain(mJobHandler, 1, params));
+        return true;
+    }
+
+    @Override
+    public boolean onStopJob(JobParameters params) {
+        mJobHandler.removeMessages(1);
+        return false;
+    }
+
     private void createNotificationChannel() {
         String CHANNEL_ID = "1";
         // Create the NotificationChannel, but only on API 26+ because
@@ -83,11 +82,12 @@ public class mydsbService extends JobService {
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            assert notificationManager != null;
             notificationManager.createNotificationChannel(channel);
         }
     }
 
-    public void create_notification() {
+    private void create_notification() {
         String m_class_setting = "deine ausgewählte Stufe";
         int class_setting = Integer.parseInt(getClassSetting());
         if (class_setting == 0) {
@@ -139,9 +139,9 @@ public class mydsbService extends JobService {
         }
     }
 
-    public void request_timetableurl() {
+    private void request_timetableurl() {
         final String api_key = getApi_key();
-        final ArrayList<String> timetableurls = new ArrayList<String>();
+        final ArrayList<String> timetableurls = new ArrayList<>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
@@ -177,48 +177,48 @@ public class mydsbService extends JobService {
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    public String getApi_key() {
+    private String getApi_key() {
         SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
         return sp2.getString("api_key", null);
     }
 
-    public Boolean getNotificationSetting() {
+    private Boolean getNotificationSetting() {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getBoolean("notifications_new_message", true);
     }
 
-    public Boolean getVibrationSetting() {
+    private Boolean getVibrationSetting() {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getBoolean("notifications_new_message_vibrate", true);
     }
 
-    public Boolean getLEDSetting() {
+    private Boolean getLEDSetting() {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getBoolean("notifications_new_message_led", true);
     }
 
-    public void setWebCache(String s) {
+    private void setWebCache(String s) {
         SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
         SharedPreferences.Editor ed1 = sp.edit();
         ed1.putString("web_cache", s);
         ed1.apply();
     }
 
-    public String getWebcache() {
+    private String getWebcache() {
         SharedPreferences sp = this.getSharedPreferences("web_cache", MODE_PRIVATE);
         return sp.getString("web_cache", "");
     }
 
-    public String getClassSetting() {
+    private String getClassSetting() {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getString("general_list", "0");
     }
 
-    public boolean getLogged_in() {
+    private boolean getLogged_in() {
         SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
         return sp2.getBoolean("logged_in", false);
     }
@@ -226,11 +226,6 @@ public class mydsbService extends JobService {
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
         int counter = 0;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
 
         @Override
         @SafeVarargs
@@ -286,10 +281,14 @@ public class mydsbService extends JobService {
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Art</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Vertretungs-Text</th>", "");
             String old_webchache = getWebcache();
-            if (!timetable.equals(old_webchache)) {
+            String timetable_cache = timetable.replace("\\s+", "");
+            timetable_cache = timetable_cache.replaceAll("[\\r\\n]", "");
+            Log.i("old_webcache", old_webchache);
+            Log.i("new_webcache", timetable_cache);
+            if (!timetable_cache.equals(old_webchache)) {
                 Log.i("bcheck", "new table");
+                setWebCache(timetable_cache);
                 create_notification();
-                setWebCache(timetable);
             } else {
                 Log.i("bcheck", "nothing new");
             }

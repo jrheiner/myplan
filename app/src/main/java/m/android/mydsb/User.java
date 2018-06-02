@@ -37,28 +37,15 @@ import java.util.ArrayList;
 
 public class User extends AppCompatActivity {
 
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
-        progressBar_user.setVisibility(View.VISIBLE);
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
         PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
-        this.setTitle(String.format("%s", getString(R.string.user_header)));
-        request_timetableurl(getApi_key());
-        mSwipeRefreshLayout = findViewById(R.id.user_swipe_refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        request_timetableurl(getApi_key());
-                    }
-                }
-        );
     }
 
     @Override
@@ -76,7 +63,7 @@ public class User extends AppCompatActivity {
                     new ComponentName(getPackageName(),
                             mydsbService.class.getName()));
             int sync_freq = Integer.parseInt(getSyncFreq());
-            int service_timing = sync_freq * 60000;
+            int service_timing = sync_freq * 1000;
             Log.i("mydsb", String.valueOf(sync_freq));
 
             if (service_timing > 0) {
@@ -85,15 +72,31 @@ public class User extends AppCompatActivity {
                 return;
             }
             builder.setPersisted(true);
-            if (mJobScheduler.schedule(builder.build()) == JobScheduler.RESULT_FAILURE) {
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            if (((mJobScheduler != null) ? mJobScheduler.schedule(builder.build()) : 0) == JobScheduler.RESULT_FAILURE) {
                 Log.i("mydsb.USER", "JobService failure");
                 Toast.makeText(this, "Background Service failed to start!", Toast.LENGTH_SHORT).show();
             } else {
                 Log.i("mydsb.USER", "JobService success");
             }
-        } else {
+        } else if (!getNotificationSetting() && !getLogged_in()) {
+            assert mJobScheduler != null;
             mJobScheduler.cancelAll();
         }
+
+        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+        progressBar_user.setVisibility(View.VISIBLE);
+        this.setTitle(String.format("%s", getString(R.string.user_header)));
+        mSwipeRefreshLayout = findViewById(R.id.user_swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        request_timetableurl(getApi_key());
+                    }
+                }
+        );
+
 
         final WebView webView_user = findViewById(R.id.webView_user);
         mSwipeRefreshLayout = findViewById(R.id.user_swipe_refresh_layout);
@@ -111,7 +114,6 @@ public class User extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.user_menu, menu);
         return true;
     }
@@ -125,13 +127,11 @@ public class User extends AppCompatActivity {
                 return true;
 
             case R.id.action_refresh:
-                // Refresh
                 mSwipeRefreshLayout.setRefreshing(true);
                 request_timetableurl(getApi_key());
                 return true;
 
             case R.id.action_logout:
-                // Logout
                 Intent intent_login = new Intent(User.this, Login.class);
                 startActivity(intent_login);
                 resetLogged_in();
@@ -145,9 +145,8 @@ public class User extends AppCompatActivity {
         }
     }
 
-
-    public void request_timetableurl(final String api_key) {
-        final ArrayList<String> timetableurls = new ArrayList<String>();
+    private void request_timetableurl(final String api_key) {
+        final ArrayList<String> timetableurls = new ArrayList<>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
@@ -183,74 +182,15 @@ public class User extends AppCompatActivity {
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    public void setWebCache(String s) {
-        SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
-        SharedPreferences.Editor ed1 = sp.edit();
-        ed1.putString("web_cache", s);
-        ed1.apply();
-    }
-
-    public void resetLogged_in() {
-        SharedPreferences sp3 = getSharedPreferences("logged_in", MODE_PRIVATE);
-        SharedPreferences.Editor ed3 = sp3.edit();
-        ed3.putBoolean("logged_in", false);
-        ed3.apply();
-    }
-
-    public boolean getLogged_in() {
-        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp2.getBoolean("logged_in", false);
-    }
-
-    public String getApi_key() {
-        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
-        return sp2.getString("api_key", null);
-    }
-
-    public String getClassSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_list", "0");
-    }
-
-    public String getSyncFreq() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("sync_frequency", "180");
-    }
-
-    public Boolean getNotificationSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message", true);
-    }
-
-    public void resetApi_key() {
-        SharedPreferences sp1 = getSharedPreferences("api_key", MODE_PRIVATE);
-        SharedPreferences.Editor ed1 = sp1.edit();
-        ed1.putString("api_key", "");
-        ed1.apply();
-    }
-
-    public String getWebcache() {
-        SharedPreferences sp = this.getSharedPreferences("web_cache", MODE_PRIVATE);
-        return sp.getString("web_cache", "");
-    }
-
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
-        String class_settings[] = {"", "5a", "5b", "5c", "5d", "5e",
+        final String[] class_settings = {"", "5a", "5b", "5c", "5d", "5e",
                 "6a", "6b", "6c", "6d", "6e",
                 "7a", "7b", "7c", "7d", "7e",
                 "8a", "8b", "8c", "8d", "8e",
                 "9a", "9b", "9c", "9d", "9e",
                 "10", "11"};
         int counter = 0;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
 
         @Override
         @SafeVarargs
@@ -306,7 +246,9 @@ public class User extends AppCompatActivity {
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">Raum</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Art</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Vertretungs-Text</th>", "");
-            setWebCache(timetable);
+            String timetable_cache = timetable.replace("\\s+", "");
+            timetable_cache = timetable_cache.replaceAll("[\\r\\n]", "");
+            setWebCache(timetable_cache);
             webView_user.loadData(timetable, "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
@@ -316,4 +258,54 @@ public class User extends AppCompatActivity {
         }
 
     }
+
+    private void setWebCache(String s) {
+        SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
+        SharedPreferences.Editor ed1 = sp.edit();
+        ed1.putString("web_cache", s);
+        ed1.apply();
+    }
+
+    private void resetLogged_in() {
+        SharedPreferences sp3 = getSharedPreferences("logged_in", MODE_PRIVATE);
+        SharedPreferences.Editor ed3 = sp3.edit();
+        ed3.putBoolean("logged_in", false);
+        ed3.apply();
+    }
+
+    private boolean getLogged_in() {
+        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
+        return sp2.getBoolean("logged_in", false);
+    }
+
+    private String getApi_key() {
+        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
+        return sp2.getString("api_key", null);
+    }
+
+    private String getClassSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("general_list", "0");
+    }
+
+    private String getSyncFreq() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("sync_frequency", "180");
+    }
+
+    private Boolean getNotificationSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message", true);
+    }
+
+    private void resetApi_key() {
+        SharedPreferences sp1 = getSharedPreferences("api_key", MODE_PRIVATE);
+        SharedPreferences.Editor ed1 = sp1.edit();
+        ed1.putString("api_key", "");
+        ed1.apply();
+    }
+
 }

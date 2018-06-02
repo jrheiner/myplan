@@ -11,23 +11,19 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 public class Login extends AppCompatActivity {
 
     private EditText username;
     private EditText password;
     private Button button_login;
-    int attempt_counter = 5;
+    private int attempt_counter = 5;
     private String message;
-    boolean logged_in;
+    private boolean logged_in;
     private String api_key;
-    String base_url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/";
-    String auth_url = "authid/";
     private ProgressBar progressBar_login;
 
 
@@ -36,7 +32,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.setTitle("");
-        if (!getLogged_in()) {
+        if (getNotLogged_in()) {
             login_auth();
         } else {
             Intent intent = new Intent(Login.this, User.class);
@@ -48,7 +44,7 @@ public class Login extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 
-        if (!getLogged_in()) {
+        if (getNotLogged_in()) {
             button_login.setEnabled(true);
             login_auth();
         } else {
@@ -57,7 +53,7 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    public void login_auth() {
+    private void login_auth() {
         username = findViewById(R.id.editText_user);
         password = findViewById(R.id.editText_password);
         button_login = findViewById(R.id.button_login);
@@ -79,11 +75,11 @@ public class Login extends AppCompatActivity {
         );
     }
 
-    public void request_api_key() {
-        RequestQueue mRequestQueue;
+    private void request_api_key() {
         StringRequest mStringRequest;
         progressBar_login = findViewById(R.id.progressBar_login);
-        mRequestQueue = Volley.newRequestQueue(this);
+        String base_url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/";
+        String auth_url = "authid/";
         mStringRequest = new StringRequest(Request.Method.GET, base_url + auth_url + username.getText() + "/" + password.getText(), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -91,7 +87,7 @@ public class Login extends AppCompatActivity {
                 logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
                 if (logged_in) {
                     Toast.makeText(Login.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
-                    setLogged_in(true);
+                    setLogged_in();
                     setApi_key(api_key);
                     Intent intent = new Intent("m.android.mydsb.User");
                     startActivity(intent);
@@ -125,30 +121,25 @@ public class Login extends AppCompatActivity {
                 button_login.setEnabled(true);
             }
         });
-        mRequestQueue.add(mStringRequest);
+        SingletonRequestQueue.getInstance(this).addToRequestQueue(mStringRequest);
     }
 
-    public void setApi_key(String api_key) {
-        SharedPreferences sp1 = getSharedPreferences("api_key", MODE_PRIVATE);
-        SharedPreferences.Editor ed1 = sp1.edit();
-        ed1.putString("api_key", api_key);
-        ed1.apply();
+    private void setApi_key(String api_key) {
+        SharedPreferences sp = getSharedPreferences("api_key", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("api_key", api_key);
+        ed.apply();
     }
 
-    public String getApi_key() {
-        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
-        return sp2.getString("api_key", null);
+    private void setLogged_in() {
+        SharedPreferences sp = getSharedPreferences("logged_in", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean("logged_in", true);
+        ed.apply();
     }
 
-    public void setLogged_in(boolean logged_in) {
-        SharedPreferences sp3 = getSharedPreferences("logged_in", MODE_PRIVATE);
-        SharedPreferences.Editor ed3 = sp3.edit();
-        ed3.putBoolean("logged_in", logged_in);
-        ed3.apply();
-    }
-
-    public boolean getLogged_in() {
-        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp2.getBoolean("logged_in", false);
+    private boolean getNotLogged_in() {
+        SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
+        return !sp.getBoolean("logged_in", false);
     }
 }
