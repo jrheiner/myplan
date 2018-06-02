@@ -63,7 +63,7 @@ public class User extends AppCompatActivity {
                     new ComponentName(getPackageName(),
                             mydsbService.class.getName()));
             int sync_freq = Integer.parseInt(getSyncFreq());
-            int service_timing = sync_freq * 1000;
+            int service_timing = sync_freq * 60000;
             Log.i("mydsb", String.valueOf(sync_freq));
 
             if (service_timing > 0) {
