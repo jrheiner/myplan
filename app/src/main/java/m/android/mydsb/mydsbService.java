@@ -177,51 +177,6 @@ public class mydsbService extends JobService {
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
-    private String getApi_key() {
-        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
-        return sp2.getString("api_key", null);
-    }
-
-    private Boolean getNotificationSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message", true);
-    }
-
-    private Boolean getVibrationSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message_vibrate", true);
-    }
-
-    private Boolean getLEDSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message_led", true);
-    }
-
-    private void setWebCache(String s) {
-        SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
-        SharedPreferences.Editor ed1 = sp.edit();
-        ed1.putString("web_cache", s);
-        ed1.apply();
-    }
-
-    private String getWebcache() {
-        SharedPreferences sp = this.getSharedPreferences("web_cache", MODE_PRIVATE);
-        return sp.getString("web_cache", "");
-    }
-
-    private String getClassSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_list", "0");
-    }
-
-    private boolean getLogged_in() {
-        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp2.getBoolean("logged_in", false);
-    }
 
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
@@ -233,14 +188,13 @@ public class mydsbService extends JobService {
             for (ArrayList<String> url_list : params) {
                 for (String url : url_list) {
                     try {
-                        counter = 0; //#6f6f6f
+                        counter = 0;
                         Document doc = Jsoup.connect(url).get();
                         Elements td_list = doc.select("tr.list");
                         Elements html_header = doc.getElementsByTag("head");
                         builder.append(html_header.outerHtml());
                         Elements tt_title = doc.select("div.mon_title");
                         builder.append(String.format("<br><h3>%s</h3>", tt_title.text()));
-                        //custom webview background color
                         builder.append("<body style=\"background: #fff;\"><table class=\"mon_list\"><tbody>");
                         String last_inline_header = "";
                         String class_setting = getClassSetting();
@@ -296,6 +250,51 @@ public class mydsbService extends JobService {
 
     }
 
+    private String getApi_key() {
+        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
+        return sp2.getString("api_key", null);
+    }
+
+    private Boolean getNotificationSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message", true);
+    }
+
+    private Boolean getVibrationSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message_vibrate", true);
+    }
+
+    private Boolean getLEDSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message_led", true);
+    }
+
+    private void setWebCache(String s) {
+        SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
+        SharedPreferences.Editor ed1 = sp.edit();
+        ed1.putString("web_cache", s);
+        ed1.apply();
+    }
+
+    private String getWebcache() {
+        SharedPreferences sp = this.getSharedPreferences("web_cache", MODE_PRIVATE);
+        return sp.getString("web_cache", "");
+    }
+
+    private String getClassSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("general_list", "0");
+    }
+
+    private boolean getLogged_in() {
+        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
+        return sp2.getBoolean("logged_in", false);
+    }
 }
 
 

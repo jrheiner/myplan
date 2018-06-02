@@ -164,6 +164,7 @@ public class Settings extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("general_list"));
+            bindPreferenceSummaryToValue(findPreference("general_theme"));
         }
 
         @Override

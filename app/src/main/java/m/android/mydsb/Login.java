@@ -3,7 +3,9 @@ package m.android.mydsb;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +31,28 @@ public class Login extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        switch (getThemeSettings()) {
+            case "-1":
+                if (savedInstanceState == null) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                }
+                break;
+            case "0":
+                if (savedInstanceState == null) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+                }
+                break;
+            case "1":
+                if (savedInstanceState == null) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
+                break;
+            case "2":
+                if (savedInstanceState == null) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                }
+                break;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.setTitle("");
@@ -141,5 +165,10 @@ public class Login extends AppCompatActivity {
     private boolean getNotLogged_in() {
         SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
         return !sp.getBoolean("logged_in", false);
+    }
+
+    private String getThemeSettings() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("general_theme", "0");
     }
 }

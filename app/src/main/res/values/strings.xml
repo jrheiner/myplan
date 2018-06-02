@@ -83,6 +83,21 @@
         <item>27</item>
     </string-array>
 
+    <string name="pref_title_theme">Farbschema</string>
+    <string-array name="pref_theme_list_titles">
+        <item>Geräteinstellung übernehmen</item>
+        <item>Automatisch bei Sonnenuntergang</item>
+        <item>Hell</item>
+        <item>Dunkel</item>
+    </string-array>
+
+    <string-array name="pref_theme_list_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Synchronisierung</string>
 

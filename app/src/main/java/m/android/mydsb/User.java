@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +42,28 @@ public class User extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        switch (getThemeSettings()) {
+            case "-1":
+                if (savedInstanceState == null) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                }
+                break;
+            case "0":
+                if (savedInstanceState == null) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+                }
+                break;
+            case "1":
+                if (savedInstanceState == null) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                }
+                break;
+            case "2":
+                if (savedInstanceState == null) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                }
+                break;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
@@ -52,7 +75,28 @@ public class User extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         request_timetableurl(getApi_key());
+        if (!getThemeSettings().equals(String.valueOf(AppCompatDelegate.getDefaultNightMode()))) {
+            switch (getThemeSettings()) {
+                case "-1":
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                    this.recreate();
+                    break;
+                case "0":
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+                    this.recreate();
+                    break;
+                case "1":
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    this.recreate();
+                    break;
+                case "2":
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    this.recreate();
+                    break;
+            }
+        }
     }
+
 
     @Override
     protected void onStart() {
@@ -198,14 +242,13 @@ public class User extends AppCompatActivity {
             for (ArrayList<String> url_list : params) {
                 for (String url : url_list) {
                     try {
-                        counter = 0; //#6f6f6f
+                        counter = 0;
                         Document doc = Jsoup.connect(url).get();
                         Elements td_list = doc.select("tr.list");
                         Elements html_header = doc.getElementsByTag("head");
                         builder.append(html_header.outerHtml());
                         Elements tt_title = doc.select("div.mon_title");
                         builder.append(String.format("<br><h3>%s</h3>", tt_title.text()));
-                        //custom webview background color
                         builder.append("<body style=\"background: #fff;\"><table class=\"mon_list\"><tbody>");
                         String last_inline_header = "";
                         String class_setting = getClassSetting();
@@ -261,26 +304,26 @@ public class User extends AppCompatActivity {
 
     private void setWebCache(String s) {
         SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
-        SharedPreferences.Editor ed1 = sp.edit();
-        ed1.putString("web_cache", s);
-        ed1.apply();
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("web_cache", s);
+        ed.apply();
     }
 
     private void resetLogged_in() {
-        SharedPreferences sp3 = getSharedPreferences("logged_in", MODE_PRIVATE);
-        SharedPreferences.Editor ed3 = sp3.edit();
-        ed3.putBoolean("logged_in", false);
-        ed3.apply();
+        SharedPreferences sp = getSharedPreferences("logged_in", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean("logged_in", false);
+        ed.apply();
     }
 
     private boolean getLogged_in() {
-        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp2.getBoolean("logged_in", false);
+        SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
+        return sp.getBoolean("logged_in", false);
     }
 
     private String getApi_key() {
-        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
-        return sp2.getString("api_key", null);
+        SharedPreferences sp = this.getSharedPreferences("api_key", MODE_PRIVATE);
+        return sp.getString("api_key", null);
     }
 
     private String getClassSetting() {
@@ -301,11 +344,15 @@ public class User extends AppCompatActivity {
         return sharedPref.getBoolean("notifications_new_message", true);
     }
 
-    private void resetApi_key() {
-        SharedPreferences sp1 = getSharedPreferences("api_key", MODE_PRIVATE);
-        SharedPreferences.Editor ed1 = sp1.edit();
-        ed1.putString("api_key", "");
-        ed1.apply();
+    private String getThemeSettings() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("general_theme", "0");
     }
 
+    private void resetApi_key() {
+        SharedPreferences sp = getSharedPreferences("api_key", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("api_key", "");
+        ed.apply();
+    }
 }
