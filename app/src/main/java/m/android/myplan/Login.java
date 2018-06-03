@@ -56,7 +56,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.setTitle("");
-        if (getNotLogged_in()) {
+        if (!getLoggedIn()) {
             login_auth();
         } else {
             Intent intent = new Intent(Login.this, User.class);
@@ -68,7 +68,7 @@ public class Login extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 
-        if (getNotLogged_in()) {
+        if (!getLoggedIn()) {
             button_login.setEnabled(true);
             login_auth();
         } else {
@@ -111,8 +111,8 @@ public class Login extends AppCompatActivity {
                 logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
                 if (logged_in) {
                     Toast.makeText(Login.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
-                    setLogged_in();
-                    setApi_key(api_key);
+                    setLoggedIn();
+                    setApiKey(api_key);
                     Intent intent = new Intent("m.android.myplan.User");
                     startActivity(intent);
                     finish();
@@ -148,23 +148,23 @@ public class Login extends AppCompatActivity {
         SingletonRequestQueue.getInstance(this).addToRequestQueue(mStringRequest);
     }
 
-    private void setApi_key(String api_key) {
+    private void setApiKey(String api_key) {
         SharedPreferences sp = getSharedPreferences("api_key", MODE_PRIVATE);
         SharedPreferences.Editor ed = sp.edit();
         ed.putString("api_key", api_key);
         ed.apply();
     }
 
-    private void setLogged_in() {
+    private void setLoggedIn() {
         SharedPreferences sp = getSharedPreferences("logged_in", MODE_PRIVATE);
         SharedPreferences.Editor ed = sp.edit();
         ed.putBoolean("logged_in", true);
         ed.apply();
     }
 
-    private boolean getNotLogged_in() {
+    private boolean getLoggedIn() {
         SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return !sp.getBoolean("logged_in", false);
+        return sp.getBoolean("logged_in", false);
     }
 
     private String getThemeSettings() {

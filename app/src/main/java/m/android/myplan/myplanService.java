@@ -49,7 +49,7 @@ public class myplanService extends JobService {
         @Override
         public boolean handleMessage(Message msg) {
 
-            if (getNotificationSetting() && getLogged_in()) {
+            if (getNotificationSetting() && getLoggedIn()) {
                 request_timetableurl();
             }
 
@@ -141,7 +141,7 @@ public class myplanService extends JobService {
 
     // TODO check for timestamp before jsoup https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/16d7ffbb-0780-4bcf-a780-df6cbb5e9a4d
     private void request_timetableurl() {
-        final String api_key = getApi_key();
+        final String api_key = getApiKey();
         final ArrayList<String> timetableurls = new ArrayList<>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
@@ -164,7 +164,6 @@ public class myplanService extends JobService {
                                 JSONObject json_node = (JSONObject) response.get(i);
 
                                 String timetableurl = json_node.getString("timetableurl");
-                                Log.i("myplanService", timetableurl);
                                 timetableurls.add(timetableurl);
                             }
                             new myplanService.JsoupAsyncTask().execute(timetableurls);
@@ -186,6 +185,63 @@ public class myplanService extends JobService {
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
+    private String getApiKey() {
+        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
+        return sp2.getString("api_key", null);
+    }
+
+    private Boolean getNotificationSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message", true);
+    }
+
+    private Boolean getVibrationSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message_vibrate", true);
+    }
+
+    private Boolean getLEDSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message_led", true);
+    }
+
+    private void setWebCache(String s) {
+        SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
+        SharedPreferences.Editor ed1 = sp.edit();
+        ed1.putString("web_cache", s);
+        ed1.apply();
+    }
+
+    private String getWebcache() {
+        SharedPreferences sp = this.getSharedPreferences("web_cache", MODE_PRIVATE);
+        return sp.getString("web_cache", "");
+    }
+
+    private String getClassSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("general_list", "0");
+    }
+
+    private boolean getLoggedIn() {
+        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
+        return sp2.getBoolean("logged_in", false);
+    }
+
+    private String getLastUpdate() {
+        SharedPreferences sp = this.getSharedPreferences("last_update", MODE_PRIVATE);
+        return sp.getString("last_update", "");
+    }
+
+    private void setLastUpdate(String s) {
+        SharedPreferences sp = getSharedPreferences("last_update", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("last_update", s);
+        ed.apply();
+    }
 
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
@@ -246,75 +302,12 @@ public class myplanService extends JobService {
             String old_webchache = getWebcache();
             String timetable_cache = timetable.replace("\\s+", "");
             timetable_cache = timetable_cache.replaceAll("[\\r\\n]", "");
-            Log.i("old_webcache", old_webchache);
-            Log.i("new_webcache", timetable_cache);
             if (!timetable_cache.equals(old_webchache)) {
-                Log.i("bcheck", "new table");
                 setWebCache(timetable_cache);
                 create_notification();
-            } else {
-                Log.i("bcheck", "nothing new");
             }
         }
 
-    }
-
-    private String getApi_key() {
-        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
-        return sp2.getString("api_key", null);
-    }
-
-    private Boolean getNotificationSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message", true);
-    }
-
-    private Boolean getVibrationSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message_vibrate", true);
-    }
-
-    private Boolean getLEDSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message_led", true);
-    }
-
-    private void setWebCache(String s) {
-        SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
-        SharedPreferences.Editor ed1 = sp.edit();
-        ed1.putString("web_cache", s);
-        ed1.apply();
-    }
-
-    private String getWebcache() {
-        SharedPreferences sp = this.getSharedPreferences("web_cache", MODE_PRIVATE);
-        return sp.getString("web_cache", "");
-    }
-
-    private String getClassSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_list", "0");
-    }
-
-    private boolean getLogged_in() {
-        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp2.getBoolean("logged_in", false);
-    }
-
-    private void setLastUpdate(String s) {
-        SharedPreferences sp = getSharedPreferences("last_update", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("last_update", s);
-        ed.apply();
-    }
-
-    private String getLastUpdate() {
-        SharedPreferences sp = this.getSharedPreferences("last_update", MODE_PRIVATE);
-        return sp.getString("last_update", "");
     }
 }
 

@@ -12,7 +12,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,7 +73,7 @@ public class User extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        request_timetableurl(getApi_key());
+        request_timetableurl(getApiKey());
         if (!getThemeSettings().equals(String.valueOf(AppCompatDelegate.getDefaultNightMode()))) {
             switch (getThemeSettings()) {
                 case "-1":
@@ -102,28 +101,28 @@ public class User extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         JobScheduler mJobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (getNotificationSetting() && getLogged_in()) {
+        if (getNotificationSetting() && getLoggedIn()) {
             JobInfo.Builder builder = new JobInfo.Builder(1,
                     new ComponentName(getPackageName(),
                             myplanService.class.getName()));
             int sync_freq = Integer.parseInt(getSyncFreq());
             int service_timing = sync_freq * 60000;
-            Log.i("myplan", String.valueOf(sync_freq));
-
             if (service_timing > 0) {
                 builder.setPeriodic(service_timing);
             } else {
                 return;
             }
             builder.setPersisted(true);
-            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            if (getWLANSetting() && getMobileSetting()) {
+                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            } else if (getWLANSetting() && !getMobileSetting()) {
+                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
+            } else return;
+
             if (((mJobScheduler != null) ? mJobScheduler.schedule(builder.build()) : 0) == JobScheduler.RESULT_FAILURE) {
-                Log.i("myplan.USER", "JobService failure");
                 Toast.makeText(this, "Background Service failed to start!", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.i("myplan.USER", "JobService success");
             }
-        } else if (!getNotificationSetting() && !getLogged_in()) {
+        } else if (!getNotificationSetting() && !getLoggedIn()) {
             assert mJobScheduler != null;
             mJobScheduler.cancelAll();
         }
@@ -136,7 +135,7 @@ public class User extends AppCompatActivity {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        request_timetableurl(getApi_key());
+                        request_timetableurl(getApiKey());
                     }
                 }
         );
@@ -172,14 +171,14 @@ public class User extends AppCompatActivity {
 
             case R.id.action_refresh:
                 mSwipeRefreshLayout.setRefreshing(true);
-                request_timetableurl(getApi_key());
+                request_timetableurl(getApiKey());
                 return true;
 
             case R.id.action_logout:
                 Intent intent_login = new Intent(User.this, Login.class);
                 startActivity(intent_login);
-                resetLogged_in();
-                resetApi_key();
+                resetLoggedIn();
+                resetApiKey();
                 finish();
                 return true;
 
@@ -204,7 +203,6 @@ public class User extends AppCompatActivity {
                                 JSONObject json_node = (JSONObject) response.get(i);
 
                                 String timetableurl = json_node.getString("timetableurl");
-                                Log.i("myplan.User", timetableurl);
                                 timetableurls.add(timetableurl);
                             }
                             new JsoupAsyncTask().execute(timetableurls);
@@ -224,6 +222,72 @@ public class User extends AppCompatActivity {
                 });
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private void setWebCache(String s) {
+        SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("web_cache", s);
+        ed.apply();
+    }
+
+    private void resetLoggedIn() {
+        SharedPreferences sp = getSharedPreferences("logged_in", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean("logged_in", false);
+        ed.apply();
+    }
+
+    private boolean getLoggedIn() {
+        SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
+        return sp.getBoolean("logged_in", false);
+    }
+
+    private String getApiKey() {
+        SharedPreferences sp = this.getSharedPreferences("api_key", MODE_PRIVATE);
+        return sp.getString("api_key", null);
+    }
+
+    private String getClassSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("general_list", "0");
+    }
+
+    private String getSyncFreq() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("sync_frequency", "180");
+    }
+
+    private Boolean getNotificationSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("notifications_new_message", true);
+    }
+
+    private Boolean getWLANSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("sync_network_wlan", true);
+    }
+
+    private Boolean getMobileSetting() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getBoolean("sync_network_mobile", true);
+    }
+
+    private String getThemeSettings() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("general_theme", "0");
+    }
+
+    private void resetApiKey() {
+        SharedPreferences sp = getSharedPreferences("api_key", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("api_key", "");
+        ed.apply();
     }
 
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
@@ -264,7 +328,6 @@ public class User extends AppCompatActivity {
                         }
                         builder.append("</tbody></table></body>");
                     } catch (java.io.IOException e) {
-                        Log.e("myplan.User", e.toString());
                         Toast.makeText(User.this, e.toString(), Toast.LENGTH_SHORT).show();
                     }
                     if (counter == 0) {
@@ -300,59 +363,5 @@ public class User extends AppCompatActivity {
 
         }
 
-    }
-
-    private void setWebCache(String s) {
-        SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("web_cache", s);
-        ed.apply();
-    }
-
-    private void resetLogged_in() {
-        SharedPreferences sp = getSharedPreferences("logged_in", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean("logged_in", false);
-        ed.apply();
-    }
-
-    private boolean getLogged_in() {
-        SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp.getBoolean("logged_in", false);
-    }
-
-    private String getApi_key() {
-        SharedPreferences sp = this.getSharedPreferences("api_key", MODE_PRIVATE);
-        return sp.getString("api_key", null);
-    }
-
-    private String getClassSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_list", "0");
-    }
-
-    private String getSyncFreq() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("sync_frequency", "180");
-    }
-
-    private Boolean getNotificationSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message", true);
-    }
-
-    private String getThemeSettings() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_theme", "0");
-    }
-
-    private void resetApi_key() {
-        SharedPreferences sp = getSharedPreferences("api_key", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("api_key", "");
-        ed.apply();
     }
 }

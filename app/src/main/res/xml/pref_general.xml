@@ -11,9 +11,8 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_class" />
 
-    <PreferenceCategory android:title="Bildschirm">
+    <PreferenceCategory android:title="@string/pref_general_category" />
 
-    </PreferenceCategory>
     <ListPreference
         android:defaultValue="-1"
         android:entries="@array/pref_theme_list_titles"
