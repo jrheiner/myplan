@@ -188,7 +188,6 @@ public class User extends AppCompatActivity {
         }
     }
 
-    // TODO check for timestamp before jsoup https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/16d7ffbb-0780-4bcf-a780-df6cbb5e9a4d
     private void request_timetableurl(final String api_key) {
         final ArrayList<String> timetableurls = new ArrayList<>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;

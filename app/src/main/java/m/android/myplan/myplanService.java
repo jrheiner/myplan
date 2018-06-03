@@ -139,7 +139,6 @@ public class myplanService extends JobService {
         }
     }
 
-    // TODO check for timestamp before jsoup https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/16d7ffbb-0780-4bcf-a780-df6cbb5e9a4d
     private void request_timetableurl() {
         final String api_key = getApiKey();
         final ArrayList<String> timetableurls = new ArrayList<>();
@@ -177,8 +176,7 @@ public class myplanService extends JobService {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
-
+                        // TODO
                     }
                 });
 
