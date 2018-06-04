@@ -243,6 +243,7 @@ public class myplanService extends JobService {
 
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
+        final StringBuilder cache = new StringBuilder();
         int counter = 0;
 
         @Override
@@ -268,13 +269,13 @@ public class myplanService extends JobService {
                             }
                             if (last_inline_header.contains(class_settings[Integer.parseInt(class_setting)])) {
                                 builder.append(affected_class);
+                                cache.append(affected_class);
                                 counter++;
                             }
                         }
                         builder.append("</tbody></table></body>");
                     } catch (java.io.IOException e) {
                         Log.e("myplanService", e.toString());
-                        //Toast.makeText(myplanService.this, e.toString(), Toast.LENGTH_SHORT).show();
                     }
                     if (counter == 0) {
                         builder.append("<table class=\"mon_list\"><tbody>");
@@ -289,18 +290,11 @@ public class myplanService extends JobService {
 
         @Override
         protected void onPostExecute(String result) {
-            String timetable = builder.toString();
-            timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Stunde</th>", "");
-            timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">\\(Lehrer\\)</th>", "");
-            timetable = timetable.replaceAll("<th class=\"list\" align=\"center\"><b>Fach</b></th>", "");
-            timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"10\"><b>Vertreter</b></th>", "");
-            timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">Raum</th>", "");
-            timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Art</th>", "");
-            timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Vertretungs-Text</th>", "");
-            String old_webchache = getWebcache();
-            String timetable_cache = timetable.replace("\\s+", "");
+            String timetable_cache = cache.toString();
+            String old_webcache = getWebcache();
+            timetable_cache = timetable_cache.replaceAll("\\s+", "");
             timetable_cache = timetable_cache.replaceAll("[\\r\\n]", "");
-            if (!timetable_cache.equals(old_webchache)) {
+            if (!timetable_cache.equals(old_webcache)) {
                 setWebCache(timetable_cache);
                 create_notification();
             }

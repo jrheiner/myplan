@@ -7,7 +7,6 @@
     tools:context="m.android.myplan.User">
 
     <TextView
-        android:id="@+id/textView_user_header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -45,7 +44,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ListView
-            android:id="@+id/activity_main_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible" />

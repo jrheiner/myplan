@@ -56,7 +56,7 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.setTitle("");
-        if (!getLoggedIn()) {
+        if (isNotLoggedIn()) {
             login_auth();
         } else {
             Intent intent = new Intent(Login.this, User.class);
@@ -68,7 +68,7 @@ public class Login extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 
-        if (!getLoggedIn()) {
+        if (isNotLoggedIn()) {
             button_login.setEnabled(true);
             login_auth();
         } else {
@@ -162,9 +162,9 @@ public class Login extends AppCompatActivity {
         ed.apply();
     }
 
-    private boolean getLoggedIn() {
+    private boolean isNotLoggedIn() {
         SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp.getBoolean("logged_in", false);
+        return !sp.getBoolean("logged_in", false);
     }
 
     private String getThemeSettings() {

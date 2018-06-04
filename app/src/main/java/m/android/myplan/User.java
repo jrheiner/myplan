@@ -291,6 +291,7 @@ public class User extends AppCompatActivity {
 
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
+        final StringBuilder cache = new StringBuilder();
         final String[] class_settings = {"", "5a", "5b", "5c", "5d", "5e",
                 "6a", "6b", "6c", "6d", "6e",
                 "7a", "7b", "7c", "7d", "7e",
@@ -321,6 +322,7 @@ public class User extends AppCompatActivity {
                                 last_inline_header = tt_class.text();
                             }
                             if (last_inline_header.contains(class_settings[Integer.parseInt(class_setting)])) {
+                                cache.append(affected_class);
                                 builder.append(affected_class);
                                 counter++;
                             }
@@ -344,6 +346,7 @@ public class User extends AppCompatActivity {
         protected void onPostExecute(String result) {
             final WebView webView_user = findViewById(R.id.webView_user);
             String timetable = builder.toString();
+            String timetable_cache = cache.toString();
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Stunde</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">\\(Lehrer\\)</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\"><b>Fach</b></th>", "");
@@ -351,7 +354,7 @@ public class User extends AppCompatActivity {
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">Raum</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Art</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Vertretungs-Text</th>", "");
-            String timetable_cache = timetable.replace("\\s+", "");
+            timetable_cache = timetable_cache.replaceAll("\\s+", "");
             timetable_cache = timetable_cache.replaceAll("[\\r\\n]", "");
             setWebCache(timetable_cache);
             webView_user.loadData(timetable, "text/html; charset=utf-8", "UTF-8");
