@@ -290,6 +290,7 @@ public class myplanService extends JobService {
 
         @Override
         protected void onPostExecute(String result) {
+            // TODO: GET JSON FORMATTED WEBCACHE, COMPARE BASED ON DATES
             String timetable_cache = cache.toString();
             String old_webcache = getWebcache();
             timetable_cache = timetable_cache.replaceAll("\\s+", "");

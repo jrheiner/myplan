@@ -292,6 +292,9 @@ public class User extends AppCompatActivity {
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
         final StringBuilder cache = new StringBuilder();
+
+        final JSONObject jwebcache = new JSONObject();
+
         final String[] class_settings = {"", "5a", "5b", "5c", "5d", "5e",
                 "6a", "6b", "6c", "6d", "6e",
                 "7a", "7b", "7c", "7d", "7e",
@@ -327,16 +330,21 @@ public class User extends AppCompatActivity {
                                 counter++;
                             }
                         }
+                        String date = tt_title.text().replaceAll("[^0-9.]", "");
+                        jwebcache.put(date, cache.toString());
                         builder.append("</tbody></table></body>");
-                    } catch (java.io.IOException e) {
+                    } catch (java.io.IOException | JSONException e) {
                         Toast.makeText(User.this, e.toString(), Toast.LENGTH_SHORT).show();
                     }
+
+
                     if (counter == 0) {
                         builder.append("<table class=\"mon_list\"><tbody>");
                         builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
                         builder.append("</tbody></table>");
                     }
                 }
+
             }
 
             return null;
@@ -344,6 +352,7 @@ public class User extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            // TODO: SAVE JSON FORMATTED WEBCACHE, COMPARE BASED ON DATES
             final WebView webView_user = findViewById(R.id.webView_user);
             String timetable = builder.toString();
             String timetable_cache = cache.toString();
