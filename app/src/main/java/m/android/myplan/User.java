@@ -117,14 +117,6 @@ public class User extends AppCompatActivity {
                 return;
             }
             builder.setPersisted(true);
-            if (getWLANSetting() && getMobileSetting()) {
-                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-            } else if (getWLANSetting() && !getMobileSetting()) {
-                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
-            } else {
-                assert mJobScheduler != null;
-                mJobScheduler.cancelAll();
-            }
 
             if (((mJobScheduler != null) ? mJobScheduler.schedule(builder.build()) : 0) == JobScheduler.RESULT_FAILURE) {
                 Toast.makeText(this, "Background Service failed to start!", Toast.LENGTH_SHORT).show();
@@ -270,18 +262,6 @@ public class User extends AppCompatActivity {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getBoolean("notifications_new_message", true);
-    }
-
-    private Boolean getWLANSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("sync_network_wlan", true);
-    }
-
-    private Boolean getMobileSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("sync_network_mobile", true);
     }
 
     private String getThemeSettings() {

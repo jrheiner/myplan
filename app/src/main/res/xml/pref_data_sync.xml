@@ -11,20 +11,4 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_frequency" />
 
-    <PreferenceCategory android:title="@string/pref_title_sync_network" />
-
-    <SwitchPreference
-        android:defaultValue="true"
-        android:icon="@drawable/ic_wifi_black_24dp"
-        android:key="sync_network_wlan"
-        android:title="@string/pref_title_network_wlan" />
-
-    <SwitchPreference
-        android:defaultValue="false"
-        android:dependency="sync_network_wlan"
-        android:icon="@drawable/ic_network_cell_black_24dp"
-        android:key="sync_network_mobile"
-        android:title="@string/pref_title_network_mobile" />
-
-
 </PreferenceScreen>
