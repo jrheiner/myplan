@@ -33,7 +33,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class User extends AppCompatActivity {
 
@@ -73,7 +77,6 @@ public class User extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        request_timetableurl(getApiKey());
         if (!getThemeSettings().equals(String.valueOf(AppCompatDelegate.getDefaultNightMode()))) {
             switch (getThemeSettings()) {
                 case "-1":
@@ -94,6 +97,7 @@ public class User extends AppCompatActivity {
                     break;
             }
         }
+        request_timetableurl(getApiKey());
     }
 
 
@@ -117,7 +121,10 @@ public class User extends AppCompatActivity {
                 builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
             } else if (getWLANSetting() && !getMobileSetting()) {
                 builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
-            } else return;
+            } else {
+                assert mJobScheduler != null;
+                mJobScheduler.cancelAll();
+            }
 
             if (((mJobScheduler != null) ? mJobScheduler.schedule(builder.build()) : 0) == JobScheduler.RESULT_FAILURE) {
                 Toast.makeText(this, "Background Service failed to start!", Toast.LENGTH_SHORT).show();
@@ -170,7 +177,7 @@ public class User extends AppCompatActivity {
                 return true;
 
             case R.id.action_refresh:
-                mSwipeRefreshLayout.setRefreshing(true);
+                if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
                 request_timetableurl(getApiKey());
                 return true;
 
@@ -215,7 +222,7 @@ public class User extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
+                        Toast.makeText(User.this, error.toString(), Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -291,8 +298,6 @@ public class User extends AppCompatActivity {
 
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
-        final StringBuilder cache = new StringBuilder();
-
         final JSONObject jwebcache = new JSONObject();
 
         final String[] class_settings = {"", "5a", "5b", "5c", "5d", "5e",
@@ -301,7 +306,7 @@ public class User extends AppCompatActivity {
                 "8a", "8b", "8c", "8d", "8e",
                 "9a", "9b", "9c", "9d", "9e",
                 "10", "11"};
-        int counter = 0;
+        int counter;
 
         @Override
         @SafeVarargs
@@ -309,6 +314,7 @@ public class User extends AppCompatActivity {
             for (ArrayList<String> url_list : params) {
                 for (String url : url_list) {
                     try {
+                        StringBuilder jcache = new StringBuilder();
                         counter = 0;
                         Document doc = Jsoup.connect(url).get();
                         Elements td_list = doc.select("tr.list");
@@ -325,19 +331,21 @@ public class User extends AppCompatActivity {
                                 last_inline_header = tt_class.text();
                             }
                             if (last_inline_header.contains(class_settings[Integer.parseInt(class_setting)])) {
-                                cache.append(affected_class);
                                 builder.append(affected_class);
+                                jcache.append(affected_class);
                                 counter++;
                             }
                         }
-                        String date = tt_title.text().replaceAll("[^0-9.]", "");
-                        jwebcache.put(date, cache.toString());
+                        String date_str = tt_title.text().replaceAll("[^0-9.]", "");
+                        Date date_obj = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(date_str);
+                        String date = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(date_obj);
+                        jwebcache.put(date, jcache.toString());
                         builder.append("</tbody></table></body>");
                     } catch (java.io.IOException | JSONException e) {
                         Toast.makeText(User.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-
-
                     if (counter == 0) {
                         builder.append("<table class=\"mon_list\"><tbody>");
                         builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
@@ -352,10 +360,9 @@ public class User extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            // TODO: SAVE JSON FORMATTED WEBCACHE, COMPARE BASED ON DATES
             final WebView webView_user = findViewById(R.id.webView_user);
             String timetable = builder.toString();
-            String timetable_cache = cache.toString();
+            String timetable_cache = jwebcache.toString();
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Stunde</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">\\(Lehrer\\)</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\"><b>Fach</b></th>", "");
@@ -363,13 +370,11 @@ public class User extends AppCompatActivity {
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">Raum</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Art</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Vertretungs-Text</th>", "");
-            timetable_cache = timetable_cache.replaceAll("\\s+", "");
-            timetable_cache = timetable_cache.replaceAll("[\\r\\n]", "");
             setWebCache(timetable_cache);
             webView_user.loadData(timetable, "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
-            mSwipeRefreshLayout.setRefreshing(false);
+            if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_success)), Toast.LENGTH_SHORT).show();
 
         }

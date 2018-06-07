@@ -31,7 +31,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Locale;
 
 import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 
@@ -100,9 +105,6 @@ public class myplanService extends JobService {
             m_class_setting = String.format("den %s. Jahrgang", class_settings[class_setting]);
         }
 
-        // Create an explicit intent for an Activity in your app
-
-
         Intent intent = new Intent(this, User.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -158,7 +160,6 @@ public class myplanService extends JobService {
                             } else {
                                 setLastUpdate(timetabledate);
                             }
-
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject json_node = (JSONObject) response.get(i);
 
@@ -176,7 +177,6 @@ public class myplanService extends JobService {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO
                     }
                 });
 
@@ -241,10 +241,31 @@ public class myplanService extends JobService {
         ed.apply();
     }
 
+    private boolean cacheIsEqual(JSONObject new_table, JSONObject old_table) {
+        Iterator<String> ttc_keys = new_table.keys();
+        while (ttc_keys.hasNext()) {
+            String key = ttc_keys.next();
+            try {
+                String new_value = new_table.getString(key);
+                if (old_table.has(key)) {
+                    String old_value = old_table.getString(key);
+                    if (!new_value.equals(old_value)) {
+                        return true;
+                    }
+                } else {
+                    return false;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
-        final StringBuilder cache = new StringBuilder();
-        int counter = 0;
+        final JSONObject jwebcache = new JSONObject();
+        int counter;
 
         @Override
         @SafeVarargs
@@ -252,6 +273,7 @@ public class myplanService extends JobService {
             for (ArrayList<String> url_list : params) {
                 for (String url : url_list) {
                     try {
+                        StringBuilder jcache = new StringBuilder();
                         counter = 0;
                         Document doc = Jsoup.connect(url).get();
                         Elements td_list = doc.select("tr.list");
@@ -269,13 +291,19 @@ public class myplanService extends JobService {
                             }
                             if (last_inline_header.contains(class_settings[Integer.parseInt(class_setting)])) {
                                 builder.append(affected_class);
-                                cache.append(affected_class);
+                                jcache.append(affected_class);
                                 counter++;
                             }
                         }
+                        String date_str = tt_title.text().replaceAll("[^0-9.]", "");
+                        Date date_obj = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(date_str);
+                        String date = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(date_obj);
+                        jwebcache.put(date, jcache.toString());
                         builder.append("</tbody></table></body>");
                     } catch (java.io.IOException e) {
                         Log.e("myplanService", e.toString());
+                    } catch (JSONException | ParseException e) {
+                        e.printStackTrace();
                     }
                     if (counter == 0) {
                         builder.append("<table class=\"mon_list\"><tbody>");
@@ -290,14 +318,17 @@ public class myplanService extends JobService {
 
         @Override
         protected void onPostExecute(String result) {
-            // TODO: GET JSON FORMATTED WEBCACHE, COMPARE BASED ON DATES
-            String timetable_cache = cache.toString();
+            String timetable_cache = jwebcache.toString();
             String old_webcache = getWebcache();
-            timetable_cache = timetable_cache.replaceAll("\\s+", "");
-            timetable_cache = timetable_cache.replaceAll("[\\r\\n]", "");
-            if (!timetable_cache.equals(old_webcache)) {
-                setWebCache(timetable_cache);
-                create_notification();
+            try {
+                JSONObject jtimetable_cache = new JSONObject(timetable_cache);
+                JSONObject jold_webcache = new JSONObject(old_webcache);
+                if (cacheIsEqual(jtimetable_cache, jold_webcache)) {
+                    setWebCache(timetable_cache);
+                    create_notification();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
