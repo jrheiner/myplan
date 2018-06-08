@@ -131,11 +131,5 @@
         <item>-1</item>
     </string-array>
 
-    <string name="pref_title_sync_network">Netzwerk</string>
-
-    <string name="pref_title_network_wlan">WLAN</string>
-
-    <string name="pref_title_network_mobile">mobile Daten</string>
-
 
 </resources>

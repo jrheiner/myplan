@@ -113,7 +113,7 @@ public class Login extends AppCompatActivity {
                     Toast.makeText(Login.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
                     setLoggedIn();
                     setApiKey(api_key);
-                    Intent intent = new Intent("m.android.myplan.User");
+                    Intent intent = new Intent(Login.this, User.class);
                     startActivity(intent);
                     finish();
                     progressBar_login.setVisibility(View.INVISIBLE);
