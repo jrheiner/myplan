@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="m.android.myplan.Login">
+    tools:context="de.myplan.android.Login">
 
     <TextView
         android:id="@+id/textView_login_header"

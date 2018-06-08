@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="m.android.myplan">
+    package="de.myplan.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,31 +13,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="m.android.myplan.Login">
+        <activity android:name="de.myplan.android.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="m.android.myplan.User">
+        <activity android:name="de.myplan.android.User">
             <intent-filter>
-                <action android:name="m.android.myplan.User" />
+                <action android:name="de.android.myplan.User" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name="m.android.myplan.Settings"
+            android:name="de.myplan.android.Settings"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="m.android.myplan.User">
+            android:parentActivityName="de.myplan.android.User">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="m.android.myplan.User" />
+                android:value="de.myplan.android.User" />
         </activity>
 
         <service
-            android:name="m.android.myplan.myplanService"
+            android:name="de.myplan.android.myplanService"
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />

@@ -1,4 +1,4 @@
-package m.android.myplan;
+package de.myplan.android;
 
 import org.junit.Test;
 

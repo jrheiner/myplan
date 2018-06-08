@@ -1,17 +1,17 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header
-        android:fragment="m.android.myplan.Settings$GeneralPreferenceFragment"
+        android:fragment="de.myplan.android.Settings$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
         android:title="@string/pref_header_general" />
 
     <header
-        android:fragment="m.android.myplan.Settings$NotificationPreferenceFragment"
+        android:fragment="de.myplan.android.Settings$NotificationPreferenceFragment"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="@string/pref_header_notifications" />
 
     <header
-        android:fragment="m.android.myplan.Settings$DataSyncPreferenceFragment"
+        android:fragment="de.myplan.android.Settings$DataSyncPreferenceFragment"
         android:icon="@drawable/ic_sync_black_24dp"
         android:title="@string/pref_header_data_sync" />
 

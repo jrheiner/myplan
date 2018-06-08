@@ -1,4 +1,4 @@
-package m.android.myplan;
+package de.myplan.android;
 
 import android.annotation.TargetApi;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package m.android.myplan;
+package de.myplan.android;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

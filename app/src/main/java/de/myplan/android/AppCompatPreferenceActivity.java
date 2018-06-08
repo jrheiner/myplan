@@ -1,4 +1,4 @@
-package m.android.myplan;
+package de.myplan.android;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
