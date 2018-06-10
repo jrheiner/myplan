@@ -61,6 +61,7 @@ public class Login extends AppCompatActivity {
         } else {
             Intent intent = new Intent(Login.this, User.class);
             startActivity(intent);
+            finish();
         }
     }
 
@@ -69,12 +70,21 @@ public class Login extends AppCompatActivity {
         super.onRestart();
 
         if (isNotLoggedIn()) {
-            button_login.setEnabled(true);
+            if (button_login != null) {
+                button_login.setEnabled(true);
+            }
             login_auth();
         } else {
             Intent intent = new Intent(Login.this, User.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            finish();
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     private void login_auth() {
@@ -114,6 +124,7 @@ public class Login extends AppCompatActivity {
                     setLoggedIn();
                     setApiKey(api_key);
                     Intent intent = new Intent(Login.this, User.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
                     progressBar_login.setVisibility(View.INVISIBLE);

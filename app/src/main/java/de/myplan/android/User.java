@@ -4,12 +4,14 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.view.Menu;
@@ -155,6 +157,23 @@ public class User extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(R.drawable.ic_exit_to_app_black_24dp)
+                .setTitle(R.string.user_exit_title)
+                .setMessage(R.string.user_exit_message)
+                .setPositiveButton(R.string.user_exit_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+
+                })
+                .setNegativeButton(R.string.user_exit_no, null)
+                .show();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.user_menu, menu);
         return true;
@@ -175,6 +194,7 @@ public class User extends AppCompatActivity {
 
             case R.id.action_logout:
                 Intent intent_login = new Intent(User.this, Login.class);
+                intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent_login);
                 resetLoggedIn();
                 resetApiKey();

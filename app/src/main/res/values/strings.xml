@@ -9,6 +9,10 @@
     <string name="user_refresh">Aktualiseren</string>
     <string name="user_refresh_success">Aktualisierung erfolgreich</string>
     <string name="user_settings">Einstellungen</string>
+    <string name="user_exit_title">myPlan verlassen</string>
+    <string name="user_exit_message">App schließen?</string>
+    <string name="user_exit_yes">Ja</string>
+    <string name="user_exit_no">Nein</string>
     <string name="login_login_failed">Authentifizierung fehlgeschlagen</string>
     <string name="login_attempts">Versuche verbleibend</string>
     <string name="login_attempt">Versuch verbleibend</string>

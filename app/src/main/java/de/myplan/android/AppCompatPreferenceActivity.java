@@ -28,6 +28,8 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
+        final Intent intent = new Intent(getApplicationContext(), User.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -35,22 +37,22 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
                     switch (getThemeSettings()) {
                         case "-1":
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                            startActivity(intent);
                             finish();
-                            startActivity(new Intent(getApplicationContext(), User.class));
                             break;
                         case "0":
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-                            startActivity(new Intent(getApplicationContext(), User.class));
+                            startActivity(intent);
                             finish();
                             break;
                         case "1":
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                            startActivity(new Intent(getApplicationContext(), User.class));
+                            startActivity(intent);
                             finish();
                             break;
                         case "2":
                             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                            startActivity(new Intent(getApplicationContext(), User.class));
+                            startActivity(intent);
                             finish();
                             break;
                     }
