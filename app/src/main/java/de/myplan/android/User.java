@@ -346,6 +346,15 @@ public class User extends AppCompatActivity {
                         builder.append(html_header.outerHtml());
                         Elements tt_title = doc.select("div.mon_title");
                         builder.append(String.format("<br><h3>%s</h3>", tt_title.text()));
+                        Elements td_info = doc.select("tr.info");
+                        for (Element tt_info : td_info) {
+                            String info_text = tt_info.text();
+                            if (info_text.contains("Unterrichtsfrei")) {
+                                builder.append("<table class=\"mon_list\" >\n");
+                                builder.append(tt_info.outerHtml().replaceAll("<tr class=\"info\">", "<tr align=\"center\" style=\"background: #5cb85c; font-weight: 700;\">"));
+                                builder.append("</table><br>");
+                            }
+                        }
                         builder.append("<body style=\"background: #fff;\"><table class=\"mon_list\"><tbody>");
                         String last_inline_header = "";
                         String class_setting = getClassSetting();
