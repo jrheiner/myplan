@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,6 +22,7 @@ public class Login extends AppCompatActivity {
 
     private EditText username;
     private EditText password;
+    private TextView login_hint;
     private Button button_login;
     private int attempt_counter = 5;
     private String message;
@@ -92,6 +94,7 @@ public class Login extends AppCompatActivity {
         password = findViewById(R.id.editText_password);
         button_login = findViewById(R.id.button_login);
         progressBar_login = findViewById(R.id.progressBar_login);
+        login_hint = findViewById(R.id.login_textView_hint);
         button_login.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -145,6 +148,7 @@ public class Login extends AppCompatActivity {
                     progressBar_login.setVisibility(View.INVISIBLE);
                     Toast.makeText(Login.this, String.format("%s!\n%s", getString(R.string.login_login_failed), message), Toast.LENGTH_SHORT).show();
                     password.setText("");
+                    login_hint.setVisibility(View.VISIBLE);
 
                 }
             }

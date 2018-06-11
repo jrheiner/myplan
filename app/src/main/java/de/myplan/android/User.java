@@ -76,6 +76,26 @@ public class User extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
         PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
         PreferenceManager.setDefaultValues(this, R.xml.pref_data_sync, false);
+
+        final String[] listItems = getResources().getStringArray(R.array.pref_general_list_titles);
+        final String[] listValues = getResources().getStringArray(R.array.pref_general_list_values);
+        boolean firstStart = getFirstStart();
+        if (firstStart) {
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(User.this);
+            mBuilder.setTitle(getString(R.string.user_introduction_title));
+            mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    setClassSetting(listValues[i]);
+                    dialogInterface.dismiss();
+                    setFirstStart();
+                    recreate();
+                }
+            });
+
+            AlertDialog mDialog = mBuilder.create();
+            mDialog.show();
+        }
     }
 
     @Override
@@ -254,6 +274,18 @@ public class User extends AppCompatActivity {
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
+    private boolean getFirstStart() {
+        SharedPreferences sp = this.getSharedPreferences("first_start", MODE_PRIVATE);
+        return sp.getBoolean("first_start", true);
+    }
+
+    private void setFirstStart() {
+        SharedPreferences sp = getSharedPreferences("first_start", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putBoolean("first_start", false);
+        ed.apply();
+    }
+
     private void setWebCache(String s) {
         SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
         SharedPreferences.Editor ed = sp.edit();
@@ -294,6 +326,12 @@ public class User extends AppCompatActivity {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getString("general_list", "0");
+    }
+
+    private void setClassSetting(String s) {
+        SharedPreferences.Editor ed = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        ed.putString("general_list", s);
+        ed.apply();
     }
 
     private String getSyncFreq() {

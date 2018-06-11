@@ -4,6 +4,7 @@
     <string name="login_user">Benutzername</string>
     <string name="login_password">Passwort</string>
     <string name="login_btn">Login</string>
+    <string name="login_user_hint">HINWEIS:\nGleiche Anmeldedaten wie DSBmobile</string>
     <string name="user_header">Meine Vertretungen</string>
     <string name="network_not_available">Netzwerkverbindung nicht verfügbar</string>
     <string name="timetable_not_up_to_date">Plan nicht aktuell</string>
@@ -16,6 +17,7 @@
     <string name="user_exit_message">App schließen?</string>
     <string name="user_exit_yes">Ja</string>
     <string name="user_exit_no">Nein</string>
+    <string name="user_introduction_title">Vertretungen anzeigen für</string>
     <string name="login_login_failed">Authentifizierung fehlgeschlagen</string>
     <string name="login_attempts">Versuche verbleibend</string>
     <string name="login_attempt">Versuch verbleibend</string>
