@@ -5,9 +5,12 @@
     <string name="login_password">Passwort</string>
     <string name="login_btn">Login</string>
     <string name="user_header">Meine Vertretungen</string>
+    <string name="network_not_available">Netzwerkverbindung nicht verfügbar</string>
+    <string name="timetable_not_up_to_date">Plan nicht aktuell</string>
     <string name="user_logout">Logout</string>
     <string name="user_refresh">Aktualiseren</string>
     <string name="user_refresh_success">Aktualisierung erfolgreich</string>
+    <string name="user_refresh_failed">Aktualisierung fehlgeschlagen</string>
     <string name="user_settings">Einstellungen</string>
     <string name="user_exit_title">myPlan verlassen</string>
     <string name="user_exit_message">App schließen?</string>

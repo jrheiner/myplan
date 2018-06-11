@@ -218,6 +218,13 @@ public class myplanService extends JobService {
         return sp.getString("web_cache", "");
     }
 
+    private void setWebCacheComplete(String s) {
+        SharedPreferences sp = getSharedPreferences("web_cache_complete", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("web_cache_complete", s);
+        ed.apply();
+    }
+
     private String getClassSetting() {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
@@ -318,6 +325,7 @@ public class myplanService extends JobService {
 
         @Override
         protected void onPostExecute(String result) {
+            setWebCacheComplete(builder.toString());
             String timetable_cache = jwebcache.toString();
             String old_webcache = getWebcache();
             try {

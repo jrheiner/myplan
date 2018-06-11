@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,6 +36,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -234,7 +236,17 @@ public class User extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(User.this, error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
+                        if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
+                        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+                        progressBar_user.setVisibility(View.INVISIBLE);
+                        String cached_timetable = getWebCacheComplete();
+                        final WebView webView_user = findViewById(R.id.webView_user);
+                        TextView user_textView_status = findViewById(R.id.user_textView_status);
+                        webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
+                        user_textView_status.setText(String.format("%s.\n%s.", getString(R.string.network_not_available), getString(R.string.timetable_not_up_to_date)));
+                        user_textView_status.setVisibility(View.VISIBLE);
+
 
                     }
                 });
@@ -246,6 +258,18 @@ public class User extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences("web_cache", MODE_PRIVATE);
         SharedPreferences.Editor ed = sp.edit();
         ed.putString("web_cache", s);
+        ed.apply();
+    }
+
+    private String getWebCacheComplete() {
+        SharedPreferences sp = this.getSharedPreferences("web_cache_complete", MODE_PRIVATE);
+        return sp.getString("web_cache_complete", "");
+    }
+
+    private void setWebCacheComplete(String s) {
+        SharedPreferences sp = getSharedPreferences("web_cache_complete", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("web_cache_complete", s);
         ed.apply();
     }
 
@@ -341,9 +365,22 @@ public class User extends AppCompatActivity {
                         String date = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(date_obj);
                         jwebcache.put(date, jcache.toString());
                         builder.append("</tbody></table></body>");
-                    } catch (java.io.IOException | JSONException e) {
+                    } catch (JSONException e) {
+                        if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
+                        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+                        progressBar_user.setVisibility(View.INVISIBLE);
                         Toast.makeText(User.this, e.toString(), Toast.LENGTH_SHORT).show();
-                    } catch (ParseException e) {
+                    } catch (ParseException | IOException e) {
+                        Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
+                        if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
+                        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+                        progressBar_user.setVisibility(View.INVISIBLE);
+                        String cached_timetable = getWebCacheComplete();
+                        final WebView webView_user = findViewById(R.id.webView_user);
+                        TextView user_textView_status = findViewById(R.id.user_textView_status);
+                        webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
+                        user_textView_status.setText(String.format("%s.\n%s.", getString(R.string.network_not_available), getString(R.string.timetable_not_up_to_date)));
+                        user_textView_status.setVisibility(View.VISIBLE);
                         e.printStackTrace();
                     }
                     if (counter == 0) {
@@ -361,6 +398,7 @@ public class User extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             final WebView webView_user = findViewById(R.id.webView_user);
+            TextView user_textView_status = findViewById(R.id.user_textView_status);
             String timetable = builder.toString();
             String timetable_cache = jwebcache.toString();
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Stunde</th>", "");
@@ -371,9 +409,11 @@ public class User extends AppCompatActivity {
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Art</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Vertretungs-Text</th>", "");
             setWebCache(timetable_cache);
+            setWebCacheComplete(timetable);
             webView_user.loadData(timetable, "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
+            user_textView_status.setVisibility(View.INVISIBLE);
             if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_success)), Toast.LENGTH_SHORT).show();
 
