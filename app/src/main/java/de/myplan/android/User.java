@@ -415,17 +415,22 @@ public class User extends AppCompatActivity {
                         progressBar_user.setVisibility(View.INVISIBLE);
                         Toast.makeText(User.this, e.toString(), Toast.LENGTH_SHORT).show();
                     } catch (ParseException | IOException e) {
-                        Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
-                        if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
-                        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
-                        progressBar_user.setVisibility(View.INVISIBLE);
-                        String cached_timetable = getWebCacheComplete();
-                        final WebView webView_user = findViewById(R.id.webView_user);
-                        TextView user_textView_status = findViewById(R.id.user_textView_status);
-                        webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
-                        user_textView_status.setText(String.format("%s.\n%s.", getString(R.string.network_not_available), getString(R.string.timetable_not_up_to_date)));
-                        user_textView_status.setVisibility(View.VISIBLE);
-                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
+                                if (mSwipeRefreshLayout != null)
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+                                progressBar_user.setVisibility(View.INVISIBLE);
+                                String cached_timetable = getWebCacheComplete();
+                                final WebView webView_user = findViewById(R.id.webView_user);
+                                TextView user_textView_status = findViewById(R.id.user_textView_status);
+                                webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
+                                user_textView_status.setText(String.format("%s.\n%s.", getString(R.string.network_not_available), getString(R.string.timetable_not_up_to_date)));
+                                user_textView_status.setVisibility(View.VISIBLE);
+                            }
+                        });
                     }
                     if (counter == 0) {
                         builder.append("<table class=\"mon_list\"><tbody>");
