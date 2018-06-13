@@ -180,19 +180,7 @@ public class User extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setIcon(R.drawable.ic_exit_to_app_black_24dp)
-                .setTitle(R.string.user_exit_title)
-                .setMessage(R.string.user_exit_message)
-                .setPositiveButton(R.string.user_exit_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-
-                })
-                .setNegativeButton(R.string.user_exit_no, null)
-                .show();
+        finish();
     }
 
     @Override
