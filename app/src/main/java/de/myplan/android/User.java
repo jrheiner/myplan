@@ -369,6 +369,7 @@ public class User extends AppCompatActivity {
                 "9a", "9b", "9c", "9d", "9e",
                 "10", "11"};
         int counter;
+        String last_date_title = "";
 
         @Override
         @SafeVarargs
@@ -382,8 +383,16 @@ public class User extends AppCompatActivity {
                         Elements td_list = doc.select("tr.list");
                         Elements html_header = doc.getElementsByTag("head");
                         builder.append(html_header.outerHtml());
-                        Elements tt_title = doc.select("div.mon_title");
-                        builder.append(String.format("<br><h3>%s</h3>", tt_title.text()));
+                        String tt_title = doc.select("div.mon_title").text();
+                        if (tt_title.contains("Seite")) {
+                            counter++;
+                            if (!last_date_title.equals(tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", ""))) {
+                                builder.append(String.format("<br><h3>%s</h3>", tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "")));
+                            }
+                            last_date_title = tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "");
+                        } else {
+                            builder.append(String.format("<br><h3>%s</h3>", tt_title));
+                        }
                         Elements td_info = doc.select("tr.info");
                         for (Element tt_info : td_info) {
                             String info_text = tt_info.text();
@@ -407,7 +416,7 @@ public class User extends AppCompatActivity {
                                 counter++;
                             }
                         }
-                        String date_str = tt_title.text().replaceAll("[^0-9.]", "");
+                        String date_str = tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "").replaceAll("[^0-9.]", "");
                         Date date_obj = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(date_str);
                         String date = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(date_obj);
                         jwebcache.put(date, jcache.toString());
