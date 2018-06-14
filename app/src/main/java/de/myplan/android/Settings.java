@@ -91,6 +91,19 @@ public class Settings extends AppCompatPreferenceActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (!String.valueOf(getTitle()).equals(getString(R.string.title_activity_settings))) {
+            Intent intent = new Intent(Settings.this, Settings.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(Settings.this, User.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
