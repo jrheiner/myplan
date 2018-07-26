@@ -1,6 +1,7 @@
 # myPlan
 > Vertretungsplan App mit praktischen Zusatzfunktionen.
 
+![](banner.png)
 
 #### Alle Features im Überblick:
 
@@ -16,7 +17,6 @@
 
 * Einfaches und übersichtliches Design
 
-![](banner.png)
 
 ## Installation
 
