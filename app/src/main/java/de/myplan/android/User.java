@@ -365,6 +365,17 @@ public class User extends AppCompatActivity {
         return sp.getString("timetable", "{\"day1\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day2\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day3\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day4\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day5\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"}}");
     }
 
+    private boolean ttFilter(JSONObject day, String stunde, String lehrer) throws JSONException {
+        for (int i = 1; i < 14; i++) {
+            if (stunde.contains(String.valueOf(i))) {
+                if (day.getString(String.valueOf(i)).split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
         final JSONObject jwebcache = new JSONObject();
@@ -445,500 +456,46 @@ public class User extends AppCompatActivity {
                                         switch (dayOfWeek) {
                                             case Calendar.MONDAY:
                                                 JSONObject day1 = timetable.getJSONObject("day1");
-                                                if (stunde.contains("1")) {
-                                                    if (day1.getString("1").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("2")) {
-                                                    if (day1.getString("2").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("3")) {
-                                                    if (day1.getString("3").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("4")) {
-                                                    if (day1.getString("4").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("5")) {
-                                                    if (day1.getString("5").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("6")) {
-                                                    if (day1.getString("6").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("7")) {
-                                                    if (day1.getString("7").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("8")) {
-                                                    if (day1.getString("8").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("9")) {
-                                                    if (day1.getString("9").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("10")) {
-                                                    if (day1.getString("10").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("11")) {
-                                                    if (day1.getString("11").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("12")) {
-                                                    if (day1.getString("12").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("13")) {
-                                                    if (day1.getString("13").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else {
-                                                    builder.append("<table class=\"mon_list\"><tbody>");
-                                                    builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
-                                                    builder.append("</tbody></table>");
+                                                if (ttFilter(day1, stunde, lehrer)) {
+                                                    builder.append(affected_class);
+                                                    jcache.append(affected_class);
+                                                    counter++;
                                                 }
                                                 break;
 
                                             case Calendar.TUESDAY:
                                                 JSONObject day2 = timetable.getJSONObject("day2");
-                                                if (stunde.contains("1")) {
-                                                    if (day2.getString("1").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("2")) {
-                                                    if (day2.getString("2").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("3")) {
-                                                    if (day2.getString("3").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("4")) {
-                                                    if (day2.getString("4").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("5")) {
-                                                    if (day2.getString("5").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("6")) {
-                                                    if (day2.getString("6").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("7")) {
-                                                    if (day2.getString("7").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("8")) {
-                                                    if (day2.getString("8").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("9")) {
-                                                    if (day2.getString("9").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("10")) {
-                                                    if (day2.getString("10").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("11")) {
-                                                    if (day2.getString("11").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("12")) {
-                                                    if (day2.getString("12").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("13")) {
-                                                    if (day2.getString("13").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else {
-                                                    builder.append("<table class=\"mon_list\"><tbody>");
-                                                    builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
-                                                    builder.append("</tbody></table>");
+                                                if (ttFilter(day2, stunde, lehrer)) {
+                                                    builder.append(affected_class);
+                                                    jcache.append(affected_class);
+                                                    counter++;
                                                 }
                                                 break;
 
                                             case Calendar.WEDNESDAY:
                                                 JSONObject day3 = timetable.getJSONObject("day3");
-                                                if (stunde.contains("1")) {
-                                                    if (day3.getString("1").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("2")) {
-                                                    if (day3.getString("2").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("3")) {
-                                                    if (day3.getString("3").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("4")) {
-                                                    if (day3.getString("4").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("5")) {
-                                                    if (day3.getString("5").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("6")) {
-                                                    if (day3.getString("6").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("7")) {
-                                                    if (day3.getString("7").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("8")) {
-                                                    if (day3.getString("8").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("9")) {
-                                                    if (day3.getString("9").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("10")) {
-                                                    if (day3.getString("10").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("11")) {
-                                                    if (day3.getString("11").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("12")) {
-                                                    if (day3.getString("12").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("13")) {
-                                                    if (day3.getString("13").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else {
-                                                    builder.append("<table class=\"mon_list\"><tbody>");
-                                                    builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
-                                                    builder.append("</tbody></table>");
+                                                if (ttFilter(day3, stunde, lehrer)) {
+                                                    builder.append(affected_class);
+                                                    jcache.append(affected_class);
+                                                    counter++;
                                                 }
                                                 break;
 
                                             case Calendar.THURSDAY:
                                                 JSONObject day4 = timetable.getJSONObject("day4");
-                                                if (stunde.contains("1")) {
-                                                    if (day4.getString("1").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("2")) {
-                                                    if (day4.getString("2").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("3")) {
-                                                    if (day4.getString("3").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("4")) {
-                                                    if (day4.getString("4").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("5")) {
-                                                    if (day4.getString("5").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("6")) {
-                                                    if (day4.getString("6").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("7")) {
-                                                    if (day4.getString("7").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("8")) {
-                                                    if (day4.getString("8").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("9")) {
-                                                    if (day4.getString("9").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("10")) {
-                                                    if (day4.getString("10").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("11")) {
-                                                    if (day4.getString("11").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("12")) {
-                                                    if (day4.getString("12").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("13")) {
-                                                    if (day4.getString("13").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else {
-                                                    builder.append("<table class=\"mon_list\"><tbody>");
-                                                    builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
-                                                    builder.append("</tbody></table>");
+                                                if (ttFilter(day4, stunde, lehrer)) {
+                                                    builder.append(affected_class);
+                                                    jcache.append(affected_class);
+                                                    counter++;
                                                 }
                                                 break;
+
                                             case Calendar.FRIDAY:
-                                                JSONObject day5 = timetable.getJSONObject("day5");
-                                                if (stunde.contains("1")) {
-                                                    if (day5.getString("1").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("2")) {
-                                                    if (day5.getString("2").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("3")) {
-                                                    if (day5.getString("3").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("4")) {
-                                                    if (day5.getString("4").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("5")) {
-                                                    if (day5.getString("5").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("6")) {
-                                                    if (day5.getString("6").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("7")) {
-                                                    if (day5.getString("7").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("8")) {
-                                                    if (day5.getString("8").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("9")) {
-                                                    if (day5.getString("9").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("10")) {
-                                                    if (day5.getString("10").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("11")) {
-                                                    if (day5.getString("11").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("12")) {
-                                                    if (day5.getString("12").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else if (stunde.contains("13")) {
-                                                    if (day5.getString("13").split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                                                        builder.append(affected_class);
-                                                        jcache.append(affected_class);
-                                                        counter++;
-                                                    }
-
-                                                } else {
-                                                    builder.append("<table class=\"mon_list\"><tbody>");
-                                                    builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
-                                                    builder.append("</tbody></table>");
+                                                JSONObject day5 = timetable.getJSONObject("day4");
+                                                if (ttFilter(day5, stunde, lehrer)) {
+                                                    builder.append(affected_class);
+                                                    jcache.append(affected_class);
+                                                    counter++;
                                                 }
                                                 break;
                                         }
