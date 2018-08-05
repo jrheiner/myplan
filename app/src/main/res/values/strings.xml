@@ -4,7 +4,7 @@
     <string name="login_user">Benutzername</string>
     <string name="login_password">Passwort</string>
     <string name="login_btn">Login</string>
-    <string name="login_user_hint">HINWEIS:\nGleiche Anmeldedaten wie DSBmobile</string>
+    <string name="login_user_hint">Anmeldedaten findest du <a href="https://kbs.itslearning.com/ContentArea/ContentArea.aspx?LocationType=1&amp;LocationID=43">hier</a></string>
     <string name="user_header">Meine Vertretungen</string>
     <string name="network_not_available">Netzwerkverbindung nicht verfügbar</string>
     <string name="timetable_not_up_to_date">Plan nicht aktuell</string>
@@ -13,10 +13,6 @@
     <string name="user_refresh_success">Aktualisierung erfolgreich</string>
     <string name="user_refresh_failed">Aktualisierung fehlgeschlagen</string>
     <string name="user_settings">Einstellungen</string>
-    <string name="user_exit_title">myPlan verlassen</string>
-    <string name="user_exit_message">App schließen?</string>
-    <string name="user_exit_yes">Ja</string>
-    <string name="user_exit_no">Nein</string>
     <string name="user_introduction_title">Vertretungen anzeigen für</string>
     <string name="login_login_failed">Authentifizierung fehlgeschlagen</string>
     <string name="login_attempts">Versuche verbleibend</string>
@@ -92,7 +88,10 @@
         <item>26</item>
         <item>27</item>
     </string-array>
-
+    <string name="pref_title_timetable">Stundenplan</string>
+    <string name="pref_title_timetable_pref">Stundenplanfilter</string>
+    <string name="pref_timetable">Nur meine Vertretungen anzeigen</string>
+    <string name="pref_title_timetable_desc">Stundenplan konfigurieren</string>
     <string name="pref_title_theme">Farbschema</string>
     <string-array name="pref_theme_list_titles">
         <item>Geräteinstellung übernehmen</item>
@@ -140,5 +139,62 @@
         <item>-1</item>
     </string-array>
 
+    <string name="title_activity_user_timetable">UserTimetable</string>
+    <string name="usertimetable_header">Mein Stundenplan</string>
+    <string name="tab_text_1">MO</string>
+    <string name="tab_text_2">DI</string>
+    <string name="tab_text_3">MI</string>
+    <string name="tab_text_4">DO</string>
+    <string name="tab_text_5">FR</string>
+    <string name="action_reset">Stundenplan zurücksetzen</string>
+    <string name="action_export">Stundenplan exportieren</string>
+    <string name="action_import">Stundenplan importieren</string>
+
+    <string name="teacher">Lehrer</string>
+    <string name="subject">Fach</string>
+    <string name="hour">Stunde</string>
+    <string name="togglebtn_save">Speichern</string>
+    <string name="togglebtn_edit">Bearbeiten</string>
+    <string name="teacher_shortform">Lehrerkürzel</string>
+
+
+    <string-array name="tt_base_subjects">
+        <item>Fach auswählen</item>
+        <item>Freistunde</item>
+        <item>Deutsch</item>
+        <item>Englisch</item>
+        <item>Französisch</item>
+        <item>Latein</item>
+        <item>Russisch</item>
+        <item>Mathe</item>
+        <item>Physik</item>
+        <item>Informatik</item>
+        <item>Chemie</item>
+        <item>Biologie</item>
+        <item>Kunst</item>
+        <item>Musik</item>
+        <item>Darstellendes Spiel</item>
+        <item>Politik und Wirtschaft</item>
+        <item>Geschichte</item>
+        <item>e. Religion</item>
+        <item>k. Religion</item>
+        <item>Ethik</item>
+        <item>Erdkunde</item>
+        <item>Sport</item>
+    </string-array>
+
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="_5">5</string>
+    <string name="_6">6</string>
+    <string name="_7">7</string>
+    <string name="_8">8</string>
+    <string name="_9">9</string>
+    <string name="_10">10</string>
+    <string name="_11">11</string>
+    <string name="_12">12</string>
+    <string name="_13">13</string>
 
 </resources>

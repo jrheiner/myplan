@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- Timetable -->
+    <item
+        android:id="@+id/action_timetable"
+        android:icon="@drawable/ic_format_list_numbered_black_48dp"
+        android:title="@string/pref_title_timetable"
+        app:showAsAction="ifRoom" />
+
     <!-- Refresh -->
     <item
         android:id="@+id/action_refresh"

@@ -3,7 +3,6 @@
     package="de.myplan.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -13,14 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="de.myplan.android.Login">
+        <activity android:name=".Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="de.myplan.android.User">
+        <activity android:name=".User">
             <intent-filter>
                 <action android:name="de.android.myplan.User" />
 
@@ -28,19 +27,37 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.myplan.android.Settings"
+            android:name=".Settings"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="de.myplan.android.User">
+            android:parentActivityName=".User">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.myplan.android.User" />
         </activity>
 
         <service
-            android:name="de.myplan.android.myplanService"
+            android:name=".myplanService"
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+
+        <activity
+
+            android:name=".UserTimetable"
+            android:label="@string/title_activity_user_timetable"
+            android:parentActivityName=".Settings"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.TIMETABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.myplan.android.Settings" />
+        </activity>
+
+
     </application>
 
 </manifest>

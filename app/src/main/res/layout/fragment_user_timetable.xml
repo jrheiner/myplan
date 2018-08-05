@@ -1,0 +1,627 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    tools:context="de.myplan.android.UserTimetable$PlaceholderFragment">
+
+    <TextView
+        android:id="@+id/tt_textView_teacher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/teacher"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tt_toggleButton_editsave"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tt_textView_subject"
+        app:layout_constraintTop_toTopOf="@+id/tt_textView_subject" />
+
+    <TextView
+        android:id="@+id/tt_textView_subject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/subject"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tt_textView_teacher"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tt_textView_hour"
+        app:layout_constraintTop_toTopOf="@+id/tt_textView_hour" />
+
+    <ToggleButton
+        android:id="@+id/tt_toggleButton_editsave"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:checked="false"
+        android:textOff="@string/togglebtn_edit"
+        android:textOn="@string/togglebtn_save"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tt_textView_hour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/hour"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tt_toggleButton_editsave"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="64dp"
+        android:background="?attr/colorPrimaryDark"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="64dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tt_textView_hour_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/_1"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tt_spinner_1"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_1"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_2"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_2" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_2"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_1" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_2"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_1" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_3"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_3" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_3"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_3"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_2" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_3"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_2" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_4"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_4" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_4"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_4"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_3" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_4"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_3" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_5"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_5"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_5" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_5"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_5"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_4" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_5"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_4" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_6"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_6"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_6" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_6"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_6"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_5" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_6"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_5" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_7"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_7"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_7" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_7"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_7"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_6" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_7"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_6" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_8"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_8"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_8" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_8"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_8"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_7" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_8"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_7" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_9"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_9"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_9" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_9"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_9"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_8" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_9"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_8" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_10"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_10"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_10" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_10"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_10"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_9" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_10"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_10"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_9" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_11"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_11"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_11" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_11"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_11"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_10" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_11"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_11"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_10" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_12"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_12"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_12" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_12"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_12"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_11" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_12"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_11" />
+
+            <TextView
+                android:id="@+id/tt_textView_hour_13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/_13"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/tt_spinner_13"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tt_spinner_13" />
+
+            <Spinner
+                android:id="@+id/tt_spinner_13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:paddingTop="2.5dp"
+                android:spinnerMode="dialog"
+                app:layout_constraintEnd_toStartOf="@+id/tt_EditText_teacher_13"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_textView_hour_13"
+                app:layout_constraintTop_toBottomOf="@+id/tt_spinner_12" />
+
+            <EditText
+                android:id="@+id/tt_EditText_teacher_13"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_marginBottom="64dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="@string/teacher_shortform"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tt_spinner_13"
+                app:layout_constraintTop_toBottomOf="@+id/tt_EditText_teacher_12" />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

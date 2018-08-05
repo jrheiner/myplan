@@ -89,6 +89,7 @@
         android:textAlignment="viewStart"
         android:textAllCaps="false"
         android:textColor="?android:attr/textColorPrimary"
+        android:textSize="16sp"
         android:visibility="invisible"
         app:layout_constraintEnd_toStartOf="@+id/button_login"
         app:layout_constraintStart_toStartOf="parent"

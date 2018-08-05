@@ -2,10 +2,14 @@ package de.myplan.android;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -95,6 +99,7 @@ public class Login extends AppCompatActivity {
         button_login = findViewById(R.id.button_login);
         progressBar_login = findViewById(R.id.progressBar_login);
         login_hint = findViewById(R.id.login_textView_hint);
+        login_hint.setMovementMethod(LinkMovementMethod.getInstance());
         button_login.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -146,7 +151,22 @@ public class Login extends AppCompatActivity {
                         message = getString(R.string.login_login_disabled);
                     }
                     progressBar_login.setVisibility(View.INVISIBLE);
-                    Toast.makeText(Login.this, String.format("%s!\n%s", getString(R.string.login_login_failed), message), Toast.LENGTH_SHORT).show();
+
+                    final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), String.format("%s!\n%s", getString(R.string.login_login_failed), message), Snackbar.LENGTH_INDEFINITE);
+                    View snackView = snackbar.getView();
+                    int snackbarTextId = android.support.design.R.id.snackbar_text;
+                    TextView textView = snackView.findViewById(snackbarTextId);
+                    textView.setTextColor(Color.RED);
+                    textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+                    snackbar.setActionTextColor(Color.RED);
+                    snackbar.setAction("OK", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            snackbar.dismiss();
+                        }
+                    });
+                    snackbar.show();
+
                     password.setText("");
                     login_hint.setVisibility(View.VISIBLE);
 
@@ -155,7 +175,20 @@ public class Login extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(Login.this, error.toString(), Toast.LENGTH_LONG).show();
+                final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_INDEFINITE);
+                View snackView = snackbar.getView();
+                int snackbarTextId = android.support.design.R.id.snackbar_text;
+                TextView textView = snackView.findViewById(snackbarTextId);
+                textView.setTextColor(Color.RED);
+                textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+                snackbar.setActionTextColor(Color.RED);
+                snackbar.setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        snackbar.dismiss();
+                    }
+                });
+                snackbar.show();
                 progressBar_login.setVisibility(View.INVISIBLE);
                 button_login.setEnabled(true);
             }
