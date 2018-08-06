@@ -57,6 +57,7 @@
         <item>9e</item>
         <item>10. JgSt</item>
         <item>11. JgSt</item>
+        <item>12. JgSt</item>
     </string-array>
     <string-array name="pref_general_list_values">
         <item>0</item>
@@ -87,6 +88,7 @@
         <item>25</item>
         <item>26</item>
         <item>27</item>
+        <item>28</item>
     </string-array>
     <string name="pref_title_timetable">Stundenplan</string>
     <string name="pref_title_timetable_pref">Stundenplanfilter</string>

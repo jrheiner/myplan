@@ -385,7 +385,7 @@ public class User extends AppCompatActivity {
                 "7a", "7b", "7c", "7d", "7e",
                 "8a", "8b", "8c", "8d", "8e",
                 "9a", "9b", "9c", "9d", "9e",
-                "10", "11"};
+                "10", "11", "12"};
         int counter;
         String last_date_title = "";
 
