@@ -149,8 +149,6 @@
     <string name="tab_text_4">DO</string>
     <string name="tab_text_5">FR</string>
     <string name="action_reset">Stundenplan zurücksetzen</string>
-    <string name="action_export">Stundenplan exportieren</string>
-    <string name="action_import">Stundenplan importieren</string>
 
     <string name="teacher">Lehrer</string>
     <string name="subject">Fach</string>
@@ -163,25 +161,25 @@
     <string-array name="tt_base_subjects">
         <item>Fach auswählen</item>
         <item>Freistunde</item>
+        <item>Biologie</item>
+        <item>Chemie</item>
+        <item>Darstellendes Spiel</item>
         <item>Deutsch</item>
         <item>Englisch</item>
-        <item>Französisch</item>
-        <item>Latein</item>
-        <item>Russisch</item>
-        <item>Mathe</item>
-        <item>Physik</item>
-        <item>Informatik</item>
-        <item>Chemie</item>
-        <item>Biologie</item>
-        <item>Kunst</item>
-        <item>Musik</item>
-        <item>Darstellendes Spiel</item>
-        <item>Politik und Wirtschaft</item>
-        <item>Geschichte</item>
-        <item>e. Religion</item>
-        <item>k. Religion</item>
-        <item>Ethik</item>
         <item>Erdkunde</item>
+        <item>Ethik</item>
+        <item>ev. Religion</item>
+        <item>Französisch</item>
+        <item>Geschichte</item>
+        <item>Informatik</item>
+        <item>kath. Religion</item>
+        <item>Kunst</item>
+        <item>Latein</item>
+        <item>Mathe</item>
+        <item>Musik</item>
+        <item>Physik</item>
+        <item>Politik und Wirtschaft</item>
+        <item>Russisch</item>
         <item>Sport</item>
     </string-array>
 

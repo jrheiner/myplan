@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 public class UserTimetable extends AppCompatActivity {
 
@@ -39,7 +40,7 @@ public class UserTimetable extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -190,7 +191,7 @@ public class UserTimetable extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -239,7 +240,7 @@ public class UserTimetable extends AppCompatActivity {
             spinner_12 = rootView.findViewById(R.id.tt_spinner_12);
             spinner_13 = rootView.findViewById(R.id.tt_spinner_13);
 
-            final ArrayAdapter<CharSequence> spinner_adapter = ArrayAdapter.createFromResource(getActivity(),
+            final ArrayAdapter<CharSequence> spinner_adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()),
                     R.array.tt_base_subjects, android.R.layout.simple_spinner_item);
             spinner_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -279,7 +280,7 @@ public class UserTimetable extends AppCompatActivity {
                 jday5 = jtimetable.getJSONObject("day5");
                 if (jday5 == null) jday1 = new JSONObject();
 
-                switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
+                switch (Objects.requireNonNull(getArguments()).getInt(ARG_SECTION_NUMBER)) {
                     case 1:
                         spinner_1.setSelection(Integer.valueOf(jday1.getString("1").split(";")[0]));
                         spinner_2.setSelection(Integer.valueOf(jday1.getString("2").split(";")[0]));
@@ -611,7 +612,7 @@ public class UserTimetable extends AppCompatActivity {
 
         }
 
-        public void disableSpinner(View view) {
+        void disableSpinner(View view) {
             ArrayList<View> vSpinner = view.getTouchables();
             for (View v : vSpinner) {
                 if (v instanceof Spinner) {
@@ -621,12 +622,12 @@ public class UserTimetable extends AppCompatActivity {
         }
 
         private String getTimetable() {
-            SharedPreferences sp = this.getActivity().getSharedPreferences("timetable", MODE_PRIVATE);
+            SharedPreferences sp = Objects.requireNonNull(this.getActivity()).getSharedPreferences("timetable", MODE_PRIVATE);
             return sp.getString("timetable", "{\"day1\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day2\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day3\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day4\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day5\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"}}");
         }
 
         private void setTimetable(String s) {
-            SharedPreferences sp = this.getActivity().getSharedPreferences("timetable", MODE_PRIVATE);
+            SharedPreferences sp = Objects.requireNonNull(this.getActivity()).getSharedPreferences("timetable", MODE_PRIVATE);
             SharedPreferences.Editor ed = sp.edit();
             ed.putString("timetable", s);
             ed.apply();
@@ -638,9 +639,9 @@ public class UserTimetable extends AppCompatActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
