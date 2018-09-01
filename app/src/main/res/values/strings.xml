@@ -153,8 +153,6 @@
     <string name="teacher">Lehrer</string>
     <string name="subject">Fach</string>
     <string name="hour">Stunde</string>
-    <string name="togglebtn_save">Speichern</string>
-    <string name="togglebtn_edit">Bearbeiten</string>
     <string name="teacher_shortform">Lehrerkürzel</string>
 
 
