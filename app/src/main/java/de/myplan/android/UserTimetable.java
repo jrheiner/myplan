@@ -11,6 +11,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,15 +21,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.ToggleButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 
@@ -128,13 +127,7 @@ public class UserTimetable extends AppCompatActivity {
                         })
                         .setNegativeButton(android.R.string.no, null).show();
                 return true;
-            /*
-            case R.id.action_import:
-                return true;
 
-            case R.id.action_export:
-                return true;
-            */
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -184,6 +177,20 @@ public class UserTimetable extends AppCompatActivity {
         Spinner spinner_12;
         Spinner spinner_13;
 
+        EditText teacher_1;
+        EditText teacher_2;
+        EditText teacher_3;
+        EditText teacher_4;
+        EditText teacher_5;
+        EditText teacher_6;
+        EditText teacher_7;
+        EditText teacher_8;
+        EditText teacher_9;
+        EditText teacher_10;
+        EditText teacher_11;
+        EditText teacher_12;
+        EditText teacher_13;
+
         public PlaceholderFragment() {
         }
 
@@ -206,25 +213,24 @@ public class UserTimetable extends AppCompatActivity {
             //TextView textView = rootView.findViewById(R.id.section_label);
             //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
-            final ToggleButton toggle = rootView.findViewById(R.id.tt_toggleButton_editsave);
 
             // TODO cleanup
             // TODO improve loading performance
 
 
-            final EditText teacher_1 = rootView.findViewById(R.id.tt_EditText_teacher_1);
-            final EditText teacher_2 = rootView.findViewById(R.id.tt_EditText_teacher_2);
-            final EditText teacher_3 = rootView.findViewById(R.id.tt_EditText_teacher_3);
-            final EditText teacher_4 = rootView.findViewById(R.id.tt_EditText_teacher_4);
-            final EditText teacher_5 = rootView.findViewById(R.id.tt_EditText_teacher_5);
-            final EditText teacher_6 = rootView.findViewById(R.id.tt_EditText_teacher_6);
-            final EditText teacher_7 = rootView.findViewById(R.id.tt_EditText_teacher_7);
-            final EditText teacher_8 = rootView.findViewById(R.id.tt_EditText_teacher_8);
-            final EditText teacher_9 = rootView.findViewById(R.id.tt_EditText_teacher_9);
-            final EditText teacher_10 = rootView.findViewById(R.id.tt_EditText_teacher_10);
-            final EditText teacher_11 = rootView.findViewById(R.id.tt_EditText_teacher_11);
-            final EditText teacher_12 = rootView.findViewById(R.id.tt_EditText_teacher_12);
-            final EditText teacher_13 = rootView.findViewById(R.id.tt_EditText_teacher_13);
+            teacher_1 = rootView.findViewById(R.id.tt_EditText_teacher_1);
+            teacher_2 = rootView.findViewById(R.id.tt_EditText_teacher_2);
+            teacher_3 = rootView.findViewById(R.id.tt_EditText_teacher_3);
+            teacher_4 = rootView.findViewById(R.id.tt_EditText_teacher_4);
+            teacher_5 = rootView.findViewById(R.id.tt_EditText_teacher_5);
+            teacher_6 = rootView.findViewById(R.id.tt_EditText_teacher_6);
+            teacher_7 = rootView.findViewById(R.id.tt_EditText_teacher_7);
+            teacher_8 = rootView.findViewById(R.id.tt_EditText_teacher_8);
+            teacher_9 = rootView.findViewById(R.id.tt_EditText_teacher_9);
+            teacher_10 = rootView.findViewById(R.id.tt_EditText_teacher_10);
+            teacher_11 = rootView.findViewById(R.id.tt_EditText_teacher_11);
+            teacher_12 = rootView.findViewById(R.id.tt_EditText_teacher_12);
+            teacher_13 = rootView.findViewById(R.id.tt_EditText_teacher_13);
 
             spinner_1 = rootView.findViewById(R.id.tt_spinner_1);
             spinner_2 = rootView.findViewById(R.id.tt_spinner_2);
@@ -259,13 +265,47 @@ public class UserTimetable extends AppCompatActivity {
             spinner_13.setAdapter(spinner_adapter);
 
             spinner_1.setOnItemSelectedListener(this);
+            spinner_2.setOnItemSelectedListener(this);
             spinner_3.setOnItemSelectedListener(this);
+            spinner_4.setOnItemSelectedListener(this);
             spinner_5.setOnItemSelectedListener(this);
+            spinner_6.setOnItemSelectedListener(this);
+            spinner_7.setOnItemSelectedListener(this);
             spinner_8.setOnItemSelectedListener(this);
+            spinner_9.setOnItemSelectedListener(this);
             spinner_10.setOnItemSelectedListener(this);
+            spinner_11.setOnItemSelectedListener(this);
             spinner_12.setOnItemSelectedListener(this);
+            spinner_13.setOnItemSelectedListener(this);
 
-            disableSpinner(rootView);
+            TextWatcher text_watcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    saveInput();
+                }
+            };
+
+            teacher_1.addTextChangedListener(text_watcher);
+            teacher_2.addTextChangedListener(text_watcher);
+            teacher_3.addTextChangedListener(text_watcher);
+            teacher_4.addTextChangedListener(text_watcher);
+            teacher_5.addTextChangedListener(text_watcher);
+            teacher_6.addTextChangedListener(text_watcher);
+            teacher_7.addTextChangedListener(text_watcher);
+            teacher_8.addTextChangedListener(text_watcher);
+            teacher_9.addTextChangedListener(text_watcher);
+            teacher_10.addTextChangedListener(text_watcher);
+            teacher_11.addTextChangedListener(text_watcher);
+            teacher_12.addTextChangedListener(text_watcher);
+            teacher_13.addTextChangedListener(text_watcher);
 
             try {
                 jtimetable = new JSONObject(getTimetable());
@@ -282,295 +322,31 @@ public class UserTimetable extends AppCompatActivity {
 
                 switch (Objects.requireNonNull(getArguments()).getInt(ARG_SECTION_NUMBER)) {
                     case 1:
-                        spinner_1.setSelection(Integer.valueOf(jday1.getString("1").split(";")[0]));
-                        spinner_2.setSelection(Integer.valueOf(jday1.getString("2").split(";")[0]));
-                        spinner_3.setSelection(Integer.valueOf(jday1.getString("3").split(";")[0]));
-                        spinner_4.setSelection(Integer.valueOf(jday1.getString("4").split(";")[0]));
-                        spinner_5.setSelection(Integer.valueOf(jday1.getString("5").split(";")[0]));
-                        spinner_6.setSelection(Integer.valueOf(jday1.getString("6").split(";")[0]));
-                        spinner_7.setSelection(Integer.valueOf(jday1.getString("7").split(";")[0]));
-                        spinner_8.setSelection(Integer.valueOf(jday1.getString("8").split(";")[0]));
-                        spinner_9.setSelection(Integer.valueOf(jday1.getString("9").split(";")[0]));
-                        spinner_10.setSelection(Integer.valueOf(jday1.getString("10").split(";")[0]));
-                        spinner_11.setSelection(Integer.valueOf(jday1.getString("11").split(";")[0]));
-                        spinner_12.setSelection(Integer.valueOf(jday1.getString("12").split(";")[0]));
-                        spinner_13.setSelection(Integer.valueOf(jday1.getString("13").split(";")[0]));
-                        teacher_1.setText(jday1.getString("1").split(";")[1].replaceAll(" ", ""));
-                        teacher_2.setText(jday1.getString("2").split(";")[1].replaceAll(" ", ""));
-                        teacher_3.setText(jday1.getString("3").split(";")[1].replaceAll(" ", ""));
-                        teacher_4.setText(jday1.getString("4").split(";")[1].replaceAll(" ", ""));
-                        teacher_5.setText(jday1.getString("5").split(";")[1].replaceAll(" ", ""));
-                        teacher_6.setText(jday1.getString("6").split(";")[1].replaceAll(" ", ""));
-                        teacher_7.setText(jday1.getString("7").split(";")[1].replaceAll(" ", ""));
-                        teacher_8.setText(jday1.getString("8").split(";")[1].replaceAll(" ", ""));
-                        teacher_9.setText(jday1.getString("9").split(";")[1].replaceAll(" ", ""));
-                        teacher_10.setText(jday1.getString("10").split(";")[1].replaceAll(" ", ""));
-                        teacher_11.setText(jday1.getString("11").split(";")[1].replaceAll(" ", ""));
-                        teacher_12.setText(jday1.getString("12").split(";")[1].replaceAll(" ", ""));
-                        teacher_13.setText(jday1.getString("13").split(";")[1].replaceAll(" ", ""));
+                        setInput(jday1);
                         break;
                     case 2:
-                        spinner_1.setSelection(Integer.valueOf(jday2.getString("1").split(";")[0]));
-                        spinner_2.setSelection(Integer.valueOf(jday2.getString("2").split(";")[0]));
-                        spinner_3.setSelection(Integer.valueOf(jday2.getString("3").split(";")[0]));
-                        spinner_4.setSelection(Integer.valueOf(jday2.getString("4").split(";")[0]));
-                        spinner_5.setSelection(Integer.valueOf(jday2.getString("5").split(";")[0]));
-                        spinner_6.setSelection(Integer.valueOf(jday2.getString("6").split(";")[0]));
-                        spinner_7.setSelection(Integer.valueOf(jday2.getString("7").split(";")[0]));
-                        spinner_8.setSelection(Integer.valueOf(jday2.getString("8").split(";")[0]));
-                        spinner_9.setSelection(Integer.valueOf(jday2.getString("9").split(";")[0]));
-                        spinner_10.setSelection(Integer.valueOf(jday2.getString("10").split(";")[0]));
-                        spinner_11.setSelection(Integer.valueOf(jday2.getString("11").split(";")[0]));
-                        spinner_12.setSelection(Integer.valueOf(jday2.getString("12").split(";")[0]));
-                        spinner_13.setSelection(Integer.valueOf(jday2.getString("13").split(";")[0]));
-                        teacher_1.setText(jday2.getString("1").split(";")[1].replaceAll(" ", ""));
-                        teacher_2.setText(jday2.getString("2").split(";")[1].replaceAll(" ", ""));
-                        teacher_3.setText(jday2.getString("3").split(";")[1].replaceAll(" ", ""));
-                        teacher_4.setText(jday2.getString("4").split(";")[1].replaceAll(" ", ""));
-                        teacher_5.setText(jday2.getString("5").split(";")[1].replaceAll(" ", ""));
-                        teacher_6.setText(jday2.getString("6").split(";")[1].replaceAll(" ", ""));
-                        teacher_7.setText(jday2.getString("7").split(";")[1].replaceAll(" ", ""));
-                        teacher_8.setText(jday2.getString("8").split(";")[1].replaceAll(" ", ""));
-                        teacher_9.setText(jday2.getString("9").split(";")[1].replaceAll(" ", ""));
-                        teacher_10.setText(jday2.getString("10").split(";")[1].replaceAll(" ", ""));
-                        teacher_11.setText(jday2.getString("11").split(";")[1].replaceAll(" ", ""));
-                        teacher_12.setText(jday2.getString("12").split(";")[1].replaceAll(" ", ""));
-                        teacher_13.setText(jday2.getString("13").split(";")[1].replaceAll(" ", ""));
+                        setInput(jday2);
                         break;
                     case 3:
-                        spinner_1.setSelection(Integer.valueOf(jday3.getString("1").split(";")[0]));
-                        spinner_2.setSelection(Integer.valueOf(jday3.getString("2").split(";")[0]));
-                        spinner_3.setSelection(Integer.valueOf(jday3.getString("3").split(";")[0]));
-                        spinner_4.setSelection(Integer.valueOf(jday3.getString("4").split(";")[0]));
-                        spinner_5.setSelection(Integer.valueOf(jday3.getString("5").split(";")[0]));
-                        spinner_6.setSelection(Integer.valueOf(jday3.getString("6").split(";")[0]));
-                        spinner_7.setSelection(Integer.valueOf(jday3.getString("7").split(";")[0]));
-                        spinner_8.setSelection(Integer.valueOf(jday3.getString("8").split(";")[0]));
-                        spinner_9.setSelection(Integer.valueOf(jday3.getString("9").split(";")[0]));
-                        spinner_10.setSelection(Integer.valueOf(jday3.getString("10").split(";")[0]));
-                        spinner_11.setSelection(Integer.valueOf(jday3.getString("11").split(";")[0]));
-                        spinner_12.setSelection(Integer.valueOf(jday3.getString("12").split(";")[0]));
-                        spinner_13.setSelection(Integer.valueOf(jday3.getString("13").split(";")[0]));
-                        teacher_1.setText(jday3.getString("1").split(";")[1].replaceAll(" ", ""));
-                        teacher_2.setText(jday3.getString("2").split(";")[1].replaceAll(" ", ""));
-                        teacher_3.setText(jday3.getString("3").split(";")[1].replaceAll(" ", ""));
-                        teacher_4.setText(jday3.getString("4").split(";")[1].replaceAll(" ", ""));
-                        teacher_5.setText(jday3.getString("5").split(";")[1].replaceAll(" ", ""));
-                        teacher_6.setText(jday3.getString("6").split(";")[1].replaceAll(" ", ""));
-                        teacher_7.setText(jday3.getString("7").split(";")[1].replaceAll(" ", ""));
-                        teacher_8.setText(jday3.getString("8").split(";")[1].replaceAll(" ", ""));
-                        teacher_9.setText(jday3.getString("9").split(";")[1].replaceAll(" ", ""));
-                        teacher_10.setText(jday3.getString("10").split(";")[1].replaceAll(" ", ""));
-                        teacher_11.setText(jday3.getString("11").split(";")[1].replaceAll(" ", ""));
-                        teacher_12.setText(jday3.getString("12").split(";")[1].replaceAll(" ", ""));
-                        teacher_13.setText(jday3.getString("13").split(";")[1].replaceAll(" ", ""));
+                        setInput(jday3);
                         break;
                     case 4:
-                        spinner_1.setSelection(Integer.valueOf(jday4.getString("1").split(";")[0]));
-                        spinner_2.setSelection(Integer.valueOf(jday4.getString("2").split(";")[0]));
-                        spinner_3.setSelection(Integer.valueOf(jday4.getString("3").split(";")[0]));
-                        spinner_4.setSelection(Integer.valueOf(jday4.getString("4").split(";")[0]));
-                        spinner_5.setSelection(Integer.valueOf(jday4.getString("5").split(";")[0]));
-                        spinner_6.setSelection(Integer.valueOf(jday4.getString("6").split(";")[0]));
-                        spinner_7.setSelection(Integer.valueOf(jday4.getString("7").split(";")[0]));
-                        spinner_8.setSelection(Integer.valueOf(jday4.getString("8").split(";")[0]));
-                        spinner_9.setSelection(Integer.valueOf(jday4.getString("9").split(";")[0]));
-                        spinner_10.setSelection(Integer.valueOf(jday4.getString("10").split(";")[0]));
-                        spinner_11.setSelection(Integer.valueOf(jday4.getString("11").split(";")[0]));
-                        spinner_12.setSelection(Integer.valueOf(jday4.getString("12").split(";")[0]));
-                        spinner_13.setSelection(Integer.valueOf(jday4.getString("13").split(";")[0]));
-                        teacher_1.setText(jday4.getString("1").split(";")[1].replaceAll(" ", ""));
-                        teacher_2.setText(jday4.getString("2").split(";")[1].replaceAll(" ", ""));
-                        teacher_3.setText(jday4.getString("3").split(";")[1].replaceAll(" ", ""));
-                        teacher_4.setText(jday4.getString("4").split(";")[1].replaceAll(" ", ""));
-                        teacher_5.setText(jday4.getString("5").split(";")[1].replaceAll(" ", ""));
-                        teacher_6.setText(jday4.getString("6").split(";")[1].replaceAll(" ", ""));
-                        teacher_7.setText(jday4.getString("7").split(";")[1].replaceAll(" ", ""));
-                        teacher_8.setText(jday4.getString("8").split(";")[1].replaceAll(" ", ""));
-                        teacher_9.setText(jday4.getString("9").split(";")[1].replaceAll(" ", ""));
-                        teacher_10.setText(jday4.getString("10").split(";")[1].replaceAll(" ", ""));
-                        teacher_11.setText(jday4.getString("11").split(";")[1].replaceAll(" ", ""));
-                        teacher_12.setText(jday4.getString("12").split(";")[1].replaceAll(" ", ""));
-                        teacher_13.setText(jday4.getString("13").split(";")[1].replaceAll(" ", ""));
+                        setInput(jday4);
                         break;
                     case 5:
-                        spinner_1.setSelection(Integer.valueOf(jday5.getString("1").split(";")[0]));
-                        spinner_2.setSelection(Integer.valueOf(jday5.getString("2").split(";")[0]));
-                        spinner_3.setSelection(Integer.valueOf(jday5.getString("3").split(";")[0]));
-                        spinner_4.setSelection(Integer.valueOf(jday5.getString("4").split(";")[0]));
-                        spinner_5.setSelection(Integer.valueOf(jday5.getString("5").split(";")[0]));
-                        spinner_6.setSelection(Integer.valueOf(jday5.getString("6").split(";")[0]));
-                        spinner_7.setSelection(Integer.valueOf(jday5.getString("7").split(";")[0]));
-                        spinner_8.setSelection(Integer.valueOf(jday5.getString("8").split(";")[0]));
-                        spinner_9.setSelection(Integer.valueOf(jday5.getString("9").split(";")[0]));
-                        spinner_10.setSelection(Integer.valueOf(jday5.getString("10").split(";")[0]));
-                        spinner_11.setSelection(Integer.valueOf(jday5.getString("11").split(";")[0]));
-                        spinner_12.setSelection(Integer.valueOf(jday5.getString("12").split(";")[0]));
-                        spinner_13.setSelection(Integer.valueOf(jday5.getString("13").split(";")[0]));
-                        teacher_1.setText(jday5.getString("1").split(";")[1].replaceAll(" ", ""));
-                        teacher_2.setText(jday5.getString("2").split(";")[1].replaceAll(" ", ""));
-                        teacher_3.setText(jday5.getString("3").split(";")[1].replaceAll(" ", ""));
-                        teacher_4.setText(jday5.getString("4").split(";")[1].replaceAll(" ", ""));
-                        teacher_5.setText(jday5.getString("5").split(";")[1].replaceAll(" ", ""));
-                        teacher_6.setText(jday5.getString("6").split(";")[1].replaceAll(" ", ""));
-                        teacher_7.setText(jday5.getString("7").split(";")[1].replaceAll(" ", ""));
-                        teacher_8.setText(jday5.getString("8").split(";")[1].replaceAll(" ", ""));
-                        teacher_9.setText(jday5.getString("9").split(";")[1].replaceAll(" ", ""));
-                        teacher_10.setText(jday5.getString("10").split(";")[1].replaceAll(" ", ""));
-                        teacher_11.setText(jday5.getString("11").split(";")[1].replaceAll(" ", ""));
-                        teacher_12.setText(jday5.getString("12").split(";")[1].replaceAll(" ", ""));
-                        teacher_13.setText(jday5.getString("13").split(";")[1].replaceAll(" ", ""));
+                        setInput(jday5);
                         break;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-
-                        spinner_1.setEnabled(true);
-                        spinner_2.setEnabled(true);
-                        spinner_3.setEnabled(true);
-                        spinner_4.setEnabled(true);
-                        spinner_5.setEnabled(true);
-                        spinner_6.setEnabled(true);
-                        spinner_7.setEnabled(true);
-                        spinner_8.setEnabled(true);
-                        spinner_9.setEnabled(true);
-                        spinner_10.setEnabled(true);
-                        spinner_11.setEnabled(true);
-                        spinner_12.setEnabled(true);
-                        spinner_13.setEnabled(true);
-
-                        teacher_1.setEnabled(true);
-                        teacher_2.setEnabled(true);
-                        teacher_3.setEnabled(true);
-                        teacher_4.setEnabled(true);
-                        teacher_5.setEnabled(true);
-                        teacher_6.setEnabled(true);
-                        teacher_7.setEnabled(true);
-                        teacher_8.setEnabled(true);
-                        teacher_9.setEnabled(true);
-                        teacher_10.setEnabled(true);
-                        teacher_11.setEnabled(true);
-                        teacher_12.setEnabled(true);
-                        teacher_13.setEnabled(true);
-                    } else {
-                        disableSpinner(rootView);
-                        try {
-                            switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-                                case 1:
-                                    jday1.put("1", String.format("%s;%s", spinner_1.getSelectedItemPosition(), teacher_1.getText() + " "));
-                                    jday1.put("2", String.format("%s;%s", spinner_2.getSelectedItemPosition(), teacher_2.getText() + " "));
-                                    jday1.put("3", String.format("%s;%s", spinner_3.getSelectedItemPosition(), teacher_3.getText() + " "));
-                                    jday1.put("4", String.format("%s;%s", spinner_4.getSelectedItemPosition(), teacher_4.getText() + " "));
-                                    jday1.put("5", String.format("%s;%s", spinner_5.getSelectedItemPosition(), teacher_5.getText() + " "));
-                                    jday1.put("6", String.format("%s;%s", spinner_6.getSelectedItemPosition(), teacher_6.getText() + " "));
-                                    jday1.put("7", String.format("%s;%s", spinner_7.getSelectedItemPosition(), teacher_7.getText() + " "));
-                                    jday1.put("8", String.format("%s;%s", spinner_8.getSelectedItemPosition(), teacher_8.getText() + " "));
-                                    jday1.put("9", String.format("%s;%s", spinner_9.getSelectedItemPosition(), teacher_9.getText() + " "));
-                                    jday1.put("10", String.format("%s;%s", spinner_10.getSelectedItemPosition(), teacher_10.getText() + " "));
-                                    jday1.put("11", String.format("%s;%s", spinner_11.getSelectedItemPosition(), teacher_11.getText() + " "));
-                                    jday1.put("12", String.format("%s;%s", spinner_12.getSelectedItemPosition(), teacher_12.getText() + " "));
-                                    jday1.put("13", String.format("%s;%s", spinner_13.getSelectedItemPosition(), teacher_13.getText() + " "));
-                                    break;
-                                case 2:
-                                    jday2.put("1", String.format("%s;%s", spinner_1.getSelectedItemPosition(), teacher_1.getText() + " "));
-                                    jday2.put("2", String.format("%s;%s", spinner_2.getSelectedItemPosition(), teacher_2.getText() + " "));
-                                    jday2.put("3", String.format("%s;%s", spinner_3.getSelectedItemPosition(), teacher_3.getText() + " "));
-                                    jday2.put("4", String.format("%s;%s", spinner_4.getSelectedItemPosition(), teacher_4.getText() + " "));
-                                    jday2.put("5", String.format("%s;%s", spinner_5.getSelectedItemPosition(), teacher_5.getText() + " "));
-                                    jday2.put("6", String.format("%s;%s", spinner_6.getSelectedItemPosition(), teacher_6.getText() + " "));
-                                    jday2.put("7", String.format("%s;%s", spinner_7.getSelectedItemPosition(), teacher_7.getText() + " "));
-                                    jday2.put("8", String.format("%s;%s", spinner_8.getSelectedItemPosition(), teacher_8.getText() + " "));
-                                    jday2.put("9", String.format("%s;%s", spinner_9.getSelectedItemPosition(), teacher_9.getText() + " "));
-                                    jday2.put("10", String.format("%s;%s", spinner_10.getSelectedItemPosition(), teacher_10.getText() + " "));
-                                    jday2.put("11", String.format("%s;%s", spinner_11.getSelectedItemPosition(), teacher_11.getText() + " "));
-                                    jday2.put("12", String.format("%s;%s", spinner_12.getSelectedItemPosition(), teacher_12.getText() + " "));
-                                    jday2.put("13", String.format("%s;%s", spinner_13.getSelectedItemPosition(), teacher_13.getText() + " "));
-                                    break;
-                                case 3:
-                                    jday3.put("1", String.format("%s;%s", spinner_1.getSelectedItemPosition(), teacher_1.getText() + " "));
-                                    jday3.put("2", String.format("%s;%s", spinner_2.getSelectedItemPosition(), teacher_2.getText() + " "));
-                                    jday3.put("3", String.format("%s;%s", spinner_3.getSelectedItemPosition(), teacher_3.getText() + " "));
-                                    jday3.put("4", String.format("%s;%s", spinner_4.getSelectedItemPosition(), teacher_4.getText() + " "));
-                                    jday3.put("5", String.format("%s;%s", spinner_5.getSelectedItemPosition(), teacher_5.getText() + " "));
-                                    jday3.put("6", String.format("%s;%s", spinner_6.getSelectedItemPosition(), teacher_6.getText() + " "));
-                                    jday3.put("7", String.format("%s;%s", spinner_7.getSelectedItemPosition(), teacher_7.getText() + " "));
-                                    jday3.put("8", String.format("%s;%s", spinner_8.getSelectedItemPosition(), teacher_8.getText() + " "));
-                                    jday3.put("9", String.format("%s;%s", spinner_9.getSelectedItemPosition(), teacher_9.getText() + " "));
-                                    jday3.put("10", String.format("%s;%s", spinner_10.getSelectedItemPosition(), teacher_10.getText() + " "));
-                                    jday3.put("11", String.format("%s;%s", spinner_11.getSelectedItemPosition(), teacher_11.getText() + " "));
-                                    jday3.put("12", String.format("%s;%s", spinner_12.getSelectedItemPosition(), teacher_12.getText() + " "));
-                                    jday3.put("13", String.format("%s;%s", spinner_13.getSelectedItemPosition(), teacher_13.getText() + " "));
-                                    break;
-                                case 4:
-                                    jday4.put("1", String.format("%s;%s", spinner_1.getSelectedItemPosition(), teacher_1.getText() + " "));
-                                    jday4.put("2", String.format("%s;%s", spinner_2.getSelectedItemPosition(), teacher_2.getText() + " "));
-                                    jday4.put("3", String.format("%s;%s", spinner_3.getSelectedItemPosition(), teacher_3.getText() + " "));
-                                    jday4.put("4", String.format("%s;%s", spinner_4.getSelectedItemPosition(), teacher_4.getText() + " "));
-                                    jday4.put("5", String.format("%s;%s", spinner_5.getSelectedItemPosition(), teacher_5.getText() + " "));
-                                    jday4.put("6", String.format("%s;%s", spinner_6.getSelectedItemPosition(), teacher_6.getText() + " "));
-                                    jday4.put("7", String.format("%s;%s", spinner_7.getSelectedItemPosition(), teacher_7.getText() + " "));
-                                    jday4.put("8", String.format("%s;%s", spinner_8.getSelectedItemPosition(), teacher_8.getText() + " "));
-                                    jday4.put("9", String.format("%s;%s", spinner_9.getSelectedItemPosition(), teacher_9.getText() + " "));
-                                    jday4.put("10", String.format("%s;%s", spinner_10.getSelectedItemPosition(), teacher_10.getText() + " "));
-                                    jday4.put("11", String.format("%s;%s", spinner_11.getSelectedItemPosition(), teacher_11.getText() + " "));
-                                    jday4.put("12", String.format("%s;%s", spinner_12.getSelectedItemPosition(), teacher_12.getText() + " "));
-                                    jday4.put("13", String.format("%s;%s", spinner_13.getSelectedItemPosition(), teacher_13.getText() + " "));
-                                    break;
-                                case 5:
-                                    jday5.put("1", String.format("%s;%s", spinner_1.getSelectedItemPosition(), teacher_1.getText() + " "));
-                                    jday5.put("2", String.format("%s;%s", spinner_2.getSelectedItemPosition(), teacher_2.getText() + " "));
-                                    jday5.put("3", String.format("%s;%s", spinner_3.getSelectedItemPosition(), teacher_3.getText() + " "));
-                                    jday5.put("4", String.format("%s;%s", spinner_4.getSelectedItemPosition(), teacher_4.getText() + " "));
-                                    jday5.put("5", String.format("%s;%s", spinner_5.getSelectedItemPosition(), teacher_5.getText() + " "));
-                                    jday5.put("6", String.format("%s;%s", spinner_6.getSelectedItemPosition(), teacher_6.getText() + " "));
-                                    jday5.put("7", String.format("%s;%s", spinner_7.getSelectedItemPosition(), teacher_7.getText() + " "));
-                                    jday5.put("8", String.format("%s;%s", spinner_8.getSelectedItemPosition(), teacher_8.getText() + " "));
-                                    jday5.put("9", String.format("%s;%s", spinner_9.getSelectedItemPosition(), teacher_9.getText() + " "));
-                                    jday5.put("10", String.format("%s;%s", spinner_10.getSelectedItemPosition(), teacher_10.getText() + " "));
-                                    jday5.put("11", String.format("%s;%s", spinner_11.getSelectedItemPosition(), teacher_11.getText() + " "));
-                                    jday5.put("12", String.format("%s;%s", spinner_12.getSelectedItemPosition(), teacher_12.getText() + " "));
-                                    jday5.put("13", String.format("%s;%s", spinner_13.getSelectedItemPosition(), teacher_13.getText() + " "));
-                                    break;
-                            }
-                            jtimetable.put("day1", jday1);
-                            jtimetable.put("day2", jday2);
-                            jtimetable.put("day3", jday3);
-                            jtimetable.put("day4", jday4);
-                            jtimetable.put("day5", jday5);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        setTimetable(jtimetable.toString());
-
-                        teacher_1.setEnabled(false);
-                        teacher_2.setEnabled(false);
-                        teacher_3.setEnabled(false);
-                        teacher_4.setEnabled(false);
-                        teacher_5.setEnabled(false);
-                        teacher_6.setEnabled(false);
-                        teacher_7.setEnabled(false);
-                        teacher_8.setEnabled(false);
-                        teacher_9.setEnabled(false);
-                        teacher_10.setEnabled(false);
-                        teacher_11.setEnabled(false);
-                        teacher_12.setEnabled(false);
-                        teacher_13.setEnabled(false);
-
-                    }
-                }
-            });
-
             return rootView;
         }
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            saveInput();
             int spinner_id = parent.getId();
             if (position == 0) return;
             switch (spinner_id) {
@@ -612,13 +388,85 @@ public class UserTimetable extends AppCompatActivity {
 
         }
 
-        void disableSpinner(View view) {
-            ArrayList<View> vSpinner = view.getTouchables();
-            for (View v : vSpinner) {
-                if (v instanceof Spinner) {
-                    v.setEnabled(false);
+        void saveInput() {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
+                            case 1:
+                                packInput(jday1);
+                                break;
+                            case 2:
+                                packInput(jday2);
+                                break;
+                            case 3:
+                                packInput(jday3);
+                                break;
+                            case 4:
+                                packInput(jday4);
+                                break;
+                            case 5:
+                                packInput(jday5);
+                                break;
+                        }
+                        jtimetable.put("day1", jday1);
+                        jtimetable.put("day2", jday2);
+                        jtimetable.put("day3", jday3);
+                        jtimetable.put("day4", jday4);
+                        jtimetable.put("day5", jday5);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    setTimetable(jtimetable.toString());
                 }
-            }
+            }).start();
+        }
+
+        void packInput(JSONObject jday) throws JSONException {
+            jday.put("1", String.format("%s;%s", spinner_1.getSelectedItemPosition(), teacher_1.getText() + " "));
+            jday.put("2", String.format("%s;%s", spinner_2.getSelectedItemPosition(), teacher_2.getText() + " "));
+            jday.put("3", String.format("%s;%s", spinner_3.getSelectedItemPosition(), teacher_3.getText() + " "));
+            jday.put("4", String.format("%s;%s", spinner_4.getSelectedItemPosition(), teacher_4.getText() + " "));
+            jday.put("5", String.format("%s;%s", spinner_5.getSelectedItemPosition(), teacher_5.getText() + " "));
+            jday.put("6", String.format("%s;%s", spinner_6.getSelectedItemPosition(), teacher_6.getText() + " "));
+            jday.put("7", String.format("%s;%s", spinner_7.getSelectedItemPosition(), teacher_7.getText() + " "));
+            jday.put("8", String.format("%s;%s", spinner_8.getSelectedItemPosition(), teacher_8.getText() + " "));
+            jday.put("9", String.format("%s;%s", spinner_9.getSelectedItemPosition(), teacher_9.getText() + " "));
+            jday.put("10", String.format("%s;%s", spinner_10.getSelectedItemPosition(), teacher_10.getText() + " "));
+            jday.put("11", String.format("%s;%s", spinner_11.getSelectedItemPosition(), teacher_11.getText() + " "));
+            jday.put("12", String.format("%s;%s", spinner_12.getSelectedItemPosition(), teacher_12.getText() + " "));
+            jday.put("13", String.format("%s;%s", spinner_13.getSelectedItemPosition(), teacher_13.getText() + " "));
+
+        }
+
+        void setInput(JSONObject jday) throws JSONException {
+            spinner_1.setSelection(Integer.valueOf(jday.getString("1").split(";")[0]));
+            spinner_2.setSelection(Integer.valueOf(jday.getString("2").split(";")[0]));
+            spinner_3.setSelection(Integer.valueOf(jday.getString("3").split(";")[0]));
+            spinner_4.setSelection(Integer.valueOf(jday.getString("4").split(";")[0]));
+            spinner_5.setSelection(Integer.valueOf(jday.getString("5").split(";")[0]));
+            spinner_6.setSelection(Integer.valueOf(jday.getString("6").split(";")[0]));
+            spinner_7.setSelection(Integer.valueOf(jday.getString("7").split(";")[0]));
+            spinner_8.setSelection(Integer.valueOf(jday.getString("8").split(";")[0]));
+            spinner_9.setSelection(Integer.valueOf(jday.getString("9").split(";")[0]));
+            spinner_10.setSelection(Integer.valueOf(jday.getString("10").split(";")[0]));
+            spinner_11.setSelection(Integer.valueOf(jday.getString("11").split(";")[0]));
+            spinner_12.setSelection(Integer.valueOf(jday.getString("12").split(";")[0]));
+            spinner_13.setSelection(Integer.valueOf(jday.getString("13").split(";")[0]));
+            teacher_1.setText(jday.getString("1").split(";")[1].replaceAll(" ", ""));
+            teacher_2.setText(jday.getString("2").split(";")[1].replaceAll(" ", ""));
+            teacher_3.setText(jday.getString("3").split(";")[1].replaceAll(" ", ""));
+            teacher_4.setText(jday.getString("4").split(";")[1].replaceAll(" ", ""));
+            teacher_5.setText(jday.getString("5").split(";")[1].replaceAll(" ", ""));
+            teacher_6.setText(jday.getString("6").split(";")[1].replaceAll(" ", ""));
+            teacher_7.setText(jday.getString("7").split(";")[1].replaceAll(" ", ""));
+            teacher_8.setText(jday.getString("8").split(";")[1].replaceAll(" ", ""));
+            teacher_9.setText(jday.getString("9").split(";")[1].replaceAll(" ", ""));
+            teacher_10.setText(jday.getString("10").split(";")[1].replaceAll(" ", ""));
+            teacher_11.setText(jday.getString("11").split(";")[1].replaceAll(" ", ""));
+            teacher_12.setText(jday.getString("12").split(";")[1].replaceAll(" ", ""));
+            teacher_13.setText(jday.getString("13").split(";")[1].replaceAll(" ", ""));
         }
 
         private String getTimetable() {

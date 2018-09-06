@@ -6,72 +6,12 @@
     android:focusableInTouchMode="true"
     tools:context="de.myplan.android.UserTimetable$PlaceholderFragment">
 
-    <TextView
-        android:id="@+id/tt_textView_teacher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/teacher"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/tt_toggleButton_editsave"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/tt_textView_subject"
-        app:layout_constraintTop_toTopOf="@+id/tt_textView_subject" />
-
-    <TextView
-        android:id="@+id/tt_textView_subject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/subject"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/tt_textView_teacher"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/tt_textView_hour"
-        app:layout_constraintTop_toTopOf="@+id/tt_textView_hour" />
-
-    <ToggleButton
-        android:id="@+id/tt_toggleButton_editsave"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:checked="false"
-        android:textOff="@string/togglebtn_edit"
-        android:textOn="@string/togglebtn_save"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tt_textView_hour"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/hour"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tt_toggleButton_editsave"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="fill_parent"
-        android:layout_height="1dip"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="64dp"
-        android:background="?attr/colorPrimaryDark"
-
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
-
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="64dp">
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -106,7 +46,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -148,7 +87,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -190,7 +128,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -232,7 +169,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -274,7 +210,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -316,7 +251,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -358,7 +292,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -400,7 +333,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -442,7 +374,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -484,7 +415,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -526,7 +456,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -568,7 +497,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionNext"
                 android:inputType="text"
@@ -611,7 +539,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:enabled="false"
                 android:hint="@string/teacher_shortform"
                 android:imeOptions="actionDone"
                 android:inputType="text"
