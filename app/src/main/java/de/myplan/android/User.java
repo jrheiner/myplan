@@ -406,14 +406,27 @@ public class User extends AppCompatActivity {
                         Elements html_header = doc.getElementsByTag("head");
                         builder.append(html_header.outerHtml());
                         String tt_title = doc.select("div.mon_title").text();
+                        int currentNightMode = getResources().getConfiguration().uiMode;
+                        String h3color;
+                        switch (currentNightMode) {
+                            case 33:
+                                h3color = "white";
+                                break;
+                            case 17:
+                                h3color = "black";
+                                break;
+                            default:
+                                h3color = "black";
+                                break;
+                        }
                         if (tt_title.contains("Seite")) {
                             counter++;
                             if (!last_date_title.equals(tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", ""))) {
-                                builder.append(String.format("<br><h3>%s</h3>", tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "")));
+                                builder.append(String.format("<br><h3 style=\"color:" + h3color + ";\">%s</h3>", tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "")));
                             }
                             last_date_title = tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "");
                         } else {
-                            builder.append(String.format("<br><h3>%s</h3>", tt_title));
+                            builder.append(String.format("<br><h3 style=\"color:" + h3color + ";\">%s</h3>", tt_title));
                         }
                         Elements td_info = doc.select("tr.info");
                         for (Element tt_info : td_info) {
@@ -562,6 +575,17 @@ public class User extends AppCompatActivity {
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">Raum</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Art</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Vertretungs-Text</th>", "");
+            int currentNightMode = getResources().getConfiguration().uiMode;
+            switch (currentNightMode) {
+                case 33:
+                    timetable_cache = timetable_cache.replaceAll("#fff", "#212121");
+                    timetable = timetable.replaceAll("#fff", "#212121");
+                    break;
+                case 17:
+                    timetable_cache = timetable_cache.replaceAll("#212121", "#fff");
+                    timetable = timetable.replaceAll("#212121", "#fff");
+                    break;
+            }
             setWebCache(timetable_cache);
             setWebCacheComplete(timetable);
             webView_user.loadData(timetable, "text/html; charset=utf-8", "UTF-8");
