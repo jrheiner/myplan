@@ -103,7 +103,7 @@ public class User extends AppCompatActivity {
         }
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.cancelAll();
+        notificationManager.cancel(1);
 
         final WebView webView_user = findViewById(R.id.webView_user);
         webView_user.setBackgroundColor(Color.TRANSPARENT);

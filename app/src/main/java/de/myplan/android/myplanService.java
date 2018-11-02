@@ -138,7 +138,7 @@ public class myplanService extends JobService {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-        int notificationId = 123;
+        int notificationId = 1;
         if (getNotificationSetting()) {
             notificationManager.notify(notificationId, mBuilder.build());
         }
