@@ -235,6 +235,7 @@ public class User extends AppCompatActivity {
 
     private void request_timetableurl(final String api_key) {
         final ArrayList<String> timetableurls = new ArrayList<>();
+        final ArrayList<String> last_updates = new ArrayList<>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
@@ -247,9 +248,14 @@ public class User extends AppCompatActivity {
                                 JSONObject json_node = (JSONObject) response.get(i);
 
                                 String timetableurl = json_node.getString("timetableurl");
+                                String last_update = json_node.getString("timetabledate");
                                 timetableurls.add(timetableurl);
+                                last_updates.add(last_update);
                             }
                             new JsoupAsyncTask().execute(timetableurls);
+                            TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
+                            user_textView_last_updated.setText(String.format("%s: %s", getString(R.string.user_last_updated), last_updates.get(0)));
+                            setLastUpdated(last_updates.get(0));
 
 
                         } catch (JSONException e) {
@@ -270,12 +276,27 @@ public class User extends AppCompatActivity {
                         webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
                         user_textView_status.setText(String.format("%s.\n%s.", getString(R.string.network_not_available), getString(R.string.timetable_not_up_to_date)));
                         user_textView_status.setVisibility(View.VISIBLE);
+                        TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
+                        user_textView_last_updated.setText(String.format("%s: %s", getString(R.string.user_last_updated), getLastUpdated()));
+
 
 
                     }
                 });
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private String getLastUpdated() {
+        SharedPreferences sp = this.getSharedPreferences("last_updated", MODE_PRIVATE);
+        return sp.getString("last_updated", "");
+    }
+
+    private void setLastUpdated(String s) {
+        SharedPreferences sp = getSharedPreferences("last_updated", MODE_PRIVATE);
+        SharedPreferences.Editor ed = sp.edit();
+        ed.putString("last_updated", s);
+        ed.apply();
     }
 
     private boolean getFirstStart() {
