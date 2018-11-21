@@ -209,8 +209,9 @@ public class User extends AppCompatActivity {
                 return true;
 
             case R.id.action_refresh:
-                if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(true);
-                request_timetableurl(getApiKey());
+                //if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(true);
+                //request_timetableurl(getApiKey());
+                recreate();
                 return true;
 
             case R.id.action_timetable:
