@@ -1,4 +1,4 @@
-# myPlan
+# myPlan Vertretungsplan
 > Vertretungsplan App mit praktischen Zusatzfunktionen.
 
 ![](banner.png)
@@ -11,16 +11,16 @@
 
 * Offline-Funktion
 
-* Helles und dunkles Farbschema
-
 * Kurze und schnelle Ladezeiten
 
-* Einfaches und übersichtliches Design
+* Helles und dunkles Farbschema
+
+* Einfaches Design & kompakte Übersicht
 
 
 ## Installation
 
-Android Google Play Store:
+**Android** Google Play Store:
 
 > https://play.google.com/store/apps/details?id=de.myplan.android
 
@@ -32,7 +32,10 @@ Alternativ Download des letzes Release als `.apk`.
 
 Jonas Rheiner – [@jrheiner](https://github.com/jrheiner)
 
-[Lizenzinformationen](https://github.com/jrheiner/myplan/blob/master/LICENSE)
+### Mitwirkende
 
- 
-> Danke an [@daniel-lerch](https://github.com/daniel-lerch)
+* Daniel Lerch - [@daniel-lerch](https://github.com/daniel-lerch)
+
+## Lizenz
+
+[Lizenzinformationen](https://github.com/jrheiner/myplan/blob/master/LICENSE)
