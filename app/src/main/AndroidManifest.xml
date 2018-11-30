@@ -12,14 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login">
+        <activity android:name=".ui.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".User">
+        <activity android:name=".ui.UserActivity">
             <intent-filter>
                 <action android:name="de.android.myplan.User" />
 
@@ -27,16 +27,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Settings"
+            android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".User">
+            android:parentActivityName=".ui.UserActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.myplan.android.User" />
+                android:value="de.myplan.android.ui.UserActivity" />
         </activity>
 
         <service
-            android:name=".myplanService"
+            android:name=".MyplanService"
             android:enabled="true"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
@@ -44,9 +44,9 @@
 
         <activity
 
-            android:name=".UserTimetable"
+            android:name=".ui.UserTimetable"
             android:label="@string/title_activity_user_timetable"
-            android:parentActivityName=".Settings"
+            android:parentActivityName=".ui.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.TIMETABLE" />
@@ -54,7 +54,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.myplan.android.Settings" />
+                android:value="de.myplan.android.ui.SettingsActivity" />
         </activity>
 
 

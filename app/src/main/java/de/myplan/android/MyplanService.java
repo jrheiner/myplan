@@ -23,6 +23,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 
+import de.myplan.android.ui.UserActivity;
+import de.myplan.android.util.Constants;
+import de.myplan.android.util.SingletonRequestQueue;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,14 +48,8 @@ import java.util.regex.Pattern;
 import static android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 
-public class myplanService extends JobService {
+public class MyplanService extends JobService {
 
-    private final String[] class_settings = {"", "5a", "5b", "5c", "5d", "5e",
-            "6a", "6b", "6c", "6d", "6e",
-            "7a", "7b", "7c", "7d", "7e",
-            "8a", "8b", "8c", "8d", "8e",
-            "9a", "9b", "9c", "9d", "9e",
-            "10", "11", "12"};
     private final Handler mJobHandler = new Handler(new Handler.Callback() {
 
         @Override
@@ -102,13 +100,13 @@ public class myplanService extends JobService {
             m_class_setting = "alle Klassenstufen";
         }
         if (class_setting > 0 && class_setting < 26) {
-            m_class_setting = String.format("Klasse %s", class_settings[class_setting]);
+            m_class_setting = String.format("Klasse %s", Constants.classSettings[class_setting]);
         }
         if (class_setting > 25) {
-            m_class_setting = String.format("den %s. Jahrgang", class_settings[class_setting]);
+            m_class_setting = String.format("den %s. Jahrgang", Constants.classSettings[class_setting]);
         }
 
-        Intent intent = new Intent(this, User.class);
+        Intent intent = new Intent(this, UserActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
@@ -169,7 +167,7 @@ public class myplanService extends JobService {
                                 String timetableurl = json_node.getString("timetableurl");
                                 timetableurls.add(timetableurl);
                             }
-                            new myplanService.JsoupAsyncTask().execute(timetableurls);
+                            new MyplanService.JsoupAsyncTask().execute(timetableurls);
 
 
                         } catch (JSONException e) {
@@ -345,7 +343,7 @@ public class myplanService extends JobService {
                             if (affected_class.contains("inline_header")) {
                                 last_inline_header = tt_class.text();
                             }
-                            if (last_inline_header.contains(class_settings[Integer.parseInt(class_setting)])) {
+                            if (last_inline_header.contains(Constants.classSettings[Integer.parseInt(class_setting)])) {
                                 if (getTimetableSetting()) {
                                     Pattern p = Pattern.compile(">(\\d.+|\\d.?-.?\\d+)</td>\\n.+\">(.+)</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>");
                                     Matcher m = p.matcher(affected_class);
@@ -367,51 +365,14 @@ public class myplanService extends JobService {
 
                                         JSONObject timetable = new JSONObject(getTimetable());
 
-                                        switch (dayOfWeek) {
-                                            case Calendar.MONDAY:
-                                                JSONObject day1 = timetable.getJSONObject("day1");
-                                                if (ttFilter(day1, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
-
-                                            case Calendar.TUESDAY:
-                                                JSONObject day2 = timetable.getJSONObject("day2");
-                                                if (ttFilter(day2, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
-
-                                            case Calendar.WEDNESDAY:
-                                                JSONObject day3 = timetable.getJSONObject("day3");
-                                                if (ttFilter(day3, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
-
-                                            case Calendar.THURSDAY:
-                                                JSONObject day4 = timetable.getJSONObject("day4");
-                                                if (ttFilter(day4, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
-
-                                            case Calendar.FRIDAY:
-                                                JSONObject day5 = timetable.getJSONObject("day4");
-                                                if (ttFilter(day5, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
+                                        if (Calendar.MONDAY <= dayOfWeek && dayOfWeek <= Calendar.FRIDAY) {
+                                            // Use an offset of -1 to make Calendar.MONDAY to "day1".
+                                            JSONObject day = timetable.getJSONObject("day" + (dayOfWeek - 1));
+                                            if (ttFilter(day, stunde, lehrer)) {
+                                                builder.append(affected_class);
+                                                jcache.append(affected_class);
+                                                counter++;
+                                            }
                                         }
                                     }
                                 } else {
@@ -425,7 +386,7 @@ public class myplanService extends JobService {
                         jwebcache.put(date, jcache.toString());
                         builder.append("</tbody></table></body>");
                     } catch (java.io.IOException e) {
-                        Log.e("myplanService", e.toString());
+                        Log.e("MyplanService", e.toString());
                     } catch (JSONException | ParseException e) {
                         e.printStackTrace();
                     }

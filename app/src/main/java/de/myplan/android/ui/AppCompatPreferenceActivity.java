@@ -1,4 +1,4 @@
-package de.myplan.android;
+package de.myplan.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,7 +28,7 @@ public abstract class AppCompatPreferenceActivity extends PreferenceActivity {
         getDelegate().installViewFactory();
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
-        final Intent intent = new Intent(getApplicationContext(), User.class);
+        final Intent intent = new Intent(getApplicationContext(), UserActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         listener = new SharedPreferences.OnSharedPreferenceChangeListener() {

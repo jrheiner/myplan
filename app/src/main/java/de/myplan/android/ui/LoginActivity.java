@@ -1,4 +1,4 @@
-package de.myplan.android;
+package de.myplan.android.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,7 +22,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-public class Login extends AppCompatActivity {
+import de.myplan.android.R;
+import de.myplan.android.util.SingletonRequestQueue;
+
+public class LoginActivity extends AppCompatActivity {
 
     private EditText username;
     private EditText password;
@@ -37,27 +40,8 @@ public class Login extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        switch (getThemeSettings()) {
-            case "-1":
-                if (savedInstanceState == null) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                }
-                break;
-            case "0":
-                if (savedInstanceState == null) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-                }
-                break;
-            case "1":
-                if (savedInstanceState == null) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                }
-                break;
-            case "2":
-                if (savedInstanceState == null) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                }
-                break;
+        if (savedInstanceState == null) {
+            AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -65,7 +49,7 @@ public class Login extends AppCompatActivity {
         if (isNotLoggedIn()) {
             login_auth();
         } else {
-            Intent intent = new Intent(Login.this, User.class);
+            Intent intent = new Intent(LoginActivity.this, UserActivity.class);
             startActivity(intent);
             finish();
         }
@@ -81,7 +65,7 @@ public class Login extends AppCompatActivity {
             }
             login_auth();
         } else {
-            Intent intent = new Intent(Login.this, User.class);
+            Intent intent = new Intent(LoginActivity.this, UserActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             finish();
             startActivity(intent);
@@ -128,10 +112,10 @@ public class Login extends AppCompatActivity {
                 api_key = response.replaceAll("\"", "");
                 logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
                 if (logged_in) {
-                    Toast.makeText(Login.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
                     setLoggedIn();
                     setApiKey(api_key);
-                    Intent intent = new Intent(Login.this, User.class);
+                    Intent intent = new Intent(LoginActivity.this, UserActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     finish();
@@ -218,5 +202,20 @@ public class Login extends AppCompatActivity {
     private String getThemeSettings() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getString("general_theme", "0");
+    }
+
+    private int getThemeSettingsAsNightMode() {
+        switch (getThemeSettings()) {
+            case "-1":
+                return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+            case "0":
+                return AppCompatDelegate.MODE_NIGHT_AUTO;
+            case "1":
+                return AppCompatDelegate.MODE_NIGHT_NO;
+            case "2":
+                return AppCompatDelegate.MODE_NIGHT_YES;
+            default:
+                return AppCompatDelegate.MODE_NIGHT_AUTO;
+        }
     }
 }

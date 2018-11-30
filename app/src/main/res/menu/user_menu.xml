@@ -16,7 +16,7 @@
         android:title="@string/user_refresh"
         app:showAsAction="ifRoom" />
 
-    <!-- Settings -->
+    <!-- SettingsActivity -->
     <item
         android:id="@+id/action_settings"
         android:title="@string/user_settings"

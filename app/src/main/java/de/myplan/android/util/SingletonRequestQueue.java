@@ -1,4 +1,4 @@
-package de.myplan.android;
+package de.myplan.android.util;
 
 import android.content.Context;
 
@@ -8,7 +8,7 @@ import com.android.volley.toolbox.Volley;
 
 // https://developer.android.com/training/volley/requestqueue
 
-class SingletonRequestQueue {
+public class SingletonRequestQueue {
     private static SingletonRequestQueue mInstance;
     private static Context mCtx;
     private RequestQueue mRequestQueue;
@@ -18,7 +18,7 @@ class SingletonRequestQueue {
         mRequestQueue = getRequestQueue();
     }
 
-    static synchronized SingletonRequestQueue getInstance(Context context) {
+    public static synchronized SingletonRequestQueue getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new SingletonRequestQueue(context);
         }
@@ -34,7 +34,7 @@ class SingletonRequestQueue {
         return mRequestQueue;
     }
 
-    <T> void addToRequestQueue(Request<T> req) {
+    public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }
 

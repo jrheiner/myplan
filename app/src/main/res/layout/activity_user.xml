@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="de.myplan.android.User">
+    tools:context="de.myplan.android.ui.UserActivity">
 
     <WebView
         android:id="@+id/webView_user"

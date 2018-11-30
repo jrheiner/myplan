@@ -1,4 +1,4 @@
-package de.myplan.android;
+package de.myplan.android.ui;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -30,6 +30,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 
+import de.myplan.android.MyplanService;
+import de.myplan.android.R;
+import de.myplan.android.util.Constants;
+import de.myplan.android.util.SingletonRequestQueue;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,33 +53,14 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class User extends AppCompatActivity {
+public class UserActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        switch (getThemeSettings()) {
-            case "-1":
-                if (savedInstanceState == null) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                }
-                break;
-            case "0":
-                if (savedInstanceState == null) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-                }
-                break;
-            case "1":
-                if (savedInstanceState == null) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                }
-                break;
-            case "2":
-                if (savedInstanceState == null) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                }
-                break;
+        if (savedInstanceState == null) {
+            AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
@@ -86,7 +72,7 @@ public class User extends AppCompatActivity {
         final String[] listValues = getResources().getStringArray(R.array.pref_general_list_values);
         boolean firstStart = getFirstStart();
         if (firstStart) {
-            AlertDialog.Builder mBuilder = new AlertDialog.Builder(User.this);
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(UserActivity.this);
             mBuilder.setTitle(getString(R.string.user_introduction_title));
             mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
                 @Override
@@ -112,25 +98,9 @@ public class User extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (!getThemeSettings().equals(String.valueOf(AppCompatDelegate.getDefaultNightMode()))) {
-            switch (getThemeSettings()) {
-                case "-1":
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                    this.recreate();
-                    break;
-                case "0":
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
-                    this.recreate();
-                    break;
-                case "1":
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    this.recreate();
-                    break;
-                case "2":
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    this.recreate();
-                    break;
-            }
+        if (getThemeSettingsAsNightMode() != AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
+            this.recreate();
         }
         request_timetableurl(getApiKey());
     }
@@ -143,7 +113,7 @@ public class User extends AppCompatActivity {
         if (getNotificationSetting() && getLoggedIn()) {
             JobInfo.Builder builder = new JobInfo.Builder(1,
                     new ComponentName(getPackageName(),
-                            myplanService.class.getName()));
+                            MyplanService.class.getName()));
             int sync_freq = Integer.parseInt(getSyncFreq());
             int service_timing = sync_freq * 60000;
             if (service_timing > 0) {
@@ -204,7 +174,7 @@ public class User extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                Intent intent_settings = new Intent(this, Settings.class);
+                Intent intent_settings = new Intent(this, SettingsActivity.class);
                 startActivity(intent_settings);
                 return true;
 
@@ -220,7 +190,7 @@ public class User extends AppCompatActivity {
                 return true;
 
             case R.id.action_logout:
-                Intent intent_login = new Intent(User.this, Login.class);
+                Intent intent_login = new Intent(UserActivity.this, LoginActivity.class);
                 intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent_login);
                 resetLoggedIn();
@@ -267,7 +237,7 @@ public class User extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UserActivity.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
                         if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
                         ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
                         progressBar_user.setVisibility(View.INVISIBLE);
@@ -279,7 +249,6 @@ public class User extends AppCompatActivity {
                         user_textView_status.setVisibility(View.VISIBLE);
                         TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
                         user_textView_last_updated.setText(String.format("%s: %s", getString(R.string.user_last_updated), getLastUpdated()));
-
 
 
                     }
@@ -383,6 +352,21 @@ public class User extends AppCompatActivity {
         return sharedPref.getString("general_theme", "0");
     }
 
+    private int getThemeSettingsAsNightMode() {
+        switch (getThemeSettings()) {
+            case "-1":
+                return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+            case "0":
+                return AppCompatDelegate.MODE_NIGHT_AUTO;
+            case "1":
+                return AppCompatDelegate.MODE_NIGHT_NO;
+            case "2":
+                return AppCompatDelegate.MODE_NIGHT_YES;
+            default:
+                return AppCompatDelegate.MODE_NIGHT_AUTO;
+        }
+    }
+
     private void resetApiKey() {
         SharedPreferences sp = getSharedPreferences("api_key", MODE_PRIVATE);
         SharedPreferences.Editor ed = sp.edit();
@@ -410,12 +394,6 @@ public class User extends AppCompatActivity {
         final StringBuilder builder = new StringBuilder();
         final JSONObject jwebcache = new JSONObject();
 
-        final String[] class_settings = {"", "5a", "5b", "5c", "5d", "5e",
-                "6a", "6b", "6c", "6d", "6e",
-                "7a", "7b", "7c", "7d", "7e",
-                "8a", "8b", "8c", "8d", "8e",
-                "9a", "9b", "9c", "9d", "9e",
-                "10", "11", "12"};
         int counter;
         String last_date_title = "";
 
@@ -474,7 +452,7 @@ public class User extends AppCompatActivity {
                             if (affected_class.contains("inline_header")) {
                                 last_inline_header = tt_class.text();
                             }
-                            if (last_inline_header.contains(class_settings[Integer.parseInt(class_setting)])) {
+                            if (last_inline_header.contains(Constants.classSettings[Integer.parseInt(class_setting)])) {
                                 if (getTimetableSetting()) {
                                     Pattern p = Pattern.compile(">(\\d.+|\\d.?-.?\\d+)</td>\\n.+\">(.+)</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>");
                                     Matcher m = p.matcher(affected_class);
@@ -496,51 +474,14 @@ public class User extends AppCompatActivity {
 
                                         JSONObject timetable = new JSONObject(getTimetable());
 
-                                        switch (dayOfWeek) {
-                                            case Calendar.MONDAY:
-                                                JSONObject day1 = timetable.getJSONObject("day1");
-                                                if (ttFilter(day1, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
-
-                                            case Calendar.TUESDAY:
-                                                JSONObject day2 = timetable.getJSONObject("day2");
-                                                if (ttFilter(day2, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
-
-                                            case Calendar.WEDNESDAY:
-                                                JSONObject day3 = timetable.getJSONObject("day3");
-                                                if (ttFilter(day3, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
-
-                                            case Calendar.THURSDAY:
-                                                JSONObject day4 = timetable.getJSONObject("day4");
-                                                if (ttFilter(day4, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
-
-                                            case Calendar.FRIDAY:
-                                                JSONObject day5 = timetable.getJSONObject("day4");
-                                                if (ttFilter(day5, stunde, lehrer)) {
-                                                    builder.append(affected_class);
-                                                    jcache.append(affected_class);
-                                                    counter++;
-                                                }
-                                                break;
+                                        if (Calendar.MONDAY <= dayOfWeek && dayOfWeek <= Calendar.FRIDAY) {
+                                            // Use an offset of -1 to make Calendar.MONDAY to "day1".
+                                            JSONObject day = timetable.getJSONObject("day" + (dayOfWeek - 1));
+                                            if (ttFilter(day, stunde, lehrer)) {
+                                                builder.append(affected_class);
+                                                jcache.append(affected_class);
+                                                counter++;
+                                            }
                                         }
                                     }
                                 } else {
@@ -557,12 +498,12 @@ public class User extends AppCompatActivity {
                         if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
                         ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
                         progressBar_user.setVisibility(View.INVISIBLE);
-                        Toast.makeText(User.this, e.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UserActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                     } catch (ParseException | IOException e) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(UserActivity.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
                                 if (mSwipeRefreshLayout != null)
                                     mSwipeRefreshLayout.setRefreshing(false);
                                 ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
@@ -619,7 +560,7 @@ public class User extends AppCompatActivity {
             progressBar_user.setVisibility(View.INVISIBLE);
             user_textView_status.setVisibility(View.INVISIBLE);
             if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(User.this, String.format("%s!", getString(R.string.user_refresh_success)), Toast.LENGTH_SHORT).show();
+            Toast.makeText(UserActivity.this, String.format("%s!", getString(R.string.user_refresh_success)), Toast.LENGTH_SHORT).show();
 
         }
 

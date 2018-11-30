@@ -1,4 +1,4 @@
-package de.myplan.android;
+package de.myplan.android.ui;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -29,6 +29,8 @@ import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Objects;
+
+import de.myplan.android.R;
 
 public class UserTimetable extends AppCompatActivity {
 
