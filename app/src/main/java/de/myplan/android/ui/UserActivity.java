@@ -190,14 +190,21 @@ public class UserActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_logout:
-                Intent intent_login = new Intent(UserActivity.this, LoginActivity.class);
-                intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent_login);
-                resetLoggedIn();
-                resetApiKey();
-                finish();
+                new android.app.AlertDialog.Builder(this)
+                        .setTitle("Logout")
+                        .setMessage("Sicher das du dich abmelden willst?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Intent intent_login = new Intent(UserActivity.this, LoginActivity.class);
+                                intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent_login);
+                                resetLoggedIn();
+                                resetApiKey();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null).show();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
 
