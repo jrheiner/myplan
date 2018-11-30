@@ -30,11 +30,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 
-import de.myplan.android.MyplanService;
-import de.myplan.android.R;
-import de.myplan.android.util.Constants;
-import de.myplan.android.util.SingletonRequestQueue;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +47,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.myplan.android.MyplanService;
+import de.myplan.android.R;
+import de.myplan.android.util.Constants;
+import de.myplan.android.util.SingletonRequestQueue;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -244,8 +244,14 @@ public class UserActivity extends AppCompatActivity {
                         String cached_timetable = getWebCacheComplete();
                         final WebView webView_user = findViewById(R.id.webView_user);
                         TextView user_textView_status = findViewById(R.id.user_textView_status);
+                        cached_timetable = cached_timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
+                        if (getThemeColorCode().get(0).equals("#fff")) {
+                            cached_timetable = cached_timetable.replaceAll("BLACK", "WHITE");
+                        } else {
+                            cached_timetable = cached_timetable.replaceAll("WHITE", "BLACK");
+                        }
                         webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
-                        user_textView_status.setText(String.format("%s.\n%s.", getString(R.string.network_not_available), getString(R.string.timetable_not_up_to_date)));
+                        user_textView_status.setText(String.format("%s.", getString(R.string.network_not_available)));
                         user_textView_status.setVisibility(View.VISIBLE);
                         TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
                         user_textView_last_updated.setText(String.format("%s: %s", getString(R.string.user_last_updated), getLastUpdated()));
@@ -390,6 +396,22 @@ public class UserActivity extends AppCompatActivity {
         return false;
     }
 
+    private ArrayList<String> getThemeColorCode() {
+        ArrayList<String> colorCodes = new ArrayList<>();
+        int currentNightMode = getResources().getConfiguration().uiMode;
+        switch (currentNightMode) {
+            case 33:
+                colorCodes.add(0, "#fff");
+                colorCodes.add(1, "#303030");
+                break;
+            case 17:
+                colorCodes.add(0, "#303030");
+                colorCodes.add(1, "#fff");
+                break;
+        }
+        return colorCodes;
+    }
+
     private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
         final StringBuilder builder = new StringBuilder();
         final JSONObject jwebcache = new JSONObject();
@@ -414,13 +436,13 @@ public class UserActivity extends AppCompatActivity {
                         String h3color;
                         switch (currentNightMode) {
                             case 33:
-                                h3color = "white";
+                                h3color = "WHITE";
                                 break;
                             case 17:
-                                h3color = "black";
+                                h3color = "BLACK";
                                 break;
                             default:
-                                h3color = "black";
+                                h3color = "BLACK";
                                 break;
                         }
                         if (tt_title.contains("Seite")) {
@@ -509,10 +531,16 @@ public class UserActivity extends AppCompatActivity {
                                 ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
                                 progressBar_user.setVisibility(View.INVISIBLE);
                                 String cached_timetable = getWebCacheComplete();
+                                cached_timetable = cached_timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
+                                if (getThemeColorCode().get(0).equals("#fff")) {
+                                    cached_timetable = cached_timetable.replaceAll("rgb(0,0,0)", "rgb(255,255,255)");
+                                } else {
+                                    cached_timetable = cached_timetable.replaceAll("rgb(255,255,255)", "rgb(0,0,0)");
+                                }
                                 final WebView webView_user = findViewById(R.id.webView_user);
                                 TextView user_textView_status = findViewById(R.id.user_textView_status);
                                 webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
-                                user_textView_status.setText(String.format("%s.\n%s.", getString(R.string.network_not_available), getString(R.string.timetable_not_up_to_date)));
+                                user_textView_status.setText(String.format("%s", getString(R.string.network_not_available)));
                                 user_textView_status.setVisibility(View.VISIBLE);
                             }
                         });
@@ -542,23 +570,14 @@ public class UserActivity extends AppCompatActivity {
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\" width=\"9\">Raum</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Art</th>", "");
             timetable = timetable.replaceAll("<th class=\"list\" align=\"center\">Vertretungs-Text</th>", "");
-            int currentNightMode = getResources().getConfiguration().uiMode;
-            switch (currentNightMode) {
-                case 33:
-                    timetable_cache = timetable_cache.replaceAll("#fff", "#212121");
-                    timetable = timetable.replaceAll("#fff", "#212121");
-                    break;
-                case 17:
-                    timetable_cache = timetable_cache.replaceAll("#212121", "#fff");
-                    timetable = timetable.replaceAll("#212121", "#fff");
-                    break;
-            }
+            timetable_cache = timetable_cache.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
+            timetable = timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
             setWebCache(timetable_cache);
             setWebCacheComplete(timetable);
             webView_user.loadData(timetable, "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
-            user_textView_status.setVisibility(View.INVISIBLE);
+            user_textView_status.setVisibility(View.GONE);
             if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(UserActivity.this, String.format("%s!", getString(R.string.user_refresh_success)), Toast.LENGTH_SHORT).show();
 

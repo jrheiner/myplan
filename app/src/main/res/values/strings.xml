@@ -7,7 +7,6 @@
     <string name="login_user_hint">Anmeldedaten findest du <a href="https://kbs.itslearning.com/ContentArea/ContentArea.aspx?LocationType=1&amp;LocationID=43">hier</a></string>
     <string name="user_header">Meine Vertretungen</string>
     <string name="network_not_available">Netzwerkverbindung nicht verfügbar</string>
-    <string name="timetable_not_up_to_date">Plan nicht aktuell</string>
     <string name="user_logout">Logout</string>
     <string name="user_refresh">Aktualiseren</string>
     <string name="user_refresh_success">Aktualisierung erfolgreich</string>
