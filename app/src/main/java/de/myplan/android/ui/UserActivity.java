@@ -533,9 +533,9 @@ public class UserActivity extends AppCompatActivity {
                                 String cached_timetable = getWebCacheComplete();
                                 cached_timetable = cached_timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
                                 if (getThemeColorCode().get(0).equals("#fff")) {
-                                    cached_timetable = cached_timetable.replaceAll("rgb(0,0,0)", "rgb(255,255,255)");
+                                    cached_timetable = cached_timetable.replaceAll("BLACK", "WHITE");
                                 } else {
-                                    cached_timetable = cached_timetable.replaceAll("rgb(255,255,255)", "rgb(0,0,0)");
+                                    cached_timetable = cached_timetable.replaceAll("WHITE", "BLACK");
                                 }
                                 final WebView webView_user = findViewById(R.id.webView_user);
                                 TextView user_textView_status = findViewById(R.id.user_textView_status);
