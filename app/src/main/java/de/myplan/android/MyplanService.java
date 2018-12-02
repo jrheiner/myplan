@@ -22,7 +22,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import de.myplan.android.model.DsbTimetable;
 import de.myplan.android.ui.UserActivity;
 import de.myplan.android.util.Constants;
 import de.myplan.android.util.SingletonRequestQueue;
@@ -35,6 +38,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -153,6 +157,11 @@ public class MyplanService extends JobService {
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
+                            String object = response.getJSONObject(0).toString();
+                            Log.e("MyplanService", object);
+                            Gson gson = new GsonBuilder().setDateFormat("dd.MM.yyyy HH:mm").create();
+                            DsbTimetable currentTable = gson.fromJson(object, DsbTimetable.class);
+                            Log.e("MyPlanService", currentTable.date.toString());
                             String last_update = getLastUpdate();
                             JSONObject current_request = (JSONObject) response.get(0);
                             String timetabledate = current_request.getString("timetabledate");

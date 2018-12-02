@@ -44,7 +44,7 @@
 
         <activity
 
-            android:name=".ui.UserTimetable"
+            android:name=".ui.UserTimetableActivity"
             android:label="@string/title_activity_user_timetable"
             android:parentActivityName=".ui.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar">

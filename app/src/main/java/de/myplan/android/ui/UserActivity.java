@@ -185,7 +185,7 @@ public class UserActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_timetable:
-                Intent intent_timetable = new Intent(this, UserTimetable.class);
+                Intent intent_timetable = new Intent(this, UserTimetableActivity.class);
                 startActivity(intent_timetable);
                 return true;
 

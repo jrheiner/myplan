@@ -32,7 +32,7 @@ import java.util.Objects;
 
 import de.myplan.android.R;
 
-public class UserTimetable extends AppCompatActivity {
+public class UserTimetableActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
