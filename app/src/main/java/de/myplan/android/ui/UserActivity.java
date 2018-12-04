@@ -88,8 +88,7 @@ public class UserActivity extends AppCompatActivity {
             mDialog.show();
         }
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.cancel(1);
+        NotificationManagerCompat.from(this).cancel(1);
 
         final WebView webView_user = findViewById(R.id.webView_user);
         webView_user.setBackgroundColor(Color.TRANSPARENT);
@@ -102,6 +101,7 @@ public class UserActivity extends AppCompatActivity {
             AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
             this.recreate();
         }
+        NotificationManagerCompat.from(this).cancel(1);
         request_timetableurl(getApiKey());
     }
 
