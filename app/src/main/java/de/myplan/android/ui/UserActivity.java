@@ -80,6 +80,7 @@ public class UserActivity extends AppCompatActivity {
                     setClassSetting(listValues[i]);
                     dialogInterface.dismiss();
                     setFirstStart();
+                    invalidateOptionsMenu();
                     recreate();
                 }
             });
@@ -97,6 +98,7 @@ public class UserActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        invalidateOptionsMenu();
         if (getThemeSettingsAsNightMode() != AppCompatDelegate.getDefaultNightMode()) {
             AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
             this.recreate();
@@ -209,6 +211,12 @@ public class UserActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem action_timetable = menu.findItem(R.id.action_timetable);
+        action_timetable.setVisible(Integer.parseInt(getClassSetting()) > 25);
+        return true;
     }
 
     private void request_timetableurl(final String api_key) {
