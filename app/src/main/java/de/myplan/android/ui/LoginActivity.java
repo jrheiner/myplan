@@ -1,15 +1,12 @@
 package de.myplan.android.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +18,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.material.snackbar.Snackbar;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import de.myplan.android.R;
 import de.myplan.android.util.SingletonRequestQueue;
 
@@ -29,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText username;
     private EditText password;
-    private TextView login_hint;
     private Button button_login;
     private int attempt_counter = 5;
     private String message;
@@ -77,13 +77,24 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    public void hintOnClick(View v) {
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(LoginActivity.this);
+        mBuilder.setTitle(getString(R.string.login_user_hint))
+                .setMessage(getString(R.string.login_user_hint_popup))
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+    }
+
     private void login_auth() {
         username = findViewById(R.id.editText_user);
         password = findViewById(R.id.editText_password);
         button_login = findViewById(R.id.button_login);
         progressBar_login = findViewById(R.id.progressBar_login);
-        login_hint = findViewById(R.id.login_textView_hint);
-        login_hint.setMovementMethod(LinkMovementMethod.getInstance());
         button_login.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -152,7 +163,6 @@ public class LoginActivity extends AppCompatActivity {
                     snackbar.show();
 
                     password.setText("");
-                    login_hint.setVisibility(View.VISIBLE);
 
                 }
             }
