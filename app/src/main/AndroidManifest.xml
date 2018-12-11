@@ -28,12 +28,8 @@
         </activity>
         <activity
             android:name=".ui.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.UserActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.myplan.android.ui.UserActivity" />
-        </activity>
+            android:parentActivityName=".ui.UserActivity"
+            android:label="@string/title_activity_settings" />
 
         <service
             android:name=".MyplanService"
@@ -43,7 +39,6 @@
 
 
         <activity
-
             android:name=".ui.UserTimetable"
             android:label="@string/title_activity_user_timetable"
             android:parentActivityName=".ui.SettingsActivity"

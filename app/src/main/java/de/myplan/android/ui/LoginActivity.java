@@ -6,9 +6,9 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), String.format("%s!\n%s", getString(R.string.login_login_failed), message), Snackbar.LENGTH_INDEFINITE);
                     View snackView = snackbar.getView();
-                    int snackbarTextId = android.support.design.R.id.snackbar_text;
+                    int snackbarTextId = com.google.android.material.R.id.snackbar_text;
                     TextView textView = snackView.findViewById(snackbarTextId);
                     textView.setTextColor(Color.RED);
                     textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
@@ -161,7 +161,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_INDEFINITE);
                 View snackView = snackbar.getView();
-                int snackbarTextId = android.support.design.R.id.snackbar_text;
+                int snackbarTextId = com.google.android.material.R.id.snackbar_text;
                 TextView textView = snackView.findViewById(snackbarTextId);
                 textView.setTextColor(Color.RED);
                 textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
