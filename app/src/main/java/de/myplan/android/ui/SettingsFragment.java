@@ -50,7 +50,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             PrefCat.setVisible(true);
         } else {
             PrefCat.setVisible(false);
+            //disable filter when hiding it
+            disableTimetableFilter();
         }
+    }
+
+    private void disableTimetableFilter() {
+        SharedPreferences.Editor ed = android.preference.PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+        ed.putBoolean("general_timetable_pref", false);
+        ed.apply();
     }
 
     private String getClassSetting() {
