@@ -24,8 +24,6 @@
 
     <!-- Strings related to SettingsActivity -->
 
-    <!-- Example General settings -->
-
     <string name="pref_title_class">Klassenstufe</string>
     <string-array name="pref_general_list_titles">
         <item>Alle</item>
@@ -108,8 +106,6 @@
         <item>2</item>
     </string-array>
 
-    <!-- Example settings for Notifications -->
-
     <string name="pref_title_new_message_notifications">Benachrichtigungen</string>
 
     <string name="pref_notification_summary">Benachrichtigungen anzeigen</string>
@@ -117,8 +113,6 @@
     <string name="pref_title_vibrate">Vibration</string>
 
     <string name="pref_title_led">Licht</string>
-
-    <!-- Example settings for Data & Sync -->
 
     <string name="pref_title_sync_frequency">Intervall</string>
     <string-array name="pref_sync_frequency_titles">
@@ -148,7 +142,6 @@
     <string name="action_reset">Stundenplan zurücksetzen</string>
 
     <string name="teacher_shortform">Lehrerkürzel</string>
-
 
     <string-array name="tt_base_subjects">
         <item>Fach auswählen</item>
