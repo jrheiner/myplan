@@ -4,7 +4,8 @@
     <string name="login_user">Benutzername</string>
     <string name="login_password">Passwort</string>
     <string name="login_btn">Login</string>
-    <string name="login_user_hint">Anmeldedaten findest du <a href="https://kbs.itslearning.com/ContentArea/ContentArea.aspx?LocationType=1&amp;LocationID=43">hier</a></string>
+    <string name="login_user_hint">Was muss ich hier eingeben?</string>
+    <string name="login_user_hint_popup">Bei den Anmeldedaten handelt es sich um die gleichen wie für die DSBmobile App, alternativ findest du sie auf itslearning im Ordner \'Vertretungsplan E/S\'</string>
     <string name="user_header">Meine Vertretungen</string>
     <string name="network_not_available">Netzwerkverbindung nicht verfügbar</string>
     <string name="user_logout">Logout</string>
@@ -20,12 +21,10 @@
     <string name="login_login_disabled">Anmeldung temporär deaktiviert</string>
     <string name="login_login_success">Anmeldung erfolgreich</string>
     <string name="title_activity_settings">Einstellungen</string>
-    <string name="pref_general_category">Bildschirm</string>
 
     <!-- Strings related to SettingsActivity -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">Allgemein</string>
 
     <string name="pref_title_class">Klassenstufe</string>
     <string-array name="pref_general_list_titles">
@@ -110,7 +109,6 @@
     </string-array>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Benachrichtigungen</string>
 
     <string name="pref_title_new_message_notifications">Benachrichtigungen</string>
 
@@ -121,7 +119,6 @@
     <string name="pref_title_led">Licht</string>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Synchronisierung</string>
 
     <string name="pref_title_sync_frequency">Intervall</string>
     <string-array name="pref_sync_frequency_titles">
@@ -150,9 +147,6 @@
     <string name="tab_text_5">FR</string>
     <string name="action_reset">Stundenplan zurücksetzen</string>
 
-    <string name="teacher">Lehrer</string>
-    <string name="subject">Fach</string>
-    <string name="hour">Stunde</string>
     <string name="teacher_shortform">Lehrerkürzel</string>
 
 
