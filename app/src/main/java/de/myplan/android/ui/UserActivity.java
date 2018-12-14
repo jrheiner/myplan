@@ -79,12 +79,32 @@ public class UserActivity extends AppCompatActivity {
                     dialogInterface.dismiss();
                     setFirstStart();
                     invalidateOptionsMenu();
-                    recreate();
+                    if (Integer.parseInt(getClassSetting()) > 25) {
+                        new AlertDialog.Builder(UserActivity.this)
+                                .setTitle("Stundenplanfilter")
+                                .setMessage("Willst du deinen Stundenplan eingeben, damit du nur Vertretungen siehst, die deine Kurse betreffen?\nAlternativ bekommst du alle Vertretungen deiner Jahrgangsstufe angezeigt.")
+                                .setPositiveButton(getString(R.string.user_setup_timetable_yes), new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        Intent intent_timetable = new Intent(UserActivity.this, UserTimetable.class);
+                                        startActivity(intent_timetable);
+                                        setTimetableSetting(true);
+                                        recreate();
+                                    }
+                                })
+                                .setNegativeButton(getString(R.string.user_setup_timetable_no), new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        recreate();
+                                    }
+                                }).show();
+                    } else {
+                        recreate();
+                    }
                 }
             });
 
             AlertDialog mDialog = mBuilder.create();
             mDialog.show();
+
         }
 
         NotificationManagerCompat.from(this).cancel(1);
@@ -191,7 +211,7 @@ public class UserActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_logout:
-                new android.app.AlertDialog.Builder(this)
+                new AlertDialog.Builder(this)
                         .setTitle("Logout")
                         .setMessage("Sicher das du dich abmelden willst?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

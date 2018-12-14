@@ -6,6 +6,8 @@
     <string name="login_btn">Login</string>
     <string name="login_user_hint">Was muss ich hier eingeben?</string>
     <string name="login_user_hint_popup">Bei den Anmeldedaten handelt es sich um die gleichen wie für die DSBmobile App, alternativ findest du sie auf itslearning im Ordner \'Vertretungsplan E/S\'</string>
+    <string name="user_setup_timetable_yes">Ja</string>
+    <string name="user_setup_timetable_no">Nein, vielleicht später</string>
     <string name="user_header">Meine Vertretungen</string>
     <string name="network_not_available">Netzwerkverbindung nicht verfügbar</string>
     <string name="user_logout">Logout</string>
