@@ -5,7 +5,7 @@
     <!-- Timetable -->
     <item
         android:id="@+id/action_timetable"
-        android:icon="@drawable/ic_format_list_numbered_black_48dp"
+        android:icon="@drawable/ic_format_list_numbered_grey_48dp"
         android:title="@string/pref_title_timetable"
         app:showAsAction="ifRoom" />
 

@@ -185,10 +185,8 @@ public class UserActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_timetable:
-                //Intent intent_timetable = new Intent(this, UserTimetable.class);
-                //startActivity(intent_timetable);
                 setTimetableSetting(!getTimetableSetting());
-                //TODO change icon / notify user on change
+                invalidateOptionsMenu();
                 recreate();
                 return true;
 
@@ -217,6 +215,9 @@ public class UserActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem action_timetable = menu.findItem(R.id.action_timetable);
         action_timetable.setVisible(Integer.parseInt(getClassSetting()) > 25);
+        if (getTimetableSetting()) {
+            action_timetable.setIcon(R.drawable.ic_format_list_numbered_black_48dp);
+        }
         return true;
     }
 
