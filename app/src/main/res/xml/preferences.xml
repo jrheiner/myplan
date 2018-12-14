@@ -75,5 +75,14 @@
             android:title="@string/pref_title_sync_frequency" />
 
     </PreferenceCategory>
+    <PreferenceCategory android:title="">
+
+        <Preference
+            android:icon="@drawable/ic_info_outline_black_24dp"
+            android:key="general_app_info"
+            android:title="@string/pref_general_app_info">
+            <intent android:action="android.intent.action.APPINFO" />
+        </Preference>
+    </PreferenceCategory>
 
 </PreferenceScreen>
