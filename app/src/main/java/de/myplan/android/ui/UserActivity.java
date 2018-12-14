@@ -11,11 +11,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +43,11 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import de.myplan.android.MyplanService;
 import de.myplan.android.R;
 import de.myplan.android.util.Constants;
@@ -185,8 +185,11 @@ public class UserActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_timetable:
-                Intent intent_timetable = new Intent(this, UserTimetable.class);
-                startActivity(intent_timetable);
+                //Intent intent_timetable = new Intent(this, UserTimetable.class);
+                //startActivity(intent_timetable);
+                setTimetableSetting(!getTimetableSetting());
+                //TODO change icon / notify user on change
+                recreate();
                 return true;
 
             case R.id.action_logout:
@@ -364,6 +367,12 @@ public class UserActivity extends AppCompatActivity {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getBoolean("general_timetable_pref", false);
+    }
+
+    private void setTimetableSetting(Boolean b) {
+        SharedPreferences.Editor ed = android.preference.PreferenceManager.getDefaultSharedPreferences(this).edit();
+        ed.putBoolean("general_timetable_pref", b);
+        ed.apply();
     }
 
     private String getThemeSettings() {
