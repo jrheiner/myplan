@@ -85,7 +85,7 @@ public class UserActivity extends AppCompatActivity {
                                 .setMessage("Willst du deinen Stundenplan eingeben, damit du nur Vertretungen siehst, die deine Kurse betreffen?\nAlternativ bekommst du alle Vertretungen deiner Jahrgangsstufe angezeigt.")
                                 .setPositiveButton(getString(R.string.user_setup_timetable_yes), new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
-                                        Intent intent_timetable = new Intent(UserActivity.this, UserTimetable.class);
+                                        Intent intent_timetable = new Intent(UserActivity.this, UserTimetableSetup.class);
                                         startActivity(intent_timetable);
                                         setTimetableSetting(true);
                                         recreate();
@@ -205,9 +205,22 @@ public class UserActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_timetable:
-                setTimetableSetting(!getTimetableSetting());
-                invalidateOptionsMenu();
-                recreate();
+                if (getTimetableItems().length() < 3) {
+                    new AlertDialog.Builder(UserActivity.this)
+                            .setTitle("Kein Stundenplan gefunden")
+                            .setMessage("Du hast deinen Stundenplan nocht nicht abgespeichert. Jetzt einrichten?")
+                            .setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    Intent intent_timetable = new Intent(UserActivity.this, UserTimetableSetup.class);
+                                    startActivity(intent_timetable);
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null).show();
+                } else {
+                    setTimetableSetting(!getTimetableSetting());
+                    invalidateOptionsMenu();
+                    recreate();
+                }
                 return true;
 
             case R.id.action_logout:
@@ -399,6 +412,12 @@ public class UserActivity extends AppCompatActivity {
     private String getThemeSettings() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getString("general_theme", "0");
+    }
+
+    private String getTimetableItems() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPref.getString("timetable_items", "");
     }
 
     private int getThemeSettingsAsNightMode() {

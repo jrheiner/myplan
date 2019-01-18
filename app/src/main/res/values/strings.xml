@@ -23,6 +23,8 @@
     <string name="login_login_disabled">Anmeldung temporär deaktiviert</string>
     <string name="login_login_success">Anmeldung erfolgreich</string>
     <string name="title_activity_settings">Einstellungen</string>
+    <string name="save">speichern</string>
+
 
     <!-- Strings related to SettingsActivity -->
 
@@ -135,6 +137,8 @@
     </string-array>
 
     <string name="title_activity_user_timetable">UserTimetable</string>
+    <string name="title_activity_user_timetable_setup">UserTimetableSetup</string>
+    <string name="usertimetablesetup_header">Mein Stundenplan konfigurieren</string>
     <string name="usertimetable_header">Mein Stundenplan</string>
     <string name="tab_text_1">MO</string>
     <string name="tab_text_2">DI</string>
@@ -147,7 +151,6 @@
 
     <string-array name="tt_base_subjects">
         <item>Fach auswählen</item>
-        <item>Freistunde</item>
         <item>Biologie</item>
         <item>Chemie</item>
         <item>Darstellendes Spiel</item>
@@ -155,11 +158,11 @@
         <item>Englisch</item>
         <item>Erdkunde</item>
         <item>Ethik</item>
-        <item>ev. Religion</item>
+        <item>Ev. Religion</item>
         <item>Französisch</item>
         <item>Geschichte</item>
         <item>Informatik</item>
-        <item>kath. Religion</item>
+        <item>Kath. Religion</item>
         <item>Kunst</item>
         <item>Latein</item>
         <item>Mathe</item>

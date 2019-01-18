@@ -39,7 +39,7 @@
             android:key="general_timetable"
             android:summary="@string/pref_title_timetable_desc"
             android:title="@string/pref_title_timetable">
-            <intent android:action="android.intent.action.TIMETABLE" />
+            <intent android:action="android.intent.action.TIMETABLESETUP" />
         </Preference>
     </PreferenceCategory>
 
