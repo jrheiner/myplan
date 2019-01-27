@@ -31,7 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private Button button_login;
-    private int attempt_counter = 5;
     private String message;
     private boolean logged_in;
     private String api_key;
@@ -132,22 +131,9 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                     progressBar_login.setVisibility(View.INVISIBLE);
                     password.setText("");
-                    attempt_counter = 5;
                 } else {
-                    attempt_counter--;
-                    if (attempt_counter > 1) {
-                        message = String.format("%s %s!", attempt_counter, getString(R.string.login_attempts));
-                        button_login.setEnabled(true);
-                    } else if (attempt_counter == 1) {
-                        message = String.format("%s %s!", attempt_counter, getString(R.string.login_attempt));
-                        button_login.setEnabled(true);
-                    } else {
-                        button_login.setEnabled(false);
-                        message = getString(R.string.login_login_disabled);
-                    }
                     progressBar_login.setVisibility(View.INVISIBLE);
-
-                    final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), String.format("%s!\n%s", getString(R.string.login_login_failed), message), Snackbar.LENGTH_INDEFINITE);
+                    final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_login_failed), Snackbar.LENGTH_INDEFINITE);
                     View snackView = snackbar.getView();
                     int snackbarTextId = com.google.android.material.R.id.snackbar_text;
                     TextView textView = snackView.findViewById(snackbarTextId);
@@ -161,9 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                     snackbar.show();
-
                     password.setText("");
-
                 }
             }
         }, new Response.ErrorListener() {
