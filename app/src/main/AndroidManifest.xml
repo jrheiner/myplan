@@ -41,7 +41,6 @@
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-
         <activity
             android:name=".ui.UserTimetableActivity"
             android:label="@string/title_activity_user_timetable"
@@ -49,14 +48,23 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.TIMETABLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.myplan.android.ui.SettingsActivity" />
         </activity>
+        <activity
+            android:name=".ui.AppInfoActivity"
+            android:parentActivityName=".ui.SettingsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.APPINFO" />
 
-
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -11,11 +11,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +43,11 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import de.myplan.android.MyplanService;
 import de.myplan.android.R;
 import de.myplan.android.util.Constants;
@@ -230,8 +230,13 @@ public class UserActivity extends AppCompatActivity {
                             }
                             new JsoupAsyncTask().execute(timetableurls);
                             TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
-                            user_textView_last_updated.setText(String.format("%s: %s", getString(R.string.user_last_updated), last_updates.get(0)));
-                            setLastUpdated(last_updates.get(0));
+                            if (Integer.parseInt(getDateDifference(last_updates.get(0))) < 2) {
+                                user_textView_last_updated.setText(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
+                                setLastUpdated(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
+                            } else {
+                                user_textView_last_updated.setText(String.format("%s: %s (Vor ca. %s Stunden)", getString(R.string.user_last_updated), last_updates.get(0), getDateDifference(last_updates.get(0))));
+                                setLastUpdated(String.format("%s: %s (Vor %s Stunden)", getString(R.string.user_last_updated), last_updates.get(0), getDateDifference(last_updates.get(0))));
+                            }
 
 
                         } catch (JSONException e) {
@@ -259,7 +264,7 @@ public class UserActivity extends AppCompatActivity {
                         user_textView_status.setText(String.format("%s.", getString(R.string.network_not_available)));
                         user_textView_status.setVisibility(View.VISIBLE);
                         TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
-                        user_textView_last_updated.setText(String.format("%s: %s", getString(R.string.user_last_updated), getLastUpdated()));
+                        user_textView_last_updated.setText(getLastUpdated());
 
 
                     }
@@ -399,6 +404,24 @@ public class UserActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    private String getDateDifference(String date_1) {
+        long diff_ms;
+        String diff_h;
+
+        Date date_obj_1 = null;
+        try {
+            date_obj_1 = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault()).parse(date_1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Date date_obj_2 = Calendar.getInstance().getTime();
+
+        diff_ms = date_obj_2.getTime() - date_obj_1.getTime();
+        diff_h = Long.toString(diff_ms / (60000 * 60));
+
+        return diff_h;
     }
 
     private ArrayList<String> getThemeColorCode() {
