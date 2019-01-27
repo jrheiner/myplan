@@ -30,6 +30,8 @@ import com.google.gson.GsonBuilder;
 import de.myplan.android.model.DsbTimetable;
 import de.myplan.android.ui.UserActivity;
 import de.myplan.android.util.Constants;
+import de.myplan.android.util.GsonRequest;
+import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
 
 import org.json.JSONArray;
@@ -148,39 +150,25 @@ public class MyplanService extends JobService {
         final ArrayList<String> timetableurls = new ArrayList<>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
-                (Request.Method.GET, url, null, (response) -> {
-                    try {
-                        String object = response.getJSONObject(0).toString();
-                        Log.e("MyplanService", object);
-                        Gson gson = new GsonBuilder().setDateFormat("dd.MM.yyyy HH:mm").create();
-                        DsbTimetable currentTable = gson.fromJson(object, DsbTimetable.class);
-                        Log.e("MyPlanService", currentTable.date.toString());
-                        String last_update = getLastUpdate();
-                        JSONObject current_request = (JSONObject) response.get(0);
-                        String timetabledate = current_request.getString("timetabledate");
-                        if (last_update.equals(timetabledate)) {
-                            return;
-                        } else {
-                            setLastUpdate(timetabledate);
-                        }
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject json_node = (JSONObject) response.get(i);
-
-                            String timetableurl = json_node.getString("timetableurl");
-                            timetableurls.add(timetableurl);
-                        }
-                        new MyplanService.JsoupAsyncTask().execute(timetableurls);
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+        GsonRequest<DsbTimetable[]> request = new GsonRequest<>(url,
+                new GsonBuilder().setDateFormat("dd.MM.yyyy HH:mm").create(),
+                DsbTimetable[].class,
+                response -> {
+                    if (new Preferences(this).getLastUpdate().equals(response[0].date)) {
+                        return;
+                    } else {
+                        new Preferences(this).setLastUpdate(response[0].date);
                     }
-                }, error -> {
+                    for (DsbTimetable timetable : response) {
+                        timetableurls.add(timetable.url);
+                    }
+                    new MyplanService.JsoupAsyncTask().execute(timetableurls);
+                },
+                error -> {
                     // TODO Show a message if this error occurs when running in foreground
                 });
 
-        SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        SingletonRequestQueue.getInstance(this).addToRequestQueue(request);
     }
 
     private String getApiKey() {
@@ -245,18 +233,6 @@ public class MyplanService extends JobService {
     private String getTimetable() {
         SharedPreferences sp = getSharedPreferences("timetable", MODE_PRIVATE);
         return sp.getString("timetable", "{\"day1\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day2\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day3\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day4\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day5\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"}}");
-    }
-
-    private String getLastUpdate() {
-        SharedPreferences sp = this.getSharedPreferences("last_update", MODE_PRIVATE);
-        return sp.getString("last_update", "");
-    }
-
-    private void setLastUpdate(String s) {
-        SharedPreferences sp = getSharedPreferences("last_update", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("last_update", s);
-        ed.apply();
     }
 
     private boolean cacheIsEqual(JSONObject new_table, JSONObject old_table) {
