@@ -72,14 +72,11 @@ public class UserActivity extends AppCompatActivity {
         if (firstStart) {
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(UserActivity.this);
             mBuilder.setTitle(getString(R.string.user_introduction_title));
-            mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    setClassSetting(listValues[i]);
-                    dialogInterface.dismiss();
-                    setFirstStart();
-                    recreate();
-                }
+            mBuilder.setSingleChoiceItems(listItems, -1, (dialogInterface, i) -> {
+                setClassSetting(listValues[i]);
+                dialogInterface.dismiss();
+                setFirstStart();
+                recreate();
             });
 
             AlertDialog mDialog = mBuilder.create();
@@ -134,26 +131,18 @@ public class UserActivity extends AppCompatActivity {
         this.setTitle(String.format("%s", getString(R.string.user_header)));
         mSwipeRefreshLayout = findViewById(R.id.user_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        request_timetableurl(getApiKey());
-                    }
-                }
+                () -> request_timetableurl(getApiKey())
         );
 
 
         final WebView webView_user = findViewById(R.id.webView_user);
         mSwipeRefreshLayout = findViewById(R.id.user_swipe_refresh_layout);
-        mSwipeRefreshLayout.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                if (webView_user.getScrollY() == 0)
-                    mSwipeRefreshLayout.setEnabled(true);
-                else
-                    mSwipeRefreshLayout.setEnabled(false);
+        mSwipeRefreshLayout.getViewTreeObserver().addOnScrollChangedListener(() -> {
+            if (webView_user.getScrollY() == 0)
+                mSwipeRefreshLayout.setEnabled(true);
+            else
+                mSwipeRefreshLayout.setEnabled(false);
 
-            }
         });
     }
 
@@ -215,59 +204,49 @@ public class UserActivity extends AppCompatActivity {
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+                (Request.Method.GET, url, null, response -> {
+                    try {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject json_node = (JSONObject) response.get(i);
 
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject json_node = (JSONObject) response.get(i);
-
-                                String timetableurl = json_node.getString("timetableurl");
-                                String last_update = json_node.getString("timetabledate");
-                                timetableurls.add(timetableurl);
-                                last_updates.add(last_update);
-                            }
-                            new JsoupAsyncTask().execute(timetableurls);
-                            TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
-                            if (Integer.parseInt(getDateDifference(last_updates.get(0))) < 2) {
-                                user_textView_last_updated.setText(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
-                                setLastUpdated(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
-                            } else {
-                                user_textView_last_updated.setText(String.format("%s: %s (Vor ca. %s Stunden)", getString(R.string.user_last_updated), last_updates.get(0), getDateDifference(last_updates.get(0))));
-                                setLastUpdated(String.format("%s: %s (Vor %s Stunden)", getString(R.string.user_last_updated), last_updates.get(0), getDateDifference(last_updates.get(0))));
-                            }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            String timetableurl = json_node.getString("timetableurl");
+                            String last_update = json_node.getString("timetabledate");
+                            timetableurls.add(timetableurl);
+                            last_updates.add(last_update);
                         }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(UserActivity.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
-                        if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
-                        ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
-                        progressBar_user.setVisibility(View.INVISIBLE);
-                        String cached_timetable = getWebCacheComplete();
-                        final WebView webView_user = findViewById(R.id.webView_user);
-                        TextView user_textView_status = findViewById(R.id.user_textView_status);
-                        cached_timetable = cached_timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
-                        if (getThemeColorCode().get(0).equals("#fff")) {
-                            cached_timetable = cached_timetable.replaceAll("BLACK", "WHITE");
-                        } else {
-                            cached_timetable = cached_timetable.replaceAll("WHITE", "BLACK");
-                        }
-                        webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
-                        user_textView_status.setText(String.format("%s.", getString(R.string.network_not_available)));
-                        user_textView_status.setVisibility(View.VISIBLE);
+                        new JsoupAsyncTask().execute(timetableurls);
                         TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
-                        user_textView_last_updated.setText(getLastUpdated());
+                        if (Integer.parseInt(getDateDifference(last_updates.get(0))) < 2) {
+                            user_textView_last_updated.setText(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
+                            setLastUpdated(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
+                        } else {
+                            user_textView_last_updated.setText(String.format("%s: %s (Vor ca. %s Stunden)", getString(R.string.user_last_updated), last_updates.get(0), getDateDifference(last_updates.get(0))));
+                            setLastUpdated(String.format("%s: %s (Vor %s Stunden)", getString(R.string.user_last_updated), last_updates.get(0), getDateDifference(last_updates.get(0))));
+                        }
 
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                }, error -> {
+                    Toast.makeText(UserActivity.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
+                    if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
+                    ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+                    progressBar_user.setVisibility(View.INVISIBLE);
+                    String cached_timetable = getWebCacheComplete();
+                    final WebView webView_user = findViewById(R.id.webView_user);
+                    TextView user_textView_status = findViewById(R.id.user_textView_status);
+                    cached_timetable = cached_timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
+                    if (getThemeColorCode().get(0).equals("#fff")) {
+                        cached_timetable = cached_timetable.replaceAll("BLACK", "WHITE");
+                    } else {
+                        cached_timetable = cached_timetable.replaceAll("WHITE", "BLACK");
+                    }
+                    webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
+                    user_textView_status.setText(String.format("%s.", getString(R.string.network_not_available)));
+                    user_textView_status.setVisibility(View.VISIBLE);
+                    TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
+                    user_textView_last_updated.setText(getLastUpdated());
                 });
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);

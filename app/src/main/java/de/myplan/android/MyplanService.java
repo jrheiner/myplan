@@ -14,8 +14,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -54,19 +56,14 @@ import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 public class MyplanService extends JobService {
 
-    private final Handler mJobHandler = new Handler(new Handler.Callback() {
+    private final Handler mJobHandler = new Handler(msg -> {
 
-        @Override
-        public boolean handleMessage(Message msg) {
-
-            if (getNotificationSetting() && getLoggedIn()) {
-                request_timetableurl();
-            }
-
-            jobFinished((JobParameters) msg.obj, false);
-            return true;
+        if (getNotificationSetting() && getLoggedIn()) {
+            request_timetableurl();
         }
 
+        jobFinished((JobParameters) msg.obj, false);
+        return true;
     });
 
     @Override
@@ -152,42 +149,35 @@ public class MyplanService extends JobService {
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            String object = response.getJSONObject(0).toString();
-                            Log.e("MyplanService", object);
-                            Gson gson = new GsonBuilder().setDateFormat("dd.MM.yyyy HH:mm").create();
-                            DsbTimetable currentTable = gson.fromJson(object, DsbTimetable.class);
-                            Log.e("MyPlanService", currentTable.date.toString());
-                            String last_update = getLastUpdate();
-                            JSONObject current_request = (JSONObject) response.get(0);
-                            String timetabledate = current_request.getString("timetabledate");
-                            if (last_update.equals(timetabledate)) {
-                                return;
-                            } else {
-                                setLastUpdate(timetabledate);
-                            }
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject json_node = (JSONObject) response.get(i);
-
-                                String timetableurl = json_node.getString("timetableurl");
-                                timetableurls.add(timetableurl);
-                            }
-                            new MyplanService.JsoupAsyncTask().execute(timetableurls);
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                (Request.Method.GET, url, null, (response) -> {
+                    try {
+                        String object = response.getJSONObject(0).toString();
+                        Log.e("MyplanService", object);
+                        Gson gson = new GsonBuilder().setDateFormat("dd.MM.yyyy HH:mm").create();
+                        DsbTimetable currentTable = gson.fromJson(object, DsbTimetable.class);
+                        Log.e("MyPlanService", currentTable.date.toString());
+                        String last_update = getLastUpdate();
+                        JSONObject current_request = (JSONObject) response.get(0);
+                        String timetabledate = current_request.getString("timetabledate");
+                        if (last_update.equals(timetabledate)) {
+                            return;
+                        } else {
+                            setLastUpdate(timetabledate);
                         }
-                    }
-                }, new Response.ErrorListener() {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject json_node = (JSONObject) response.get(i);
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                            String timetableurl = json_node.getString("timetableurl");
+                            timetableurls.add(timetableurl);
+                        }
+                        new MyplanService.JsoupAsyncTask().execute(timetableurls);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                }, error -> {
+                    // TODO Show a message if this error occurs when running in foreground
                 });
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);

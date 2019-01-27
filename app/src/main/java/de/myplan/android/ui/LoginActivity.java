@@ -95,18 +95,15 @@ public class LoginActivity extends AppCompatActivity {
         button_login = findViewById(R.id.button_login);
         progressBar_login = findViewById(R.id.progressBar_login);
         button_login.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        button_login.setEnabled(false);
-                        if (username.getText().length() == 0 || password.getText().length() == 0) {
-                            button_login.setEnabled(true);
-                            return;
-                        }
-                        progressBar_login.setVisibility(View.VISIBLE);
-                        request_api_key();
-
+                view -> {
+                    button_login.setEnabled(false);
+                    if (username.getText().length() == 0 || password.getText().length() == 0) {
+                        button_login.setEnabled(true);
+                        return;
                     }
+                    progressBar_login.setVisibility(View.VISIBLE);
+                    request_api_key();
+
                 }
         );
     }
@@ -116,44 +113,22 @@ public class LoginActivity extends AppCompatActivity {
         progressBar_login = findViewById(R.id.progressBar_login);
         String base_url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/";
         String auth_url = "authid/";
-        mStringRequest = new StringRequest(Request.Method.GET, base_url + auth_url + username.getText() + "/" + password.getText(), new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                api_key = response.replaceAll("\"", "");
-                logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
-                if (logged_in) {
-                    Toast.makeText(LoginActivity.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
-                    setLoggedIn();
-                    setApiKey(api_key);
-                    Intent intent = new Intent(LoginActivity.this, UserActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
-                    progressBar_login.setVisibility(View.INVISIBLE);
-                    password.setText("");
-                } else {
-                    progressBar_login.setVisibility(View.INVISIBLE);
-                    final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_login_failed), Snackbar.LENGTH_INDEFINITE);
-                    View snackView = snackbar.getView();
-                    int snackbarTextId = com.google.android.material.R.id.snackbar_text;
-                    TextView textView = snackView.findViewById(snackbarTextId);
-                    textView.setTextColor(Color.RED);
-                    textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
-                    snackbar.setActionTextColor(Color.RED);
-                    snackbar.setAction("OK", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            snackbar.dismiss();
-                        }
-                    });
-                    snackbar.show();
-                    password.setText("");
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_INDEFINITE);
+        mStringRequest = new StringRequest(Request.Method.GET, base_url + auth_url + username.getText() + "/" + password.getText(), response -> {
+            api_key = response.replaceAll("\"", "");
+            logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
+            if (logged_in) {
+                Toast.makeText(LoginActivity.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
+                setLoggedIn();
+                setApiKey(api_key);
+                Intent intent = new Intent(LoginActivity.this, UserActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                progressBar_login.setVisibility(View.INVISIBLE);
+                password.setText("");
+            } else {
+                progressBar_login.setVisibility(View.INVISIBLE);
+                final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_login_failed), Snackbar.LENGTH_INDEFINITE);
                 View snackView = snackbar.getView();
                 int snackbarTextId = com.google.android.material.R.id.snackbar_text;
                 TextView textView = snackView.findViewById(snackbarTextId);
@@ -167,9 +142,25 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
                 snackbar.show();
-                progressBar_login.setVisibility(View.INVISIBLE);
-                button_login.setEnabled(true);
+                password.setText("");
             }
+        }, error -> {
+            final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_INDEFINITE);
+            View snackView = snackbar.getView();
+            int snackbarTextId = com.google.android.material.R.id.snackbar_text;
+            TextView textView = snackView.findViewById(snackbarTextId);
+            textView.setTextColor(Color.RED);
+            textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+            snackbar.setActionTextColor(Color.RED);
+            snackbar.setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snackbar.dismiss();
+                }
+            });
+            snackbar.show();
+            progressBar_login.setVisibility(View.INVISIBLE);
+            button_login.setEnabled(true);
         });
         SingletonRequestQueue.getInstance(this).addToRequestQueue(mStringRequest);
     }
