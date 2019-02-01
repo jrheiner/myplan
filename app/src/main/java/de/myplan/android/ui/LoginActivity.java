@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,8 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -24,6 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import de.myplan.android.R;
+import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
 
 public class LoginActivity extends AppCompatActivity {
@@ -40,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
+            AppCompatDelegate.setDefaultNightMode(new Preferences(this).getTheme());
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -135,12 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                 textView.setTextColor(Color.RED);
                 textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
                 snackbar.setActionTextColor(Color.RED);
-                snackbar.setAction("OK", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        snackbar.dismiss();
-                    }
-                });
+                snackbar.setAction("OK", v -> snackbar.dismiss());
                 snackbar.show();
                 password.setText("");
             }
@@ -152,12 +145,7 @@ public class LoginActivity extends AppCompatActivity {
             textView.setTextColor(Color.RED);
             textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
             snackbar.setActionTextColor(Color.RED);
-            snackbar.setAction("OK", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    snackbar.dismiss();
-                }
-            });
+            snackbar.setAction("OK", v -> snackbar.dismiss());
             snackbar.show();
             progressBar_login.setVisibility(View.INVISIBLE);
             button_login.setEnabled(true);
@@ -184,23 +172,4 @@ public class LoginActivity extends AppCompatActivity {
         return !sp.getBoolean("logged_in", false);
     }
 
-    private String getThemeSettings() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_theme", "0");
-    }
-
-    private int getThemeSettingsAsNightMode() {
-        switch (getThemeSettings()) {
-            case "-1":
-                return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-            case "0":
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
-            case "1":
-                return AppCompatDelegate.MODE_NIGHT_NO;
-            case "2":
-                return AppCompatDelegate.MODE_NIGHT_YES;
-            default:
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
-        }
-    }
 }

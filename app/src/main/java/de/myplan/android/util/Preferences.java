@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.Date;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
 public final class Preferences {
@@ -26,6 +27,21 @@ public final class Preferences {
 
     public void setLastUpdate(Date date) {
         sp.edit().putLong("last_update", date.getTime()).apply();
+    }
+
+    public int getTheme() {
+        switch (sp.getString("general_theme", "0")) {
+            case "-1":
+                return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+            case "0":
+                return AppCompatDelegate.MODE_NIGHT_AUTO;
+            case "1":
+                return AppCompatDelegate.MODE_NIGHT_NO;
+            case "2":
+                return AppCompatDelegate.MODE_NIGHT_YES;
+            default:
+                return AppCompatDelegate.MODE_NIGHT_AUTO;
+        }
     }
 
 }

@@ -1,8 +1,6 @@
 package de.myplan.android.ui;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
@@ -10,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import de.myplan.android.BuildConfig;
 import de.myplan.android.R;
+import de.myplan.android.util.Preferences;
 
 public class AppInfoActivity extends AppCompatActivity {
 
@@ -17,7 +16,7 @@ public class AppInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         if (savedInstanceState == null) {
-            AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
+            AppCompatDelegate.setDefaultNightMode(new Preferences(this).getTheme());
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_info);
@@ -28,23 +27,4 @@ public class AppInfoActivity extends AppCompatActivity {
         app_info_github.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    private String getThemeSettings() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_theme", "0");
-    }
-
-    private int getThemeSettingsAsNightMode() {
-        switch (getThemeSettings()) {
-            case "-1":
-                return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-            case "0":
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
-            case "1":
-                return AppCompatDelegate.MODE_NIGHT_NO;
-            case "2":
-                return AppCompatDelegate.MODE_NIGHT_YES;
-            default:
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
-        }
-    }
 }

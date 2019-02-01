@@ -14,27 +14,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
 import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import de.myplan.android.model.DsbTimetable;
-import de.myplan.android.ui.UserActivity;
-import de.myplan.android.util.Constants;
-import de.myplan.android.util.GsonRequest;
-import de.myplan.android.util.Preferences;
-import de.myplan.android.util.SingletonRequestQueue;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -42,7 +25,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +34,15 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import de.myplan.android.model.DsbTimetable;
+import de.myplan.android.ui.UserActivity;
+import de.myplan.android.util.Constants;
+import de.myplan.android.util.GsonRequest;
+import de.myplan.android.util.Preferences;
+import de.myplan.android.util.SingletonRequestQueue;
 
 import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
 

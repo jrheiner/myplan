@@ -14,18 +14,14 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -51,6 +47,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import de.myplan.android.MyplanService;
 import de.myplan.android.R;
 import de.myplan.android.util.Constants;
+import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
 
 public class UserActivity extends AppCompatActivity {
@@ -60,7 +57,7 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
+            AppCompatDelegate.setDefaultNightMode(new Preferences(this).getTheme());
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
@@ -92,8 +89,8 @@ public class UserActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (getThemeSettingsAsNightMode() != AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
+        if (new Preferences(this).getTheme() != AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.setDefaultNightMode(new Preferences(this).getTheme());
             this.recreate();
         }
         NotificationManagerCompat.from(this).cancel(1);
@@ -340,26 +337,6 @@ public class UserActivity extends AppCompatActivity {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getBoolean("general_timetable_pref", false);
-    }
-
-    private String getThemeSettings() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_theme", "0");
-    }
-
-    private int getThemeSettingsAsNightMode() {
-        switch (getThemeSettings()) {
-            case "-1":
-                return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-            case "0":
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
-            case "1":
-                return AppCompatDelegate.MODE_NIGHT_NO;
-            case "2":
-                return AppCompatDelegate.MODE_NIGHT_YES;
-            default:
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
-        }
     }
 
     private void resetApiKey() {
