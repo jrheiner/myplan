@@ -1,7 +1,6 @@
 package de.myplan.android.ui;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -25,6 +24,7 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -208,7 +208,7 @@ public class UserTimetableActivity extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             final View rootView = inflater.inflate(R.layout.fragment_user_timetable, container, false);
             //TextView textView = rootView.findViewById(R.id.section_label);
@@ -493,6 +493,7 @@ public class UserTimetableActivity extends AppCompatActivity {
         }
 
         @Override
+        @NonNull
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).

@@ -1,6 +1,5 @@
 package de.myplan.android.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -29,7 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private Button button_login;
-    private String message;
     private boolean logged_in;
     private String api_key;
     private ProgressBar progressBar_login;
