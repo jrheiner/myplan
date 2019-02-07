@@ -177,15 +177,13 @@ public class UserActivity extends AppCompatActivity {
                 new android.app.AlertDialog.Builder(this)
                         .setTitle("Logout")
                         .setMessage("Sicher das du dich abmelden willst?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                Intent intent_login = new Intent(UserActivity.this, LoginActivity.class);
-                                intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent_login);
-                                resetLoggedIn();
-                                resetApiKey();
-                                finish();
-                            }
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            Intent intent_login = new Intent(UserActivity.this, LoginActivity.class);
+                            intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent_login);
+                            resetLoggedIn();
+                            resetApiKey();
+                            finish();
                         })
                         .setNegativeButton(android.R.string.no, null).show();
                 return true;
@@ -506,27 +504,24 @@ public class UserActivity extends AppCompatActivity {
                         progressBar_user.setVisibility(View.INVISIBLE);
                         Toast.makeText(UserActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                     } catch (ParseException | IOException e) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(UserActivity.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
-                                if (mSwipeRefreshLayout != null)
-                                    mSwipeRefreshLayout.setRefreshing(false);
-                                ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
-                                progressBar_user.setVisibility(View.INVISIBLE);
-                                String cached_timetable = getWebCacheComplete();
-                                cached_timetable = cached_timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
-                                if (getThemeColorCode().get(0).equals("#fff")) {
-                                    cached_timetable = cached_timetable.replaceAll("BLACK", "WHITE");
-                                } else {
-                                    cached_timetable = cached_timetable.replaceAll("WHITE", "BLACK");
-                                }
-                                final WebView webView_user = findViewById(R.id.webView_user);
-                                TextView user_textView_status = findViewById(R.id.user_textView_status);
-                                webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
-                                user_textView_status.setText(String.format("%s", getString(R.string.network_not_available)));
-                                user_textView_status.setVisibility(View.VISIBLE);
+                        runOnUiThread(() -> {
+                            Toast.makeText(UserActivity.this, String.format("%s!", getString(R.string.user_refresh_failed)), Toast.LENGTH_SHORT).show();
+                            if (mSwipeRefreshLayout != null)
+                                mSwipeRefreshLayout.setRefreshing(false);
+                            ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
+                            progressBar_user.setVisibility(View.INVISIBLE);
+                            String cached_timetable = getWebCacheComplete();
+                            cached_timetable = cached_timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
+                            if (getThemeColorCode().get(0).equals("#fff")) {
+                                cached_timetable = cached_timetable.replaceAll("BLACK", "WHITE");
+                            } else {
+                                cached_timetable = cached_timetable.replaceAll("WHITE", "BLACK");
                             }
+                            final WebView webView_user = findViewById(R.id.webView_user);
+                            TextView user_textView_status = findViewById(R.id.user_textView_status);
+                            webView_user.loadData(cached_timetable, "text/html; charset=utf-8", "UTF-8");
+                            user_textView_status.setText(String.format("%s", getString(R.string.network_not_available)));
+                            user_textView_status.setVisibility(View.VISIBLE);
                         });
                     }
                     if (counter == 0) {

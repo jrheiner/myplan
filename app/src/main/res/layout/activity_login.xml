@@ -32,9 +32,11 @@
         android:ems="10"
         android:hint="@string/login_user"
         android:inputType="number"
+        android:importantForAutofill="no"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_login_header" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_login_header"
+        tools:ignore="UnusedAttribute" />
 
     <EditText
         android:id="@+id/editText_password"
@@ -46,9 +48,11 @@
         android:ems="10"
         android:hint="@string/login_password"
         android:inputType="textPassword"
+        android:importantForAutofill="no"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_user" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_user"
+        tools:ignore="UnusedAttribute" />
 
     <Button
         android:id="@+id/button_login"

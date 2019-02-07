@@ -78,11 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(LoginActivity.this);
         mBuilder.setTitle(getString(R.string.login_user_hint))
                 .setMessage(getString(R.string.login_user_hint_popup))
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
+                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss());
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
     }

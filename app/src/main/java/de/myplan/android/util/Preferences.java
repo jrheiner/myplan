@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.Date;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
@@ -12,7 +13,7 @@ public final class Preferences {
 
     private final SharedPreferences sp;
 
-    public Preferences(Context context) {
+    public Preferences(@NonNull Context context) {
         sp = PreferenceManager.getDefaultSharedPreferences(context);
     }
 

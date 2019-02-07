@@ -121,12 +121,10 @@ public class UserTimetableActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this)
                         .setTitle("Stundenplan zurücksetzen")
                         .setMessage("Dein gesamter Stundenplan wird gelöscht!")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                resetTimetable();
-                                finish();
-                                startActivity(getIntent());
-                            }
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            resetTimetable();
+                            finish();
+                            startActivity(getIntent());
                         })
                         .setNegativeButton(android.R.string.no, null).show();
                 return true;
@@ -392,37 +390,35 @@ public class UserTimetableActivity extends AppCompatActivity {
         }
 
         void saveInput() {
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
-                            case 1:
-                                packInput(jday1);
-                                break;
-                            case 2:
-                                packInput(jday2);
-                                break;
-                            case 3:
-                                packInput(jday3);
-                                break;
-                            case 4:
-                                packInput(jday4);
-                                break;
-                            case 5:
-                                packInput(jday5);
-                                break;
-                        }
-                        jtimetable.put("day1", jday1);
-                        jtimetable.put("day2", jday2);
-                        jtimetable.put("day3", jday3);
-                        jtimetable.put("day4", jday4);
-                        jtimetable.put("day5", jday5);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+            new Thread(() -> {
+                try {
+                    switch (getArguments().getInt(ARG_SECTION_NUMBER)) {
+                        case 1:
+                            packInput(jday1);
+                            break;
+                        case 2:
+                            packInput(jday2);
+                            break;
+                        case 3:
+                            packInput(jday3);
+                            break;
+                        case 4:
+                            packInput(jday4);
+                            break;
+                        case 5:
+                            packInput(jday5);
+                            break;
                     }
-                    setTimetable(jtimetable.toString());
+                    jtimetable.put("day1", jday1);
+                    jtimetable.put("day2", jday2);
+                    jtimetable.put("day3", jday3);
+                    jtimetable.put("day4", jday4);
+                    jtimetable.put("day5", jday5);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                setTimetable(jtimetable.toString());
             }).start();
         }
 
