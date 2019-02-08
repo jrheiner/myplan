@@ -1,12 +1,10 @@
 package de.myplan.android.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,8 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -24,6 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import de.myplan.android.R;
+import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
 
 public class LoginActivity extends AppCompatActivity {
@@ -31,8 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText username;
     private EditText password;
     private Button button_login;
-    private int attempt_counter = 5;
-    private String message;
     private boolean logged_in;
     private String api_key;
     private ProgressBar progressBar_login;
@@ -41,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            AppCompatDelegate.setDefaultNightMode(getThemeSettingsAsNightMode());
+            AppCompatDelegate.setDefaultNightMode(new Preferences(this).getTheme());
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -81,11 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         AlertDialog.Builder mBuilder = new AlertDialog.Builder(LoginActivity.this);
         mBuilder.setTitle(getString(R.string.login_user_hint))
                 .setMessage(getString(R.string.login_user_hint_popup))
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
+                .setPositiveButton("OK", (dialog, id) -> dialog.dismiss());
         AlertDialog mDialog = mBuilder.create();
         mDialog.show();
     }
@@ -96,18 +87,15 @@ public class LoginActivity extends AppCompatActivity {
         button_login = findViewById(R.id.button_login);
         progressBar_login = findViewById(R.id.progressBar_login);
         button_login.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        button_login.setEnabled(false);
-                        if (username.getText().length() == 0 || password.getText().length() == 0) {
-                            button_login.setEnabled(true);
-                            return;
-                        }
-                        progressBar_login.setVisibility(View.VISIBLE);
-                        request_api_key();
-
+                view -> {
+                    button_login.setEnabled(false);
+                    if (username.getText().length() == 0 || password.getText().length() == 0) {
+                        button_login.setEnabled(true);
+                        return;
                     }
+                    progressBar_login.setVisibility(View.VISIBLE);
+                    request_api_key();
+
                 }
         );
     }
@@ -117,75 +105,44 @@ public class LoginActivity extends AppCompatActivity {
         progressBar_login = findViewById(R.id.progressBar_login);
         String base_url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/";
         String auth_url = "authid/";
-        mStringRequest = new StringRequest(Request.Method.GET, base_url + auth_url + username.getText() + "/" + password.getText(), new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                api_key = response.replaceAll("\"", "");
-                logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
-                if (logged_in) {
-                    Toast.makeText(LoginActivity.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
-                    setLoggedIn();
-                    setApiKey(api_key);
-                    Intent intent = new Intent(LoginActivity.this, UserActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
-                    progressBar_login.setVisibility(View.INVISIBLE);
-                    password.setText("");
-                    attempt_counter = 5;
-                } else {
-                    attempt_counter--;
-                    if (attempt_counter > 1) {
-                        message = String.format("%s %s!", attempt_counter, getString(R.string.login_attempts));
-                        button_login.setEnabled(true);
-                    } else if (attempt_counter == 1) {
-                        message = String.format("%s %s!", attempt_counter, getString(R.string.login_attempt));
-                        button_login.setEnabled(true);
-                    } else {
-                        button_login.setEnabled(false);
-                        message = getString(R.string.login_login_disabled);
-                    }
-                    progressBar_login.setVisibility(View.INVISIBLE);
-
-                    final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), String.format("%s!\n%s", getString(R.string.login_login_failed), message), Snackbar.LENGTH_INDEFINITE);
-                    View snackView = snackbar.getView();
-                    int snackbarTextId = com.google.android.material.R.id.snackbar_text;
-                    TextView textView = snackView.findViewById(snackbarTextId);
-                    textView.setTextColor(Color.RED);
-                    textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
-                    snackbar.setActionTextColor(Color.RED);
-                    snackbar.setAction("OK", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            snackbar.dismiss();
-                        }
-                    });
-                    snackbar.show();
-
-                    password.setText("");
-
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_INDEFINITE);
+        mStringRequest = new StringRequest(Request.Method.GET, base_url + auth_url + username.getText() + "/" + password.getText(), response -> {
+            api_key = response.replaceAll("\"", "");
+            logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
+            if (logged_in) {
+                Toast.makeText(LoginActivity.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
+                setLoggedIn();
+                setApiKey(api_key);
+                Intent intent = new Intent(LoginActivity.this, UserActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+                progressBar_login.setVisibility(View.INVISIBLE);
+                password.setText("");
+            } else {
+                progressBar_login.setVisibility(View.INVISIBLE);
+                final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), getString(R.string.login_login_failed), Snackbar.LENGTH_INDEFINITE);
                 View snackView = snackbar.getView();
                 int snackbarTextId = com.google.android.material.R.id.snackbar_text;
                 TextView textView = snackView.findViewById(snackbarTextId);
                 textView.setTextColor(Color.RED);
                 textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
                 snackbar.setActionTextColor(Color.RED);
-                snackbar.setAction("OK", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        snackbar.dismiss();
-                    }
-                });
+                snackbar.setAction("OK", v -> snackbar.dismiss());
                 snackbar.show();
-                progressBar_login.setVisibility(View.INVISIBLE);
-                button_login.setEnabled(true);
+                password.setText("");
             }
+        }, error -> {
+            final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_INDEFINITE);
+            View snackView = snackbar.getView();
+            int snackbarTextId = com.google.android.material.R.id.snackbar_text;
+            TextView textView = snackView.findViewById(snackbarTextId);
+            textView.setTextColor(Color.RED);
+            textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
+            snackbar.setActionTextColor(Color.RED);
+            snackbar.setAction("OK", v -> snackbar.dismiss());
+            snackbar.show();
+            progressBar_login.setVisibility(View.INVISIBLE);
+            button_login.setEnabled(true);
         });
         SingletonRequestQueue.getInstance(this).addToRequestQueue(mStringRequest);
     }
@@ -209,23 +166,4 @@ public class LoginActivity extends AppCompatActivity {
         return !sp.getBoolean("logged_in", false);
     }
 
-    private String getThemeSettings() {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getString("general_theme", "0");
-    }
-
-    private int getThemeSettingsAsNightMode() {
-        switch (getThemeSettings()) {
-            case "-1":
-                return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-            case "0":
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
-            case "1":
-                return AppCompatDelegate.MODE_NIGHT_NO;
-            case "2":
-                return AppCompatDelegate.MODE_NIGHT_YES;
-            default:
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
-        }
-    }
 }

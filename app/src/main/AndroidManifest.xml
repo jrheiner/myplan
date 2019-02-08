@@ -29,7 +29,11 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".ui.UserActivity" />
+            android:parentActivityName=".ui.UserActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.myplan.android.ui.UserActivity" />
+        </activity>
 
         <service
             android:name=".MyplanService"
@@ -38,7 +42,7 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
-            android:name=".ui.UserTimetable"
+            android:name=".ui.UserTimetableActivity"
             android:label="@string/title_activity_user_timetable"
             android:parentActivityName=".ui.SettingsActivity"
             android:theme="@style/AppTheme.NoActionBar">

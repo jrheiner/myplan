@@ -14,20 +14,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.gson.GsonBuilder;
 
-import de.myplan.android.ui.UserActivity;
-import de.myplan.android.util.Constants;
-import de.myplan.android.util.SingletonRequestQueue;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -37,7 +27,6 @@ import org.jsoup.select.Elements;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -45,24 +34,28 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import de.myplan.android.model.DsbTimetable;
+import de.myplan.android.ui.UserActivity;
+import de.myplan.android.util.Constants;
+import de.myplan.android.util.GsonRequest;
+import de.myplan.android.util.Preferences;
+import de.myplan.android.util.SingletonRequestQueue;
+
 import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 
 public class MyplanService extends JobService {
 
-    private final Handler mJobHandler = new Handler(new Handler.Callback() {
+    private final Handler mJobHandler = new Handler(msg -> {
 
-        @Override
-        public boolean handleMessage(Message msg) {
-
-            if (getNotificationSetting() && getLoggedIn()) {
-                request_timetableurl();
-            }
-
-            jobFinished((JobParameters) msg.obj, false);
-            return true;
+        if (getNotificationSetting() && getLoggedIn()) {
+            request_timetableurl();
         }
 
+        jobFinished((JobParameters) msg.obj, false);
+        return true;
     });
 
     @Override
@@ -144,44 +137,28 @@ public class MyplanService extends JobService {
 
     private void request_timetableurl() {
         final String api_key = getApiKey();
-        final ArrayList<String> timetableurls = new ArrayList<>();
         String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
 
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            String last_update = getLastUpdate();
-                            JSONObject current_request = (JSONObject) response.get(0);
-                            String timetabledate = current_request.getString("timetabledate");
-                            if (last_update.equals(timetabledate)) {
-                                return;
-                            } else {
-                                setLastUpdate(timetabledate);
-                            }
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject json_node = (JSONObject) response.get(i);
-
-                                String timetableurl = json_node.getString("timetableurl");
-                                timetableurls.add(timetableurl);
-                            }
-                            new MyplanService.JsoupAsyncTask().execute(timetableurls);
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+        GsonRequest<DsbTimetable[]> request = new GsonRequest<>(url,
+                new GsonBuilder().setDateFormat("dd.MM.yyyy HH:mm").create(),
+                DsbTimetable[].class,
+                response -> {
+                    if (new Preferences(this).getLastUpdate().equals(response[0].date)) {
+                        return;
+                    } else {
+                        new Preferences(this).setLastUpdate(response[0].date);
                     }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                    String[] timetableurls = new String[response.length];
+                    for (int i = 0; i < response.length; i++) {
+                        timetableurls[i] = response[i].url;
                     }
+                    new MyplanService.JsoupAsyncTask().execute(timetableurls);
+                },
+                error -> {
+                    // TODO Show a message if this error occurs when running in foreground
                 });
 
-        SingletonRequestQueue.getInstance(this).addToRequestQueue(jsonObjectRequest);
+        SingletonRequestQueue.getInstance(this).addToRequestQueue(request);
     }
 
     private String getApiKey() {
@@ -248,18 +225,6 @@ public class MyplanService extends JobService {
         return sp.getString("timetable", "{\"day1\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day2\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day3\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day4\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day5\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"}}");
     }
 
-    private String getLastUpdate() {
-        SharedPreferences sp = this.getSharedPreferences("last_update", MODE_PRIVATE);
-        return sp.getString("last_update", "");
-    }
-
-    private void setLastUpdate(String s) {
-        SharedPreferences sp = getSharedPreferences("last_update", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("last_update", s);
-        ed.apply();
-    }
-
     private boolean cacheIsEqual(JSONObject new_table, JSONObject old_table) {
         Iterator<String> ttc_keys = new_table.keys();
         while (ttc_keys.hasNext()) {
@@ -292,65 +257,63 @@ public class MyplanService extends JobService {
         return false;
     }
 
-    private class JsoupAsyncTask extends AsyncTask<ArrayList<String>, Void, String> {
+    private class JsoupAsyncTask extends AsyncTask<String, Void, String> {
         final StringBuilder builder = new StringBuilder();
         final JSONObject jwebcache = new JSONObject();
         int counter;
         String last_date_title = "";
 
         @Override
-        @SafeVarargs
-        protected final String doInBackground(ArrayList<String>... params) {
-            for (ArrayList<String> url_list : params) {
-                for (String url : url_list) {
-                    try {
-                        StringBuilder jcache = new StringBuilder();
-                        counter = 0;
-                        Document doc = Jsoup.connect(url).get();
-                        Elements td_list = doc.select("tr.list");
-                        Elements html_header = doc.getElementsByTag("head");
-                        builder.append(html_header.outerHtml());
-                        String tt_title = doc.select("div.mon_title").text();
-                        if (tt_title.contains("Seite")) {
-                            counter++;
-                            if (!last_date_title.equals(tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", ""))) {
-                                builder.append(String.format("<br><h3>%s</h3>", tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "")));
-                            }
-                            last_date_title = tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "");
-                        } else {
-                            builder.append(String.format("<br><h3>%s</h3>", tt_title));
+        protected final String doInBackground(String... params) {
+            for (String url : params) {
+                try {
+                    StringBuilder jcache = new StringBuilder();
+                    counter = 0;
+                    Document doc = Jsoup.connect(url).get();
+                    Elements td_list = doc.select("tr.list");
+                    Elements html_header = doc.getElementsByTag("head");
+                    builder.append(html_header.outerHtml());
+                    String tt_title = doc.select("div.mon_title").text();
+                    if (tt_title.contains("Seite")) {
+                        counter++;
+                        if (!last_date_title.equals(tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", ""))) {
+                            builder.append(String.format("<br><h3>%s</h3>", tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "")));
                         }
-                        Elements td_info = doc.select("tr.info");
-                        for (Element tt_info : td_info) {
-                            String info_text = tt_info.text();
-                            if (info_text.contains("Unterrichtsfrei")) {
-                                builder.append("<table class=\"mon_list\" >\n");
-                                builder.append(tt_info.outerHtml().replaceAll("<tr class=\"info\">", "<tr align=\"center\" style=\"background: #5cb85c; font-weight: 700;\">"));
-                                builder.append("</table><br>");
-                            }
+                        last_date_title = tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "");
+                    } else {
+                        builder.append(String.format("<br><h3>%s</h3>", tt_title));
+                    }
+                    Elements td_info = doc.select("tr.info");
+                    for (Element tt_info : td_info) {
+                        String info_text = tt_info.text();
+                        if (info_text.contains("Unterrichtsfrei")) {
+                            builder.append("<table class=\"mon_list\" >\n");
+                            builder.append(tt_info.outerHtml().replaceAll("<tr class=\"info\">", "<tr align=\"center\" style=\"background: #5cb85c; font-weight: 700;\">"));
+                            builder.append("</table><br>");
                         }
-                        builder.append("<body style=\"background: #fff;\"><table class=\"mon_list\"><tbody>");
-                        String last_inline_header = "";
-                        String class_setting = getClassSetting();
+                    }
+                    builder.append("<body style=\"background: #fff;\"><table class=\"mon_list\"><tbody>");
+                    String last_inline_header = "";
+                    String class_setting = getClassSetting();
 
-                        String date_str = tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "").replaceAll("[^0-9.]", "");
-                        Date date_obj = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(date_str);
-                        String date = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(date_obj);
+                    String date_str = tt_title.replaceAll("\\(([A-Z])\\w+ ([0-9]) / ([0-9])\\)", "").replaceAll("[^0-9.]", "");
+                    Date date_obj = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(date_str);
+                    String date = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(date_obj);
 
 
-                        for (Element tt_class : td_list) {
-                            String affected_class = tt_class.outerHtml();
-                            if (affected_class.contains("inline_header")) {
-                                last_inline_header = tt_class.text();
-                            }
-                            if (last_inline_header.contains(Constants.classSettings[Integer.parseInt(class_setting)])) {
-                                if (getTimetableSetting()) {
-                                    Pattern p = Pattern.compile(">(\\d.+|\\d.?-.?\\d+)</td>\\n.+\">(.+)</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>");
-                                    Matcher m = p.matcher(affected_class);
-                                    while (m.find()) {
+                    for (Element tt_class : td_list) {
+                        String affected_class = tt_class.outerHtml();
+                        if (affected_class.contains("inline_header")) {
+                            last_inline_header = tt_class.text();
+                        }
+                        if (last_inline_header.contains(Constants.classSettings[Integer.parseInt(class_setting)])) {
+                            if (getTimetableSetting()) {
+                                Pattern p = Pattern.compile(">(\\d.+|\\d.?-.?\\d+)</td>\\n.+\">(.+)</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>");
+                                Matcher m = p.matcher(affected_class);
+                                while (m.find()) {
 
-                                        String stunde = m.group(1);
-                                        String lehrer = m.group(2);
+                                    String stunde = m.group(1);
+                                    String lehrer = m.group(2);
                                         /*
                                         String fach = m.group(3);
                                         String vertreter = m.group(4);
@@ -359,42 +322,41 @@ public class MyplanService extends JobService {
                                         String notiz = m.group(7);
                                         */
 
-                                        Calendar c = Calendar.getInstance();
-                                        c.setTime(date_obj);
-                                        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+                                    Calendar c = Calendar.getInstance();
+                                    c.setTime(date_obj);
+                                    int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 
-                                        JSONObject timetable = new JSONObject(getTimetable());
+                                    JSONObject timetable = new JSONObject(getTimetable());
 
-                                        if (Calendar.MONDAY <= dayOfWeek && dayOfWeek <= Calendar.FRIDAY) {
-                                            // Use an offset of -1 to make Calendar.MONDAY to "day1".
-                                            JSONObject day = timetable.getJSONObject("day" + (dayOfWeek - 1));
-                                            if (ttFilter(day, stunde, lehrer)) {
-                                                builder.append(affected_class);
-                                                jcache.append(affected_class);
-                                                counter++;
-                                            }
+                                    if (Calendar.MONDAY <= dayOfWeek && dayOfWeek <= Calendar.FRIDAY) {
+                                        // Use an offset of -1 to make Calendar.MONDAY to "day1".
+                                        JSONObject day = timetable.getJSONObject("day" + (dayOfWeek - 1));
+                                        if (ttFilter(day, stunde, lehrer)) {
+                                            builder.append(affected_class);
+                                            jcache.append(affected_class);
+                                            counter++;
                                         }
                                     }
-                                } else {
-                                    builder.append(affected_class);
-                                    jcache.append(affected_class);
-                                    counter++;
                                 }
-
+                            } else {
+                                builder.append(affected_class);
+                                jcache.append(affected_class);
+                                counter++;
                             }
+
                         }
-                        jwebcache.put(date, jcache.toString());
-                        builder.append("</tbody></table></body>");
-                    } catch (java.io.IOException e) {
-                        Log.e("MyplanService", e.toString());
-                    } catch (JSONException | ParseException e) {
-                        e.printStackTrace();
                     }
-                    if (counter == 0) {
-                        builder.append("<table class=\"mon_list\"><tbody>");
-                        builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
-                        builder.append("</tbody></table>");
-                    }
+                    jwebcache.put(date, jcache.toString());
+                    builder.append("</tbody></table></body>");
+                } catch (java.io.IOException e) {
+                    Log.e("MyplanService", e.toString());
+                } catch (JSONException | ParseException e) {
+                    e.printStackTrace();
+                }
+                if (counter == 0) {
+                    builder.append("<table class=\"mon_list\"><tbody>");
+                    builder.append("<tr class=\"list\" style=\"background: #ff975b;\"><td class=\"list\" align=\"center\" style=\"font-weight: 700;\">keine Vertretungen</td></tr>");
+                    builder.append("</tbody></table>");
                 }
             }
 
