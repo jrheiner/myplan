@@ -27,12 +27,9 @@ import org.jsoup.select.Elements;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -214,16 +211,6 @@ public class MyplanService extends JobService {
         return sp2.getBoolean("logged_in", false);
     }
 
-    private Boolean getTimetableSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("general_timetable_pref", false);
-    }
-
-    private String getTimetable() {
-        SharedPreferences sp = getSharedPreferences("timetable", MODE_PRIVATE);
-        return sp.getString("timetable", "{\"day1\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day2\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day3\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day4\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"},\"day5\":{\"1\":\"0; \",\"2\":\"0; \",\"3\":\"0; \",\"4\":\"0; \",\"5\":\"0; \",\"6\":\"0; \",\"7\":\"0; \",\"8\":\"0; \",\"9\":\"0; \",\"10\":\"0; \",\"11\":\"0; \",\"12\":\"0; \",\"13\":\"0; \"}}");
-    }
 
     private boolean cacheIsEqual(JSONObject new_table, JSONObject old_table) {
         Iterator<String> ttc_keys = new_table.keys();
@@ -246,16 +233,6 @@ public class MyplanService extends JobService {
         return false;
     }
 
-    private boolean ttFilter(JSONObject day, String stunde, String lehrer) throws JSONException {
-        for (int i = 1; i < 14; i++) {
-            if (stunde.contains(String.valueOf(i))) {
-                if (day.getString(String.valueOf(i)).split(";")[1].replaceAll(" ", "").toLowerCase().contains(lehrer.toLowerCase())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     private class JsoupAsyncTask extends AsyncTask<String, Void, String> {
         final StringBuilder builder = new StringBuilder();
@@ -307,42 +284,11 @@ public class MyplanService extends JobService {
                             last_inline_header = tt_class.text();
                         }
                         if (last_inline_header.contains(Constants.classSettings[Integer.parseInt(class_setting)])) {
-                            if (getTimetableSetting()) {
-                                Pattern p = Pattern.compile(">(\\d.+|\\d.?-.?\\d+)</td>\\n.+\">(.+)</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(?:<b>)?(.+?)(?:</b>)?</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>\\n.+\">(.+)</td>");
-                                Matcher m = p.matcher(affected_class);
-                                while (m.find()) {
 
-                                    String stunde = m.group(1);
-                                    String lehrer = m.group(2);
-                                        /*
-                                        String fach = m.group(3);
-                                        String vertreter = m.group(4);
-                                        String raum = m.group(5);
-                                        String art = m.group(6);
-                                        String notiz = m.group(7);
-                                        */
+                            builder.append(affected_class);
+                            jcache.append(affected_class);
+                            counter++;
 
-                                    Calendar c = Calendar.getInstance();
-                                    c.setTime(date_obj);
-                                    int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-
-                                    JSONObject timetable = new JSONObject(getTimetable());
-
-                                    if (Calendar.MONDAY <= dayOfWeek && dayOfWeek <= Calendar.FRIDAY) {
-                                        // Use an offset of -1 to make Calendar.MONDAY to "day1".
-                                        JSONObject day = timetable.getJSONObject("day" + (dayOfWeek - 1));
-                                        if (ttFilter(day, stunde, lehrer)) {
-                                            builder.append(affected_class);
-                                            jcache.append(affected_class);
-                                            counter++;
-                                        }
-                                    }
-                                }
-                            } else {
-                                builder.append(affected_class);
-                                jcache.append(affected_class);
-                                counter++;
-                            }
 
                         }
                     }

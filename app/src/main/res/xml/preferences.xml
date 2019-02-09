@@ -1,40 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/pref_general_list_titles"
-        android:entryValues="@array/pref_general_list_values"
-        android:icon="@drawable/ic_school_black_24dp"
-        android:key="general_list"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_class" />
+    <PreferenceCategory android:title="Allgemein">
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:icon="@drawable/ic_playlist_add_check_black_24dp_customcolor"
-        android:key="general_timetable_pref"
-        android:summary="@string/pref_timetable"
-        android:title="@string/pref_title_timetable_pref" />
-
-    <Preference
-        android:icon="@drawable/ic_format_list_numbered_black_24dp"
-        android:key="general_timetable"
-        android:summary="@string/pref_title_timetable_desc"
-        android:title="@string/pref_title_timetable">
-        <intent android:action="android.intent.action.TIMETABLE" />
-    </Preference>
-
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/pref_theme_list_titles"
-        android:entryValues="@array/pref_theme_list_values"
-        android:icon="@drawable/ic_settings_brightness_black_24dp"
-        android:key="general_theme"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_theme" />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_theme_list_titles"
+            android:entryValues="@array/pref_theme_list_values"
+            android:icon="@drawable/ic_settings_brightness_black_24dp"
+            android:key="general_theme"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_theme" />
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/pref_general_list_titles"
+            android:entryValues="@array/pref_general_list_values"
+            android:icon="@drawable/ic_school_black_24dp"
+            android:key="general_list"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_class" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="Benachrichtigungen">
 
