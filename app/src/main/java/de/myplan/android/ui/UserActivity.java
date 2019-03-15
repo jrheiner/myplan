@@ -49,12 +49,17 @@ import de.myplan.android.util.SingletonRequestQueue;
 
 public class UserActivity extends AppCompatActivity {
 
+    private final Preferences preferences;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    public UserActivity() {
+        preferences = new Preferences(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            AppCompatDelegate.setDefaultNightMode(new Preferences(this).getTheme());
+            AppCompatDelegate.setDefaultNightMode(preferences.getTheme());
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
@@ -87,11 +92,11 @@ public class UserActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         if (new Preferences(this).getTheme() != AppCompatDelegate.getDefaultNightMode()) {
-            AppCompatDelegate.setDefaultNightMode(new Preferences(this).getTheme());
+            AppCompatDelegate.setDefaultNightMode(preferences.getTheme());
             this.recreate();
         }
         NotificationManagerCompat.from(this).cancel(1);
-        request_timetableurl(getApiKey());
+        request_timetableurl();
     }
 
 
@@ -124,9 +129,7 @@ public class UserActivity extends AppCompatActivity {
         progressBar_user.setVisibility(View.VISIBLE);
         this.setTitle(String.format("%s", getString(R.string.user_header)));
         mSwipeRefreshLayout = findViewById(R.id.user_swipe_refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(
-                () -> request_timetableurl(getApiKey())
-        );
+        mSwipeRefreshLayout.setOnRefreshListener(this::request_timetableurl);
 
 
         final WebView webView_user = findViewById(R.id.webView_user);
@@ -174,7 +177,7 @@ public class UserActivity extends AppCompatActivity {
                             intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent_login);
                             resetLoggedIn();
-                            resetApiKey();
+                            preferences.resetApiKey();
                             finish();
                         })
                         .setNegativeButton(android.R.string.no, null).show();
@@ -185,9 +188,10 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
-    private void request_timetableurl(final String api_key) {
+    private void request_timetableurl() {
+        final String apiKey = preferences.getApiKey();
         final ArrayList<String> last_updates = new ArrayList<>();
-        String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
+        String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + apiKey;
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
                 (Request.Method.GET, url, null, response -> {
@@ -294,11 +298,6 @@ public class UserActivity extends AppCompatActivity {
         return sp.getBoolean("logged_in", false);
     }
 
-    private String getApiKey() {
-        SharedPreferences sp = this.getSharedPreferences("api_key", MODE_PRIVATE);
-        return sp.getString("api_key", null);
-    }
-
     private String getClassSetting() {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
@@ -321,14 +320,6 @@ public class UserActivity extends AppCompatActivity {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getBoolean("notifications_new_message", true);
-    }
-
-
-    private void resetApiKey() {
-        SharedPreferences sp = getSharedPreferences("api_key", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("api_key", "");
-        ed.apply();
     }
 
     private String getDateDifference(String date_1) {

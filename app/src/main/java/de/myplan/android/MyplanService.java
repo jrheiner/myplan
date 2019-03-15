@@ -45,25 +45,31 @@ import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 public class MyplanService extends JobService {
 
-    private final Handler mJobHandler = new Handler(msg -> {
+    private final Preferences preferences;
+    private final Handler jobHandler;
 
-        if (getNotificationSetting() && getLoggedIn()) {
-            request_timetableurl();
-        }
+    public MyplanService() {
+        preferences = new Preferences(this);
+        jobHandler = new Handler(msg -> {
 
-        jobFinished((JobParameters) msg.obj, false);
-        return true;
-    });
+            if (getNotificationSetting() && preferences.getApiKey() != null) {
+                request_timetableurl();
+            }
+
+            jobFinished((JobParameters) msg.obj, false);
+            return true;
+        });
+    }
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        mJobHandler.sendMessage(Message.obtain(mJobHandler, 1, params));
+        jobHandler.sendMessage(Message.obtain(jobHandler, 1, params));
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        mJobHandler.removeMessages(1);
+        jobHandler.removeMessages(1);
         return false;
     }
 
@@ -133,17 +139,17 @@ public class MyplanService extends JobService {
     }
 
     private void request_timetableurl() {
-        final String api_key = getApiKey();
-        String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + api_key;
+        final String apiKey = new Preferences(this).getApiKey();
+        final String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + apiKey;
 
         GsonRequest<DsbTimetable[]> request = new GsonRequest<>(url,
                 new GsonBuilder().setDateFormat("dd.MM.yyyy HH:mm").create(),
                 DsbTimetable[].class,
                 response -> {
-                    if (new Preferences(this).getLastUpdate().equals(response[0].date)) {
+                    if (preferences.getLastUpdate().equals(response[0].date)) {
                         return;
                     } else {
-                        new Preferences(this).setLastUpdate(response[0].date);
+                        preferences.setLastUpdate(response[0].date);
                     }
                     String[] timetableurls = new String[response.length];
                     for (int i = 0; i < response.length; i++) {
@@ -156,11 +162,6 @@ public class MyplanService extends JobService {
                 });
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(request);
-    }
-
-    private String getApiKey() {
-        SharedPreferences sp2 = this.getSharedPreferences("api_key", MODE_PRIVATE);
-        return sp2.getString("api_key", null);
     }
 
     private Boolean getNotificationSetting() {
@@ -205,12 +206,6 @@ public class MyplanService extends JobService {
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getString("general_list", "0");
     }
-
-    private boolean getLoggedIn() {
-        SharedPreferences sp2 = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp2.getBoolean("logged_in", false);
-    }
-
 
     private boolean cacheIsEqual(JSONObject new_table, JSONObject old_table) {
         Iterator<String> ttc_keys = new_table.keys();
@@ -288,8 +283,6 @@ public class MyplanService extends JobService {
                             builder.append(affected_class);
                             jcache.append(affected_class);
                             counter++;
-
-
                         }
                     }
                     jwebcache.put(date, jcache.toString());
@@ -325,8 +318,5 @@ public class MyplanService extends JobService {
                 e.printStackTrace();
             }
         }
-
     }
 }
-
-

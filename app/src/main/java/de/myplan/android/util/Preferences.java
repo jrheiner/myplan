@@ -17,6 +17,14 @@ public final class Preferences {
         sp = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    public String getApiKey() {
+        return sp.getString("api_key", null);
+    }
+
+    public void resetApiKey() {
+        sp.edit().remove("api_key").apply();
+    }
+
     public Date getLastUpdate() {
         try {
             return new Date(sp.getLong("last_update", 0));
@@ -31,7 +39,9 @@ public final class Preferences {
     }
 
     public int getTheme() {
-        switch (sp.getString("general_theme", "0")) {
+        final String value = sp.getString("general_theme", "0");
+        if (value == null) return AppCompatDelegate.MODE_NIGHT_AUTO;
+        switch (value) {
             case "-1":
                 return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
             case "0":
@@ -44,5 +54,4 @@ public final class Preferences {
                 return AppCompatDelegate.MODE_NIGHT_AUTO;
         }
     }
-
 }
