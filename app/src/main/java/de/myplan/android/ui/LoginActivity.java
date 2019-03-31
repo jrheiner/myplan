@@ -25,6 +25,7 @@ import de.myplan.android.util.SingletonRequestQueue;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private final Preferences preferences;
     private EditText username;
     private EditText password;
     private Button button_login;
@@ -32,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     private String api_key;
     private ProgressBar progressBar_login;
 
+    public LoginActivity() {
+        preferences = new Preferences(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.setTitle("");
-        if (isNotLoggedIn()) {
+        if (preferences.getApiKey() == null) {
             login_auth();
         } else {
             Intent intent = new Intent(LoginActivity.this, UserActivity.class);
@@ -54,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 
-        if (isNotLoggedIn()) {
+        if (preferences.getApiKey() == null) {
             if (button_login != null) {
                 button_login.setEnabled(true);
             }
@@ -110,8 +114,7 @@ public class LoginActivity extends AppCompatActivity {
             logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
             if (logged_in) {
                 Toast.makeText(LoginActivity.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();
-                setLoggedIn();
-                setApiKey(api_key);
+                preferences.setApiKey(api_key);
                 Intent intent = new Intent(LoginActivity.this, UserActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -145,25 +148,6 @@ public class LoginActivity extends AppCompatActivity {
             button_login.setEnabled(true);
         });
         SingletonRequestQueue.getInstance(this).addToRequestQueue(mStringRequest);
-    }
-
-    private void setApiKey(String api_key) {
-        SharedPreferences sp = getSharedPreferences("api_key", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("api_key", api_key);
-        ed.apply();
-    }
-
-    private void setLoggedIn() {
-        SharedPreferences sp = getSharedPreferences("logged_in", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean("logged_in", true);
-        ed.apply();
-    }
-
-    private boolean isNotLoggedIn() {
-        SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return !sp.getBoolean("logged_in", false);
     }
 
 }

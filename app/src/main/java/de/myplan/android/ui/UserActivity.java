@@ -91,7 +91,7 @@ public class UserActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (new Preferences(this).getTheme() != AppCompatDelegate.getDefaultNightMode()) {
+        if (preferences.getTheme() != AppCompatDelegate.getDefaultNightMode()) {
             AppCompatDelegate.setDefaultNightMode(preferences.getTheme());
             this.recreate();
         }
@@ -104,7 +104,7 @@ public class UserActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         JobScheduler mJobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (getNotificationSetting() && getLoggedIn()) {
+        if (getNotificationSetting() && preferences.getApiKey() != null) {
             JobInfo.Builder builder = new JobInfo.Builder(1,
                     new ComponentName(getPackageName(),
                             MyplanService.class.getName()));
@@ -120,7 +120,7 @@ public class UserActivity extends AppCompatActivity {
             if (((mJobScheduler != null) ? mJobScheduler.schedule(builder.build()) : 0) == JobScheduler.RESULT_FAILURE) {
                 Toast.makeText(this, "Background Service failed to start!", Toast.LENGTH_SHORT).show();
             }
-        } else if (!getNotificationSetting() && !getLoggedIn()) {
+        } else if (!getNotificationSetting() && preferences.getApiKey() == null) {
             assert mJobScheduler != null;
             mJobScheduler.cancelAll();
         }
@@ -176,7 +176,6 @@ public class UserActivity extends AppCompatActivity {
                             Intent intent_login = new Intent(UserActivity.this, LoginActivity.class);
                             intent_login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent_login);
-                            resetLoggedIn();
                             preferences.resetApiKey();
                             finish();
                         })
@@ -284,18 +283,6 @@ public class UserActivity extends AppCompatActivity {
         SharedPreferences.Editor ed = sp.edit();
         ed.putString("web_cache_complete", s);
         ed.apply();
-    }
-
-    private void resetLoggedIn() {
-        SharedPreferences sp = getSharedPreferences("logged_in", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putBoolean("logged_in", false);
-        ed.apply();
-    }
-
-    private boolean getLoggedIn() {
-        SharedPreferences sp = this.getSharedPreferences("logged_in", MODE_PRIVATE);
-        return sp.getBoolean("logged_in", false);
     }
 
     private String getClassSetting() {

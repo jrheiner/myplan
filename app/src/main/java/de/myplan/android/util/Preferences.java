@@ -21,6 +21,10 @@ public final class Preferences {
         return sp.getString("api_key", null);
     }
 
+    public void setApiKey(String apiKey) {
+        sp.edit().putString("api_key", apiKey).apply();
+    }
+
     public void resetApiKey() {
         sp.edit().remove("api_key").apply();
     }
