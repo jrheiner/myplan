@@ -18,6 +18,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 
@@ -36,11 +42,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import de.myplan.android.MyplanService;
 import de.myplan.android.R;
 import de.myplan.android.util.Constants;
@@ -49,15 +50,12 @@ import de.myplan.android.util.SingletonRequestQueue;
 
 public class UserActivity extends AppCompatActivity {
 
-    private final Preferences preferences;
+    private Preferences preferences;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    public UserActivity() {
-        preferences = new Preferences(this);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        preferences = new Preferences(this);
         if (savedInstanceState == null) {
             AppCompatDelegate.setDefaultNightMode(preferences.getTheme());
         }
@@ -67,8 +65,7 @@ public class UserActivity extends AppCompatActivity {
 
         final String[] listItems = getResources().getStringArray(R.array.pref_general_list_titles);
         final String[] listValues = getResources().getStringArray(R.array.pref_general_list_values);
-        boolean firstStart = getFirstStart();
-        if (firstStart) {
+        if (getFirstStart()) {
             AlertDialog.Builder mBuilder = new AlertDialog.Builder(UserActivity.this);
             mBuilder.setTitle(getString(R.string.user_introduction_title));
             mBuilder.setSingleChoiceItems(listItems, -1, (dialogInterface, i) -> {
@@ -313,10 +310,11 @@ public class UserActivity extends AppCompatActivity {
         long diff_ms;
         String diff_h;
 
-        Date date_obj_1 = null;
+        Date date_obj_1;
         try {
             date_obj_1 = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault()).parse(date_1);
         } catch (ParseException e) {
+            date_obj_1 = new Date();
             e.printStackTrace();
         }
         Date date_obj_2 = Calendar.getInstance().getTime();

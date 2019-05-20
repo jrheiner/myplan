@@ -16,6 +16,9 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
@@ -31,8 +34,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import de.myplan.android.model.DsbTimetable;
 import de.myplan.android.ui.UserActivity;
 import de.myplan.android.util.Constants;
@@ -45,15 +46,16 @@ import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 public class MyplanService extends JobService {
 
-    private final Preferences preferences;
-    private final Handler jobHandler;
+    private Preferences preferences;
+    private Handler jobHandler;
 
-    public MyplanService() {
+    @Override
+    public void onCreate() {
         preferences = new Preferences(this);
         jobHandler = new Handler(msg -> {
 
             if (getNotificationSetting() && preferences.getApiKey() != null) {
-                request_timetableurl();
+                requestTimetableUrl();
             }
 
             jobFinished((JobParameters) msg.obj, false);
@@ -138,8 +140,8 @@ public class MyplanService extends JobService {
         }
     }
 
-    private void request_timetableurl() {
-        final String apiKey = new Preferences(this).getApiKey();
+    private void requestTimetableUrl() {
+        final String apiKey = preferences.getApiKey();
         final String url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/timetables/" + apiKey;
 
         GsonRequest<DsbTimetable[]> request = new GsonRequest<>(url,
@@ -151,11 +153,11 @@ public class MyplanService extends JobService {
                     } else {
                         preferences.setLastUpdate(response[0].date);
                     }
-                    String[] timetableurls = new String[response.length];
+                    String[] timetableUrls = new String[response.length];
                     for (int i = 0; i < response.length; i++) {
-                        timetableurls[i] = response[i].url;
+                        timetableUrls[i] = response[i].url;
                     }
-                    new MyplanService.JsoupAsyncTask().execute(timetableurls);
+                    new MyplanService.JsoupAsyncTask().execute(timetableUrls);
                 },
                 error -> {
                     // TODO Show a message if this error occurs when running in foreground

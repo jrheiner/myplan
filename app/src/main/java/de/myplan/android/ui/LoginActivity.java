@@ -1,7 +1,6 @@
 package de.myplan.android.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -12,20 +11,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.snackbar.Snackbar;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import de.myplan.android.R;
 import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final Preferences preferences;
+    private Preferences preferences;
     private EditText username;
     private EditText password;
     private Button button_login;
@@ -33,14 +33,11 @@ public class LoginActivity extends AppCompatActivity {
     private String api_key;
     private ProgressBar progressBar_login;
 
-    public LoginActivity() {
-        preferences = new Preferences(this);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        preferences = new Preferences(this);
         if (savedInstanceState == null) {
-            AppCompatDelegate.setDefaultNightMode(new Preferences(this).getTheme());
+            AppCompatDelegate.setDefaultNightMode(preferences.getTheme());
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
