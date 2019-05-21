@@ -27,6 +27,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonArrayRequest;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -44,6 +47,8 @@ import java.util.Locale;
 
 import de.myplan.android.MyplanService;
 import de.myplan.android.R;
+import de.myplan.android.events.DsbTimetableEvent;
+import de.myplan.android.events.NetworkErrorEvent;
 import de.myplan.android.util.Constants;
 import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
@@ -100,6 +105,7 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
         JobScheduler mJobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         if (getNotificationSetting() && preferences.getApiKey() != null) {
             JobInfo.Builder builder = new JobInfo.Builder(1,
@@ -138,6 +144,12 @@ public class UserActivity extends AppCompatActivity {
                 mSwipeRefreshLayout.setEnabled(false);
 
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -184,6 +196,19 @@ public class UserActivity extends AppCompatActivity {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNetworkErrorEvent(NetworkErrorEvent event) {
+        // TODO Show a message if this error occurs when running in foreground
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDsbTimetableEvent(DsbTimetableEvent event) {
+        TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
+        String text = String.format("%s: %s", getString(R.string.user_last_updated),
+                new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault()).format(event.getLastUpdate()));
+        user_textView_last_updated.setText(text);
+    }
+
     private void request_timetableurl() {
         final String apiKey = preferences.getApiKey();
         final ArrayList<String> last_updates = new ArrayList<>();
@@ -203,7 +228,7 @@ public class UserActivity extends AppCompatActivity {
                         }
                         new JsoupAsyncTask().execute(timetableurls);
                         TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
-                        if (Integer.parseInt(getDateDifference(last_updates.get(0))) < 2) {
+                        if (getDateDifference(last_updates.get(0)) < 2) {
                             user_textView_last_updated.setText(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
                             setLastUpdated(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
                         } else {
@@ -306,9 +331,9 @@ public class UserActivity extends AppCompatActivity {
         return sharedPref.getBoolean("notifications_new_message", true);
     }
 
-    private String getDateDifference(String date_1) {
+    private int getDateDifference(String date_1) {
         long diff_ms;
-        String diff_h;
+        int diff_h;
 
         Date date_obj_1;
         try {
@@ -320,7 +345,7 @@ public class UserActivity extends AppCompatActivity {
         Date date_obj_2 = Calendar.getInstance().getTime();
 
         diff_ms = date_obj_2.getTime() - date_obj_1.getTime();
-        diff_h = Long.toString(diff_ms / (60000 * 60));
+        diff_h = (int) (diff_ms / (60 * 60 * 1000));
 
         return diff_h;
     }

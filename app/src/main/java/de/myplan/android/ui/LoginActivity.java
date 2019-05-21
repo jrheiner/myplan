@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
         String base_url = "https://iphone.dsbcontrol.de/iPhoneService.svc/DSB/";
         String auth_url = "authid/";
         mStringRequest = new StringRequest(Request.Method.GET, base_url + auth_url + username.getText() + "/" + password.getText(), response -> {
-            api_key = response.replaceAll("\"", "");
+            api_key = response.substring(1, 37); // remove parentheses
             logged_in = !api_key.equals("00000000-0000-0000-0000-000000000000");
             if (logged_in) {
                 Toast.makeText(LoginActivity.this, String.format("%s!", getString(R.string.login_login_success)), Toast.LENGTH_SHORT).show();

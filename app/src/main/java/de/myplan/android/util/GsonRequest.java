@@ -1,5 +1,7 @@
 package de.myplan.android.util;
 
+import androidx.annotation.Nullable;
+
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -14,7 +16,7 @@ public class GsonRequest<T> extends Request<T> {
     private final Class<T> clazz;
     private final Response.Listener<T> listener;
 
-    public GsonRequest(String url, Gson gson, Class<T> clazz, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+    public GsonRequest(String url, @Nullable Gson gson, Class<T> clazz, Response.Listener<T> listener, Response.ErrorListener errorListener) {
         super(Method.GET, url, errorListener);
         this.gson = gson != null ? gson : new Gson();
         this.clazz = clazz;

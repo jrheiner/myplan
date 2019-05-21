@@ -21,6 +21,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.google.gson.GsonBuilder;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -34,6 +35,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 
+import de.myplan.android.events.DsbTimetableEvent;
+import de.myplan.android.events.NetworkErrorEvent;
 import de.myplan.android.model.DsbTimetable;
 import de.myplan.android.ui.UserActivity;
 import de.myplan.android.util.Constants;
@@ -148,22 +151,30 @@ public class MyplanService extends JobService {
                 new GsonBuilder().setDateFormat("dd.MM.yyyy HH:mm").create(),
                 DsbTimetable[].class,
                 response -> {
-                    if (preferences.getLastUpdate().equals(response[0].date)) {
+                    Date lastUpdate = getLatest(response);
+                    boolean changed = preferences.getLastUpdate().before(lastUpdate);
+                    EventBus.getDefault().post(new DsbTimetableEvent(response, changed, lastUpdate));
+                    if (!changed)
                         return;
-                    } else {
-                        preferences.setLastUpdate(response[0].date);
-                    }
+                    preferences.setLastUpdate(lastUpdate);
                     String[] timetableUrls = new String[response.length];
                     for (int i = 0; i < response.length; i++) {
                         timetableUrls[i] = response[i].url;
                     }
                     new MyplanService.JsoupAsyncTask().execute(timetableUrls);
                 },
-                error -> {
-                    // TODO Show a message if this error occurs when running in foreground
-                });
+                error -> EventBus.getDefault().post(new NetworkErrorEvent(error)));
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(request);
+    }
+
+    private Date getLatest(DsbTimetable[] timetables) {
+        Date latest = new Date(0);
+        for (DsbTimetable timetable : timetables) {
+            if (timetable.date.after(latest))
+                latest = timetable.date;
+        }
+        return latest;
     }
 
     private Boolean getNotificationSetting() {
