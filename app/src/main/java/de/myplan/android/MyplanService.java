@@ -19,6 +19,8 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.GsonBuilder;
 
 import org.greenrobot.eventbus.EventBus;
@@ -41,6 +43,7 @@ import de.myplan.android.model.DsbTimetable;
 import de.myplan.android.ui.UserActivity;
 import de.myplan.android.util.Constants;
 import de.myplan.android.util.GsonRequest;
+import de.myplan.android.util.JsoupRequestChain;
 import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
 
@@ -50,14 +53,16 @@ import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
 public class MyplanService extends JobService {
 
     private Preferences preferences;
+    private RequestQueue requestQueue;
     private Handler jobHandler;
 
     @Override
     public void onCreate() {
         preferences = new Preferences(this);
+        requestQueue = Volley.newRequestQueue(this);
         jobHandler = new Handler(msg -> {
 
-            if (getNotificationSetting() && preferences.getApiKey() != null) {
+            if (preferences.getNotificationsEnabled() && preferences.getApiKey() != null) {
                 requestTimetableUrl();
             }
 
@@ -127,18 +132,18 @@ public class MyplanService extends JobService {
                 .setVisibility(VISIBILITY_PUBLIC)
                 .setChannelId(CHANNEL_ID);
 
-        if (getNotificationSetting() && getVibrationSetting()) {
+        if (getVibrationSetting()) {
             mBuilder.setVibrate(new long[]{0, 250});
         }
 
-        if (getNotificationSetting() && getLEDSetting()) {
+        if (getLEDSetting()) {
             mBuilder.setLights(Color.BLUE, 2000, 5000);
         }
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
         int notificationId = 1;
-        if (getNotificationSetting()) {
+        if (preferences.getNotificationsEnabled()) {
             notificationManager.notify(notificationId, mBuilder.build());
         }
     }
@@ -161,11 +166,23 @@ public class MyplanService extends JobService {
                     for (int i = 0; i < response.length; i++) {
                         timetableUrls[i] = response[i].url;
                     }
-                    new MyplanService.JsoupAsyncTask().execute(timetableUrls);
+                    requestTimetableContent(timetableUrls);
                 },
                 error -> EventBus.getDefault().post(new NetworkErrorEvent(error)));
 
         SingletonRequestQueue.getInstance(this).addToRequestQueue(request);
+    }
+
+    private void requestTimetableContent(String[] urls) {
+        JsoupRequestChain chain = new JsoupRequestChain(urls,
+                response -> {
+                    for (Document timetable : response) {
+                        timetable.body().selectFirst("table.mon_head").remove();
+                        // TODO Cleanup document
+                    }
+                },
+                error -> EventBus.getDefault().post(new NetworkErrorEvent(error)));
+        chain.execute(requestQueue);
     }
 
     private Date getLatest(DsbTimetable[] timetables) {
@@ -175,12 +192,6 @@ public class MyplanService extends JobService {
                 latest = timetable.date;
         }
         return latest;
-    }
-
-    private Boolean getNotificationSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message", true);
     }
 
     private Boolean getVibrationSetting() {

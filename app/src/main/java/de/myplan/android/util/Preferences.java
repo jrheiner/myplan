@@ -3,11 +3,11 @@ package de.myplan.android.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.Date;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
+
+import java.util.Date;
 
 public final class Preferences {
 
@@ -57,5 +57,9 @@ public final class Preferences {
             default:
                 return AppCompatDelegate.MODE_NIGHT_AUTO;
         }
+    }
+
+    public boolean getNotificationsEnabled() {
+        return sp.getBoolean("notifications_new_message", true);
     }
 }
