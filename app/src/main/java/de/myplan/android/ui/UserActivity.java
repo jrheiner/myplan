@@ -6,10 +6,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +43,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -49,11 +50,13 @@ import de.myplan.android.MyplanService;
 import de.myplan.android.R;
 import de.myplan.android.events.DsbTimetableEvent;
 import de.myplan.android.events.NetworkErrorEvent;
+import de.myplan.android.events.SghTimetableEvent;
 import de.myplan.android.util.Constants;
 import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
 
 public class UserActivity extends AppCompatActivity {
+    private static final String TAG = "UserActivity";
 
     private Preferences preferences;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -107,7 +110,7 @@ public class UserActivity extends AppCompatActivity {
         super.onStart();
         EventBus.getDefault().register(this);
         JobScheduler mJobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (getNotificationSetting() && preferences.getApiKey() != null) {
+        if (preferences.getNotificationsEnabled() && preferences.getApiKey() != null) {
             JobInfo.Builder builder = new JobInfo.Builder(1,
                     new ComponentName(getPackageName(),
                             MyplanService.class.getName()));
@@ -123,7 +126,7 @@ public class UserActivity extends AppCompatActivity {
             if (((mJobScheduler != null) ? mJobScheduler.schedule(builder.build()) : 0) == JobScheduler.RESULT_FAILURE) {
                 Toast.makeText(this, "Background Service failed to start!", Toast.LENGTH_SHORT).show();
             }
-        } else if (!getNotificationSetting() && preferences.getApiKey() == null) {
+        } else if (!preferences.getNotificationsEnabled() && preferences.getApiKey() == null) {
             assert mJobScheduler != null;
             mJobScheduler.cancelAll();
         }
@@ -209,6 +212,20 @@ public class UserActivity extends AppCompatActivity {
         user_textView_last_updated.setText(text);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSghTimetableEvent(SghTimetableEvent event) {
+        final WebView webView = findViewById(R.id.webView_user);
+        int uiMode = getResources().getConfiguration().uiMode;
+        boolean nightMode = (uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        String bgColor = nightMode ? "#333" : "white";
+        String textColor = nightMode ? "white" : "black";
+        String data = event.getTimetable().getDocument().html()
+                .replace("$BACKGROUND_COLOR", bgColor)
+                .replace("$TEXT_COLOR", textColor);
+        webView.loadData(data, "text/html", "UTF-8");
+        Log.i(TAG, data);
+    }
+
     private void request_timetableurl() {
         final String apiKey = preferences.getApiKey();
         final ArrayList<String> last_updates = new ArrayList<>();
@@ -227,16 +244,6 @@ public class UserActivity extends AppCompatActivity {
                             last_updates.add(last_update);
                         }
                         new JsoupAsyncTask().execute(timetableurls);
-                        TextView user_textView_last_updated = findViewById(R.id.user_textView_last_updated);
-                        if (getDateDifference(last_updates.get(0)) < 2) {
-                            user_textView_last_updated.setText(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
-                            setLastUpdated(String.format("%s: %s (Vor wenigen Stunden)", getString(R.string.user_last_updated), last_updates.get(0)));
-                        } else {
-                            user_textView_last_updated.setText(String.format("%s: %s (Vor ca. %s Stunden)", getString(R.string.user_last_updated), last_updates.get(0), getDateDifference(last_updates.get(0))));
-                            setLastUpdated(String.format("%s: %s (Vor %s Stunden)", getString(R.string.user_last_updated), last_updates.get(0), getDateDifference(last_updates.get(0))));
-                        }
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -267,13 +274,6 @@ public class UserActivity extends AppCompatActivity {
     private String getLastUpdated() {
         SharedPreferences sp = this.getSharedPreferences("last_updated", MODE_PRIVATE);
         return sp.getString("last_updated", "");
-    }
-
-    private void setLastUpdated(String s) {
-        SharedPreferences sp = getSharedPreferences("last_updated", MODE_PRIVATE);
-        SharedPreferences.Editor ed = sp.edit();
-        ed.putString("last_updated", s);
-        ed.apply();
     }
 
     private boolean getFirstStart() {
@@ -323,31 +323,6 @@ public class UserActivity extends AppCompatActivity {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getString("sync_frequency", "180");
-    }
-
-    private Boolean getNotificationSetting() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean("notifications_new_message", true);
-    }
-
-    private int getDateDifference(String date_1) {
-        long diff_ms;
-        int diff_h;
-
-        Date date_obj_1;
-        try {
-            date_obj_1 = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault()).parse(date_1);
-        } catch (ParseException e) {
-            date_obj_1 = new Date();
-            e.printStackTrace();
-        }
-        Date date_obj_2 = Calendar.getInstance().getTime();
-
-        diff_ms = date_obj_2.getTime() - date_obj_1.getTime();
-        diff_h = (int) (diff_ms / (60 * 60 * 1000));
-
-        return diff_h;
     }
 
     private ArrayList<String> getThemeColorCode() {
@@ -430,8 +405,6 @@ public class UserActivity extends AppCompatActivity {
                             builder.append(affected_class);
                             jcache.append(affected_class);
                             counter++;
-
-
                         }
                     }
                     jwebcache.put(date, jcache.toString());
@@ -489,7 +462,7 @@ public class UserActivity extends AppCompatActivity {
             timetable = timetable.replaceAll(getThemeColorCode().get(0), getThemeColorCode().get(1));
             setWebCache(timetable_cache);
             setWebCacheComplete(timetable);
-            webView_user.loadData(timetable, "text/html; charset=utf-8", "UTF-8");
+            //webView_user.loadData(timetable, "text/html; charset=utf-8", "UTF-8");
             ProgressBar progressBar_user = findViewById(R.id.progressBar_user);
             progressBar_user.setVisibility(View.INVISIBLE);
             user_textView_status.setVisibility(View.GONE);

@@ -39,7 +39,9 @@ import java.util.Locale;
 
 import de.myplan.android.events.DsbTimetableEvent;
 import de.myplan.android.events.NetworkErrorEvent;
+import de.myplan.android.events.SghTimetableEvent;
 import de.myplan.android.model.DsbTimetable;
+import de.myplan.android.model.SghTimetable;
 import de.myplan.android.ui.UserActivity;
 import de.myplan.android.util.Constants;
 import de.myplan.android.util.GsonRequest;
@@ -51,6 +53,7 @@ import static androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC;
 
 
 public class MyplanService extends JobService {
+    private static final String TAG = "MyplanService";
 
     private Preferences preferences;
     private RequestQueue requestQueue;
@@ -159,8 +162,8 @@ public class MyplanService extends JobService {
                     Date lastUpdate = getLatest(response);
                     boolean changed = preferences.getLastUpdate().before(lastUpdate);
                     EventBus.getDefault().post(new DsbTimetableEvent(response, changed, lastUpdate));
-                    if (!changed)
-                        return;
+                    //if (!changed)
+                    //    return;
                     preferences.setLastUpdate(lastUpdate);
                     String[] timetableUrls = new String[response.length];
                     for (int i = 0; i < response.length; i++) {
@@ -174,12 +177,12 @@ public class MyplanService extends JobService {
     }
 
     private void requestTimetableContent(String[] urls) {
+        Log.i(TAG, "Downloading timetables");
         JsoupRequestChain chain = new JsoupRequestChain(urls,
                 response -> {
-                    for (Document timetable : response) {
-                        timetable.body().selectFirst("table.mon_head").remove();
-                        // TODO Cleanup document
-                    }
+                    SghTimetable timetable = new SghTimetable(response);
+                    Log.i(TAG, "Got response: " + timetable.getDocument().html());
+                    EventBus.getDefault().post(new SghTimetableEvent(timetable));
                 },
                 error -> EventBus.getDefault().post(new NetworkErrorEvent(error)));
         chain.execute(requestQueue);
