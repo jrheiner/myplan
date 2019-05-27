@@ -37,7 +37,7 @@ public class SghTimetable {
                 root.appendChild(new Element("br"));
                 root.appendChild(new Element("h3")
                         .attr("style", "color: $TEXT_COLOR;")
-                        .text(titleText.replaceAll("\\(.*\\)", "")));
+                        .text(titleText.replaceAll("\\s\\(.*\\)", "")));
                 loadInfoTable(root, source);
                 lastDate = date;
             } else { // Append last day
@@ -58,6 +58,7 @@ public class SghTimetable {
             }
         }
         if (!infoTable.getElementsByTag("tr").isEmpty()) {
+            infoTable.attr("style", "color: $TEXT_COLOR; background-color: $CONTRAST_COLOR;");
             root.appendChild(infoTable);
             root.appendChild(new Element("p"));
         }

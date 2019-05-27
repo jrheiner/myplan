@@ -218,9 +218,11 @@ public class UserActivity extends AppCompatActivity {
         int uiMode = getResources().getConfiguration().uiMode;
         boolean nightMode = (uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         String bgColor = nightMode ? "#333" : "white";
+        String contrastColor = nightMode ? "black" : "white";
         String textColor = nightMode ? "white" : "black";
         String data = event.getTimetable().getDocument().html()
                 .replace("$BACKGROUND_COLOR", bgColor)
+                .replace("$CONTRAST_COLOR", contrastColor)
                 .replace("$TEXT_COLOR", textColor);
         webView.loadData(data, "text/html", "UTF-8");
         Log.i(TAG, data);
