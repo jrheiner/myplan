@@ -135,6 +135,6 @@
     <string name="pref_general_app_info">App-Info</string>
     <string name="app_info_title">myPlan Vertretungsplan</string>
     <string name="app_info_version">Version</string>
-    <string name="app_info_dev">Entwickler:\n#TODO\n\nMitwirkende:\n#TODO</string>
+    <string name="app_info_dev">Entwickler:\n<a href="https://github.com/jrheiner/">@jrheiner</a></string>
     <string name="app_info_github"><a href="https://github.com/jrheiner/myplan">Sourcecode (Github)</a></string>
 </resources>

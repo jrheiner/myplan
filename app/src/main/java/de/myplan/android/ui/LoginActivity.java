@@ -130,6 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                 snackbar.setAction("OK", v -> snackbar.dismiss());
                 snackbar.show();
                 password.setText("");
+                button_login.setEnabled(true);
             }
         }, error -> {
             final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_INDEFINITE);
