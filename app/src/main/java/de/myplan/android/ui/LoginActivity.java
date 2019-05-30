@@ -12,13 +12,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.android.volley.Request;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.material.snackbar.Snackbar;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import de.myplan.android.R;
 import de.myplan.android.util.Preferences;
 import de.myplan.android.util.SingletonRequestQueue;
@@ -130,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                 snackbar.setAction("OK", v -> snackbar.dismiss());
                 snackbar.show();
                 password.setText("");
+                button_login.setEnabled(true);
             }
         }, error -> {
             final Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), error.toString(), Snackbar.LENGTH_INDEFINITE);
